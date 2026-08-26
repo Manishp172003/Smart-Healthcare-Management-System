@@ -6,8 +6,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-import "./HowItWorks.css";
-
 const steps = [
   {
     number: "01",
@@ -41,23 +39,23 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section className="how-section">
+    <section className="px-4.5 py-16 bg-white md:px-7 md:py-[85px] lg:px-[38px]">
 
-      <div className="how-container">
+      <div className="max-w-[1240px] mx-auto">
 
         {/* Header */}
-        <div className="how-header">
+        <div className="max-w-[650px] mx-auto text-center">
 
-          <span className="section-label">
+          <span className="text-[#64748B] text-[11px] font-bold tracking-[1.5px] uppercase">
             HOW IT WORKS
           </span>
 
-          <h2>
+          <h2 className="mt-1 text-[#0F172A] text-[34px] leading-[1.1] tracking-[-1.5px] md:text-[40px]">
             Healthcare in
-            <span> four simple steps.</span>
+            <span className="text-[#2563EB]"> four simple steps.</span>
           </h2>
 
-          <p>
+          <p className="max-w-[580px] mt-4 mx-auto text-[#64748B] text-[13px] leading-[1.7]">
             From finding the right doctor to managing your
             appointment, SmartHealth keeps the entire process simple.
           </p>
@@ -65,35 +63,41 @@ const HowItWorks = () => {
         </div>
 
         {/* Steps */}
-        <div className="steps-container">
+        <div className="grid grid-cols-1 gap-3.75 mt-9 md:grid-cols-2 md:gap-4.5 md:mt-13 lg:grid-cols-4 lg:gap-0">
 
           {steps.map((step, index) => {
             const Icon = step.icon;
+            const iconColors = [
+              'text-[#2563EB] bg-[rgba(37,99,235,0.08)]',
+              'text-[#0D9488] bg-[rgba(13,148,136,0.09)]',
+              'text-[#7c3aed] bg-[rgba(124,58,237,0.08)]',
+              'text-[#d97706] bg-[rgba(245,158,11,0.1)]'
+            ];
 
             return (
-              <div className="step-wrapper" key={step.number}>
+              <div className="relative flex items-center" key={step.number}>
 
-                <div className="step-card">
+                <div className="relative w-full min-h-auto p-5.5 bg-white border border-[#E2E8F0] rounded-[17px] transition-transform hover:-translate-y-1.5 hover:border-[rgba(37,99,235,0.18)] hover:shadow-[0_18px_35px_rgba(15,23,42,0.08)] md:min-h-[220px] md:p-6">
 
-                  <div className="step-top">
-                    <span className="step-number">
+                  <div className="flex items-center justify-between mb-6.25">
+                    <span className="text-[#cbd5e1] text-[13px] font-extrabold tracking-[1px]">
                       {step.number}
                     </span>
 
-                    <div className="step-icon">
+                    <div className={`w-12 h-12 flex items-center justify-center rounded-xl ${iconColors[index]}`}>
                       <Icon size={23} />
                     </div>
                   </div>
 
-                  <h3>{step.title}</h3>
+                  <h3 className="text-[#0F172A] text-[15px] font-bold">{step.title}</h3>
 
-                  <p>{step.description}</p>
+                  <p className="mt-2.5 text-[#64748B] text-[11px] leading-[1.65]">{step.description}</p>
 
                 </div>
 
                 {/* Connector */}
                 {index < steps.length - 1 && (
-                  <div className="step-connector">
+                  <div className="absolute right-[-18px] z-3 w-9 h-9 hidden lg:flex items-center justify-center text-[#2563EB] bg-white border border-[#E2E8F0] rounded-full shadow-[0_5px_15px_rgba(15,23,42,0.07)]">
                     <ArrowRight size={18} />
                   </div>
                 )}
@@ -105,17 +109,17 @@ const HowItWorks = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="how-cta">
+        <div className="flex flex-col items-start gap-5.75 mt-11.25 p-5.75 bg-gradient-to-br from-[#eff6ff] to-[#ecfdf5] border border-[#dbeafe] rounded-[17px] md:flex-row md:items-center md:justify-between md:gap-7.5 md:p-6 md:px-7.5">
 
           <div>
-            <h3>Ready to take control of your healthcare?</h3>
+            <h3 className="text-[#0F172A] text-[16px] font-bold">Ready to take control of your healthcare?</h3>
 
-            <p>
+            <p className="mt-1.25 text-[#64748B] text-[11px]">
               Find a doctor and book your appointment today.
             </p>
           </div>
 
-          <button className="how-cta-button">
+          <button className="flex-shrink-0 flex items-center justify-center gap-2 p-3 px-4.5 text-white bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] border-none rounded-xl text-[11px] font-semibold shadow-[0_7px_18px_rgba(37,99,235,0.2)] transition-transform hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(37,99,235,0.28)] w-full md:w-auto">
             Book an Appointment
             <ArrowRight size={17} />
           </button>
