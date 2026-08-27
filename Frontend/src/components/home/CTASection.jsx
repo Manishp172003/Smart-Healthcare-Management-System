@@ -7,9 +7,8 @@ import {
 
 const CTASection = () => {
   return (
-    <section className="px-4.5 py-14 bg-white md:px-7 md:py-[75px] lg:px-[38px]">
-
-      <div className="relative max-w-[1240px] min-h-[420px] mx-auto flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0f4c81] via-[#2563eb] to-[#0d9488] rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.15)] md:min-h-[330px] md:rounded-3xl">
+    <div className="w-full px-4 md:px-7 max-w-[1440px] mx-auto">
+      <div className="relative w-full min-h-[420px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0f4c81] via-[#2563eb] to-[#0d9488] rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.1)] md:min-h-[330px]">
 
         {/* Decorative background */}
         <div className="absolute top-[-140px] left-[-70px] w-[280px] h-[280px] border-[45px] border-[rgba(255,255,255,0.07)] rounded-full pointer-events-none" />
@@ -68,8 +67,7 @@ const CTASection = () => {
         </div>
 
       </div>
-
-    </section>
+    </div>
   );
 };
 

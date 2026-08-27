@@ -74,86 +74,71 @@ const benefits = [
 
 const WhyChooseSection = () => {
   return (
-    <section className="px-4.5 py-16 bg-[radial-gradient(circle_at_10%_20%,rgba(37,99,235,0.07),transparent_30%),linear-gradient(135deg,#f8fbff,#f0fdfa)] md:px-7 md:py-[85px] lg:px-[38px]">
-
-      <div className="max-w-[1240px] mx-auto">
+    <div className="w-full px-4 md:px-7 max-w-[1440px] mx-auto flex flex-col gap-6" id="why-choose-us">
+      
+      {/* Teal Statistics Card Banner */}
+      <div className="w-full bg-gradient-to-br from-[#0F4C81] via-[#2563EB] to-[#0D9488] rounded-[28px] shadow-[0_8px_30px_rgba(15,23,42,0.06)] p-8 md:p-12 text-white overflow-hidden relative z-2">
+        {/* Decorative background shapes */}
+        <div className="absolute top-[-100px] left-[-50px] w-[200px] h-[200px] border-[30px] border-white/5 rounded-full pointer-events-none" />
+        <div className="absolute right-[-100px] bottom-[-120px] w-[250px] h-[250px] border-[40px] border-white/5 rounded-full pointer-events-none" />
 
         {/* Header */}
-        <div className="max-w-[650px] mx-auto text-center">
-
-          <span className="text-[#2563EB] text-[11px] font-bold tracking-[1.5px] uppercase">
+        <div className="max-w-[650px] mx-auto text-center relative z-2">
+          <span className="text-[#a7f3d0] text-xs font-bold tracking-[2px] uppercase">
             WHY SMARTHEALTH
           </span>
-
-          <h2 className="mt-1 text-[#0F172A] text-[34px] leading-[1.1] tracking-[-1.5px] md:text-[40px]">
-            Healthcare that
-            <span className="text-[#0D9488]"> works for you.</span>
+          <h2 className="mt-1 text-white text-3xl md:text-4xl font-extrabold tracking-tight">
+            Healthcare that <span className="text-[#a7f3d0]">works for you.</span>
           </h2>
-
-          <p className="max-w-[590px] mt-4 mx-auto text-[#64748B] text-[13px] leading-[1.7]">
-            We combine technology, trusted healthcare professionals,
-            and a patient-first experience to make healthcare simpler.
+          <p className="max-w-[590px] mt-4 mx-auto text-blue-100 text-sm leading-relaxed">
+            We combine technology, trusted healthcare professionals, and a patient-first experience to make healthcare simpler.
           </p>
-
         </div>
 
-        {/* Statistics */}
-        <div className="grid grid-cols-1 mt-12.5 bg-white border border-[#E2E8F0] rounded-[18px] shadow-[0_12px_35px_rgba(15,23,42,0.06)] sm:grid-cols-2 md:grid-cols-4">
-
-          {stats.map((stat, index) => (
-            <div className="relative p-6.75 px-5 text-center border-b border-[#E2E8F0] last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0" key={stat.label}>
-
-              <strong className="block" style={{ color: stat.color, fontSize: "28px", fontWeight: 800, letterSpacing: "-1px" }}>
+        {/* Statistics Grid */}
+        <div className="grid grid-cols-1 mt-10 bg-white/10 border border-white/10 rounded-2xl backdrop-blur-sm sm:grid-cols-2 md:grid-cols-4 relative z-2">
+          {stats.map((stat) => (
+            <div className="relative p-6 px-5 text-center border-b border-white/10 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0" key={stat.label}>
+              <strong className="block text-white text-[32px] font-extrabold tracking-[-1px]">
                 {stat.value}
               </strong>
-
-              <span className="block mt-1.25 text-[#64748B] text-[10px] font-medium">
+              <span className="block mt-1 text-blue-100 text-[10px] font-bold uppercase tracking-wider">
                 {stat.label}
               </span>
-
             </div>
           ))}
-
         </div>
-
-        {/* Benefits */}
-        <div className="grid grid-cols-1 gap-4.5 mt-6.25 sm:grid-cols-2 lg:grid-cols-4">
-
-          {benefits.map((benefit) => {
-            const Icon = benefit.icon;
-
-            return (
-              <div className="flex gap-3 p-5.5 bg-white/75 border border-[rgba(226,232,240,0.8)] rounded-xl transition-transform hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(15,23,42,0.07)]" key={benefit.title}>
-
-                <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl" style={{
-                  color: benefit.color.text,
-                  backgroundColor: benefit.color.bg
-                }}>
-                  <Icon size={21} />
-                </div>
-
-                <div className="flex-1">
-
-                  <div className="flex items-center gap-1.25">
-                    <CheckCircle2 size={14} className="text-[#16A34A]" />
-                    <h3 className="text-[#0F172A] text-[12px] font-bold">{benefit.title}</h3>
-                  </div>
-
-                  <p className="mt-1.75 text-[#64748B] text-[10px] leading-[1.55]">
-                    {benefit.description}
-                  </p>
-
-                </div>
-
-              </div>
-            );
-          })}
-
-        </div>
-
       </div>
 
-    </section>
+      {/* Benefits Grid (White Cards Below) */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {benefits.map((benefit) => {
+          const Icon = benefit.icon;
+          return (
+            <div 
+              className="flex gap-4 p-6 bg-white border border-[#E2E8F0] rounded-[22px] shadow-[0_4px_20px_rgba(15,23,42,0.02)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.06)] hover:-translate-y-1 transition-all duration-300 group" 
+              key={benefit.title}
+            >
+              <div 
+                className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl transition-all duration-300"
+                style={{ backgroundColor: benefit.color.bg, color: benefit.color.text }}
+              >
+                <Icon size={22} />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 size={15} className="text-[#0D9488]" />
+                  <h3 className="text-slate-900 text-sm font-extrabold leading-tight">{benefit.title}</h3>
+                </div>
+                <p className="mt-2 text-slate-500 text-xs md:text-sm leading-relaxed">
+                  {benefit.description}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 

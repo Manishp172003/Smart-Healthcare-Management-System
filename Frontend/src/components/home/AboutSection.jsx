@@ -8,9 +8,8 @@ import {
 
 const AboutSection = () => {
   return (
-    <section className="px-4.5 py-14 bg-[#F8FAFC] md:px-7 md:py-16 lg:px-[38px] lg:py-[75px]" id="about">
-
-      <div className="max-w-[1240px] mx-auto grid grid-cols-1 items-center gap-10 lg:grid-cols-[48%_52%] lg:gap-16">
+    <div className="w-full px-4 md:px-7 max-w-[1440px] mx-auto" id="about">
+      <div className="w-full bg-white border border-[#E2E8F0] rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.04)] p-8 md:p-12 grid grid-cols-1 items-center gap-10 lg:grid-cols-[48%_52%] lg:gap-16">
 
         {/* Image */}
         <div className="relative min-h-[280px] overflow-hidden rounded-[22px] bg-[#e8f4f7] shadow-[0_15px_40px_rgba(15,23,42,0.08)] md:min-h-[350px] lg:min-h-[390px]">
@@ -31,69 +30,63 @@ const AboutSection = () => {
         </div>
 
         {/* Content */}
-        <div className="max-w-full lg:max-w-[560px]">
+        <div className="max-w-full lg:max-w-[560px] flex flex-col items-start gap-5">
 
-          <span className="inline-block mb-3 text-[#0D9488] text-[11px] font-bold tracking-[1.5px]">
-            ABOUT SMARTHEALTH
-          </span>
+          <div>
+            <span className="inline-block mb-2 text-[#0D9488] text-xs font-bold tracking-[2px] uppercase">
+              ABOUT SMARTHEALTH
+            </span>
 
-          <h2 className="text-[#0F172A] text-[34px] leading-[1.1] tracking-[-1.5px] md:text-[42px] md:leading-[1.08]">
-            Better Care.
-            <br />
-            <span className="text-[#0D9488]">Better Health.</span>
-          </h2>
+            <h2 className="text-[#0F172A] text-3xl md:text-4xl lg:text-[46px] font-extrabold leading-[1.12] tracking-tight">
+              Better Care.
+              <br />
+              <span className="text-[#0D9488]">Better Health.</span>
+            </h2>
+          </div>
 
-          <p className="mt-4.5 text-[#64748B] text-[13px] leading-[1.7] md:text-[14px]">
-            SmartHealth makes healthcare simpler, more accessible,
-            and more connected. Our platform brings patients and
-            healthcare professionals together in one secure place.
-          </p>
-
-          <p className="mt-4.5 text-[#64748B] text-[13px] leading-[1.7] md:text-[14px]">
-            From finding the right doctor to booking appointments
-            and managing medical records, everything you need is
-            just a few clicks away.
+          <p className="text-[#64748B] text-sm md:text-base leading-relaxed">
+            SmartHealth connects you with verified healthcare professionals. Manage appointments, consult expert doctors, and access your secure records—all in one place.
           </p>
 
           {/* Benefits */}
-          <div className="flex flex-col gap-4 mt-6.5">
+          <div className="w-full flex flex-col gap-5 mt-3 border-l-2 border-slate-100 pl-4 md:pl-5">
 
-            <div className="flex items-center gap-3">
-              <div className="flex-shrink-0 w-9.5 h-9.5 flex items-center justify-center text-[#0D9488] bg-[rgba(13,148,136,0.08)] rounded-xl">
-                <CalendarCheck size={19} />
+            <div className="flex items-center gap-3.5">
+              <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-[#0D9488] bg-[rgba(13,148,136,0.08)] rounded-xl">
+                <CalendarCheck size={22} />
               </div>
 
               <div>
-                <h4 className="text-[#0F172A] text-[12px] font-bold">Easy Appointment Booking</h4>
-                <p className="mt-0.75 text-[#64748B] text-[10px]">Find and book appointments effortlessly.</p>
+                <h4 className="text-[#0F172A] text-sm md:text-base font-bold">Easy Appointment Booking</h4>
+                <p className="mt-0.5 text-[#64748B] text-xs md:text-sm">Find and book appointments with instant slot confirmation.</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex-shrink-0 w-9.5 h-9.5 flex items-center justify-center text-[#0D9488] bg-[rgba(13,148,136,0.08)] rounded-xl">
-                <ShieldCheck size={19} />
+            <div className="flex items-center gap-3.5">
+              <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-[#0D9488] bg-[rgba(13,148,136,0.08)] rounded-xl">
+                <ShieldCheck size={22} />
               </div>
 
               <div>
-                <h4 className="text-[#0F172A] text-[12px] font-bold">Trusted Healthcare</h4>
-                <p className="mt-0.75 text-[#64748B] text-[10px]">Connect with verified healthcare professionals.</p>
+                <h4 className="text-[#0F172A] text-sm md:text-base font-bold">Trusted Healthcare</h4>
+                <p className="mt-0.5 text-[#64748B] text-xs md:text-sm">Consult directly with verified, board-certified medical experts.</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex-shrink-0 w-9.5 h-9.5 flex items-center justify-center text-[#0D9488] bg-[rgba(13,148,136,0.08)] rounded-xl">
-                <FileHeart size={19} />
+            <div className="flex items-center gap-3.5">
+              <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-[#0D9488] bg-[rgba(13,148,136,0.08)] rounded-xl">
+                <FileHeart size={22} />
               </div>
 
               <div>
-                <h4 className="text-[#0F172A] text-[12px] font-bold">Secure Health Records</h4>
-                <p className="mt-0.75 text-[#64748B] text-[10px]">Keep your medical information organized.</p>
+                <h4 className="text-[#0F172A] text-sm md:text-base font-bold">Secure Health Records</h4>
+                <p className="mt-0.5 text-[#64748B] text-xs md:text-sm">Keep your prescriptions and reports organized and safe.</p>
               </div>
             </div>
 
           </div>
 
-          <button className="flex items-center gap-2 mt-7 p-2.75 px-4.25 text-white bg-gradient-to-br from-[#0D9488] to-[#0f766e] border-none rounded-xl text-[11px] font-semibold shadow-[0_7px_18px_rgba(13,148,136,0.2)] transition-transform hover:-translate-y-0.5 hover:shadow-[0_10px_22px_rgba(13,148,136,0.28)]">
+          <button className="flex items-center gap-2 mt-2 p-3.5 px-6 text-white bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none rounded-xl text-xs md:text-sm font-bold shadow-[0_7px_18px_rgba(37,99,235,0.18)] transition-transform hover:-translate-y-0.5 hover:shadow-[0_10px_22px_rgba(37,99,235,0.25)]">
             Learn More
             <ArrowRight size={17} />
           </button>
@@ -101,8 +94,7 @@ const AboutSection = () => {
         </div>
 
       </div>
-
-    </section>
+    </div>
   );
 };
 

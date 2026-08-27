@@ -39,9 +39,8 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section className="px-4.5 py-16 bg-white md:px-7 md:py-[85px] lg:px-[38px]">
-
-      <div className="max-w-[1240px] mx-auto">
+    <div className="w-full px-4 md:px-7 max-w-[1440px] mx-auto">
+      <div className="w-full bg-white border border-[#E2E8F0] rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.04)] p-8 md:p-12">
 
         {/* Header */}
         <div className="max-w-[650px] mx-auto text-center">
@@ -119,7 +118,7 @@ const HowItWorks = () => {
             </p>
           </div>
 
-          <button className="flex-shrink-0 flex items-center justify-center gap-2 p-3 px-4.5 text-white bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] border-none rounded-xl text-[11px] font-semibold shadow-[0_7px_18px_rgba(37,99,235,0.2)] transition-transform hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(37,99,235,0.28)] w-full md:w-auto">
+          <button className="flex-shrink-0 flex items-center justify-center gap-2 p-3 px-4.5 text-white bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none rounded-xl text-[11px] font-semibold shadow-[0_7px_18px_rgba(37,99,235,0.2)] transition-transform hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(37,99,235,0.28)] w-full md:w-auto">
             Book an Appointment
             <ArrowRight size={17} />
           </button>
@@ -127,8 +126,7 @@ const HowItWorks = () => {
         </div>
 
       </div>
-
-    </section>
+    </div>
   );
 };
 

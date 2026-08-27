@@ -3,32 +3,21 @@ import Hero from "../components/home/Hero";
 import AboutSection from "../components/home/AboutSection";
 import ServicesSection from "../components/home/ServicesSection";
 import WhyChooseSection from "../components/home/WhyChooseSection";
-import HowItWorks from "../components/home/HowItWorks";
 import DoctorsSection from "../components/home/DoctorsSection";
-import CTASection from "../components/home/CTASection";
+import TestimonialsSection from "../components/home/TestimonialsSection";
+import Footer from "../components/common/Footer";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_80%_10%,rgba(37,99,235,0.08),transparent_30%),#F8FAFC]">
-
+    <div className="min-h-screen bg-[#EFF3F7] pt-4 pb-0 flex flex-col gap-6">
       <Navbar />
-
-      <main>
-        <Hero />
-
-        <AboutSection />
-
-        <ServicesSection />
-
-        <WhyChooseSection />
-
-        <HowItWorks />
-
-        <DoctorsSection />
-
-        <CTASection />
-      </main>
-
+      <Hero />
+      <AboutSection />
+      <ServicesSection />
+      <DoctorsSection />
+      <TestimonialsSection />
+      <WhyChooseSection />
+      <Footer />
     </div>
   );
 };
