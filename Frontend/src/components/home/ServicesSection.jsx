@@ -59,66 +59,66 @@ const services = [
 
 const ServicesSection = () => {
   return (
-    <section className="px-4.5 py-15 bg-white md:px-7 md:py-18 lg:px-[38px] lg:py-20" id="services">
-      <div className="max-w-[1240px] mx-auto">
+    <div className="w-full px-4 md:px-7 max-w-[1440px] mx-auto" id="services">
+      <div className="w-full bg-white border border-[#E2E8F0] rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.04)] p-8 md:p-12">
 
         {/* Section Header */}
-        <div className="flex flex-col items-start gap-3.75 mb-9.5 md:flex-row md:items-end md:justify-between md:gap-12">
-          <div>
-            <span className="text-[#64748B] text-[11px] font-bold tracking-[1.5px] uppercase">
-              OUR SERVICES
-            </span>
+        <div className="flex flex-col items-center text-center gap-2 mb-12">
+          <span className="text-[#0D9488] text-xs font-bold tracking-[2px] uppercase">
+            OUR SPECIALIZED CARE
+          </span>
+          
+          <h2 className="text-[#0F172A] text-3xl md:text-4xl lg:text-[40px] font-extrabold tracking-tight">
+            Comprehensive Healthcare Services
+          </h2>
 
-            <h2 className="text-[#0F172A] text-[40px] leading-[1.1] tracking-[-1.5px] sm:text-[34px]">
-              Healthcare made
-              <span className="text-[#2563EB]"> simpler.</span>
-            </h2>
+          <div className="mt-2 text-[#0D9488] flex items-center justify-center">
+            <div className="w-10 h-[1.5px] bg-[#E2E8F0]" />
+            <div className="mx-3.5 flex items-center justify-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0D9488]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#0D9488]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0D9488]" />
+            </div>
+            <div className="w-10 h-[1.5px] bg-[#E2E8F0]" />
           </div>
-
-          <p className="max-w-[470px] text-[#64748B] text-[13px] leading-[1.7]">
-            Everything you need to connect with healthcare
-            professionals and manage your healthcare journey
-            from one convenient platform.
-          </p>
         </div>
 
-        {/* Service Cards */}
-        <div className="grid grid-cols-1 gap-4.5 sm:grid-cols-2 lg:grid-cols-4">
-
+        {/* Services Grid */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((service) => {
             const Icon = service.icon;
 
             return (
-              <article
-                className="relative min-h-[250px] p-6 bg-white border border-[#E2E8F0] rounded-[18px] overflow-hidden transition-transform hover:-translate-y-1.5 hover:border-transparent hover:shadow-[0_18px_40px_rgba(15,23,42,0.09)] md:min-h-[280px]"
+              <div
+                className="flex flex-col items-center text-center justify-between p-8 bg-white border border-[#E2E8F0] rounded-[28px] overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:border-transparent hover:shadow-[0_12px_32px_rgba(15,23,42,0.06)] min-h-[300px] group"
                 key={service.title}
-                style={{
-                  borderTop: `4px solid ${service.colors.border}`
-                }}
               >
-                <div className="w-13 h-13 flex items-center justify-center mb-6.25 rounded-xl" style={{
-                  color: service.colors.text,
-                  backgroundColor: service.colors.bg
-                }}>
-                  <Icon size={25} strokeWidth={2} />
+                <div className="flex flex-col items-center">
+                  {/* Icon Wrapper */}
+                  <div className="w-14 h-14 bg-[#0D9488] text-white rounded-full flex items-center justify-center mb-5 shadow-sm">
+                    <Icon size={24} />
+                  </div>
+
+                  <h3 className="text-[#0F172A] text-base md:text-lg font-bold">{service.title}</h3>
+
+                  <p className="mt-3.5 text-[#64748B] text-xs md:text-sm leading-relaxed max-w-[200px]">
+                    {service.description}
+                  </p>
                 </div>
 
-                <h3 className="text-[#0F172A] text-[17px] font-bold">{service.title}</h3>
-
-                <p className="mt-2.75 text-[#64748B] text-[11px] leading-[1.65]">{service.description}</p>
-
-                <button className="absolute bottom-6 left-6 flex items-center gap-1.5 p-0 text-[#2563EB] bg-transparent border-none text-[11px] font-bold transition-all hover:gap-2.5">
-                  Explore
-                  <ArrowRight size={15} />
-                </button>
-              </article>
+                <a
+                  href={service.link}
+                  className="flex items-center gap-1.5 text-[#0D9488] text-xs md:text-sm font-bold transition-all hover:text-[#0f766e] mt-6"
+                >
+                  Learn More <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+                </a>
+              </div>
             );
           })}
-
         </div>
 
       </div>
-    </section>
+    </div>
   );
 };
 

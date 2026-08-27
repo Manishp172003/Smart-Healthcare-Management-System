@@ -42,31 +42,25 @@ const doctors = [
 
 const DoctorsSection = () => {
   return (
-    <section className="px-4.5 py-16 bg-[#f8fbff] md:px-7 md:py-[85px] lg:px-[38px]" id="doctors">
-
-      <div className="max-w-[1240px] mx-auto">
+    <div className="w-full px-4 md:px-7 max-w-[1440px] mx-auto" id="doctors">
+      <div className="w-full bg-white border border-[#E2E8F0] rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.04)] p-8 md:p-12">
 
         {/* Header */}
-        <div className="flex flex-col items-start gap-6 mb-9.5 md:flex-row md:items-end md:justify-between md:gap-10">
+        <div className="flex flex-col gap-6 mb-12 md:flex-row md:items-end md:justify-between md:gap-10">
 
           <div>
             <span className="text-[#64748B] text-[11px] font-bold tracking-[1.5px] uppercase">
               OUR DOCTORS
             </span>
 
-            <h2 className="mt-1 text-[#0F172A] text-[34px] leading-[1.1] tracking-[-1.5px] md:text-[40px]">
+            <h2 className="mt-1 text-[#0F172A] text-3xl md:text-4xl font-extrabold tracking-tight">
               Meet our trusted
               <span className="text-[#0D9488]"> doctors.</span>
             </h2>
           </div>
 
-          <div className="flex flex-col items-start gap-3.75 md:flex-row md:items-end md:gap-6.25">
-            <p className="max-w-[360px] text-[#64748B] text-[12px] leading-[1.65]">
-              Connect with experienced healthcare professionals
-              and find the right doctor for your needs.
-            </p>
-
-            <button className="flex-shrink-0 flex items-center gap-1.75 p-2.5 px-3.5 text-[#2563EB] bg-white border border-[rgba(37,99,235,0.2)] rounded-lg text-[10px] font-semibold transition-all hover:bg-[#eff6ff] hover:-translate-y-0.5">
+          <div className="flex items-center md:items-end mt-4 md:mt-0">
+            <button className="flex-shrink-0 flex items-center gap-1.5 p-2.5 px-5 text-[#2563EB] bg-white border border-[#2563EB] rounded-full text-xs font-bold transition-all hover:bg-[#eff6ff] hover:-translate-y-0.5 shadow-sm">
               View All Doctors
               <ArrowRight size={16} />
             </button>
@@ -75,24 +69,24 @@ const DoctorsSection = () => {
         </div>
 
         {/* Doctor Cards */}
-        <div className="grid grid-cols-1 gap-5.5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 
           {doctors.map((doctor) => (
             <article
-              className="overflow-hidden bg-white border border-[#E2E8F0] rounded-[18px] shadow-[0_6px_20px_rgba(15,23,42,0.04)] transition-transform hover:-translate-y-1.5 hover:shadow-[0_18px_40px_rgba(15,23,42,0.1)]"
+              className="overflow-hidden bg-white border border-[#E2E8F0] rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.03)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-1.5"
               key={doctor.name}
             >
 
               {/* Doctor Image */}
-              <div className="relative h-[280px] overflow-hidden bg-[#e8f1f7] md:h-[245px]">
+              <div className="relative h-[240px] overflow-hidden bg-[#e8f1f7]">
 
                 <img
                   src={doctor.image}
                   alt={doctor.name}
-                  className="w-full h-full object-cover transition-transform hover:scale-105"
+                  className="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105"
                 />
 
-                <div className="absolute top-3.5 left-3.5 flex items-center gap-1.5 p-1.5 px-2.25 text-[#047857] bg-white/94 rounded-lg text-[9px] font-bold shadow-[0_4px_12px_rgba(15,23,42,0.08)] backdrop-blur-sm">
+                <div className="absolute top-3.5 left-3.5 flex items-center gap-1.5 p-1.5 px-3 text-[#047857] bg-white/94 rounded-full text-[10px] font-extrabold shadow-[0_4px_12px_rgba(15,23,42,0.06)] backdrop-blur-sm">
                   <span className="w-1.5 h-1.5 bg-[#10b981] rounded-full" />
                   Available Today
                 </div>
@@ -100,53 +94,52 @@ const DoctorsSection = () => {
               </div>
 
               {/* Content */}
-              <div className="p-5">
+              <div className="p-6 flex flex-col gap-4">
 
+                {/* Name & Rating */}
                 <div className="flex items-start justify-between gap-3">
-
                   <div>
-                    <h3 className="text-[#0F172A] text-[15px] font-bold">{doctor.name}</h3>
+                    <h3 className="text-slate-900 text-sm md:text-base font-extrabold leading-tight">{doctor.name}</h3>
 
-                    <div className="flex items-center gap-1 mt-1.25 text-[#0D9488] text-[10px] font-semibold">
+                    <div className="flex items-center gap-1 mt-1.25 text-[#0D9488] text-xs font-bold">
                       {doctor.specialty}
-
-                      <BadgeCheck size={14} className="text-[#2563EB]" />
+                      <BadgeCheck size={16} className="text-[#2563EB]" />
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-0.75 p-1.25 px-1.75 text-[#d97706] bg-[#fffbeb] rounded-lg text-[10px] font-bold">
-                    <Star size={13} fill="currentColor" />
+                  <div className="flex items-center gap-0.75 text-[#d97706] text-xs font-extrabold">
+                    <Star size={14} fill="currentColor" className="stroke-none" />
                     {doctor.rating}
                   </div>
-
                 </div>
 
-                <div className="flex flex-col gap-1.75 mt-4.25 pb-4.25 border-b border-[#E2E8F0]">
-
-                  <div className="flex items-center gap-1.75 text-[#64748B] text-[9px]">
-                    <Clock3 size={14} className="text-[#94a3b8]" />
+                {/* Details List */}
+                <div className="flex flex-col gap-2 mt-1">
+                  <div className="flex items-center gap-2 text-slate-500 text-xs">
+                    <Clock3 size={15} className="text-slate-400" />
                     {doctor.experience}
                   </div>
 
-                  <div className="flex items-center gap-1.75 text-[#64748B] text-[9px]">
-                    <MapPin size={14} className="text-[#94a3b8]" />
+                  <div className="flex items-center gap-2 text-slate-500 text-xs">
+                    <MapPin size={15} className="text-slate-400" />
                     {doctor.location}
                   </div>
-
                 </div>
 
-                <div className="flex items-center justify-between mt-3.75">
+                {/* Divider */}
+                <div className="w-full h-[1.5px] bg-slate-100/80 my-1" />
 
-                  <div className="flex flex-col gap-0.75">
-                    <span className="text-[#64748B] text-[8px]">Consultation</span>
-                    <strong className="text-[#0F172A] text-[14px]">{doctor.fee}</strong>
+                {/* Bottom Row */}
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Consultation</span>
+                    <strong className="text-slate-900 text-base md:text-lg font-extrabold">{doctor.fee}</strong>
                   </div>
 
-                  <button className="flex items-center gap-1.5 p-2.25 px-3.25 text-white bg-[#2563EB] border-none rounded-lg text-[9px] font-semibold transition-all hover:bg-[#1D4ED8] hover:-translate-y-px">
+                  <button className="flex items-center justify-center gap-1.5 h-10 px-5 text-white bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none rounded-full text-xs font-bold transition-all hover:-translate-y-px shadow-sm cursor-pointer">
                     <CalendarCheck size={15} />
                     Book
                   </button>
-
                 </div>
 
               </div>
@@ -157,8 +150,7 @@ const DoctorsSection = () => {
         </div>
 
       </div>
-
-    </section>
+    </div>
   );
 };
 
