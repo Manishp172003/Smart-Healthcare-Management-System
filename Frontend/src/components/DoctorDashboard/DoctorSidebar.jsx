@@ -31,13 +31,23 @@ const DoctorSidebar = ({ activeTab, setActiveTab }) => {
       <div>
         
         {/* Brand Logo */}
-        <div className="mb-8 flex items-center gap-3 px-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg shadow-[#0D9488]/20">
-            <HeartPulse className="text-[#0d9488] animate-pulse" size={24} />
-          </div>
-          <div>
-            <h1 className="text-lg font-black tracking-tight leading-none text-white">SmartHealth</h1>
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D9488]/85 block mt-0.5">Clinical Portal</span>
+        <div className="px-4 py-5 mb-4">
+          <div className="flex items-center gap-3">
+            
+            <div className="w-10 h-10 flex items-center justify-center text-white bg-gradient-to-br from-[#2563EB] to-[#0D9488] rounded-xl shadow-sm border border-white/10">
+              <HeartPulse size={22} className="stroke-[2.5]" />
+            </div>
+
+            <div>
+              <span className="text-lg font-extrabold tracking-[-0.5px] text-white block leading-none">
+                SmartHealth
+              </span>
+
+              <span className="text-[9px] font-bold uppercase tracking-[1.5px] text-white/50 block mt-1.5 leading-none">
+                Clinical Portal
+              </span>
+            </div>
+
           </div>
         </div>
 
