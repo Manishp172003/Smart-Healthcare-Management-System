@@ -110,11 +110,26 @@ function Sidebar({ activeTab, setActiveTab }) {
         {/* Help + Logout */}
         {bottomItems.map((item) => {
           const Icon = item.icon;
+          const isHelp = item.label === "Help Center";
+          const isActive = isHelp && activeTab === "Help Center";
+
+          const handleClick = () => {
+            if (isHelp) {
+              setActiveTab("Help Center");
+            } else {
+              alert("Signing out...");
+            }
+          };
 
           return (
             <button
               key={item.label}
-              className="mb-1 flex w-full items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/5 hover:text-white cursor-pointer"
+              onClick={handleClick}
+              className={`mb-1 flex w-full items-center gap-4 px-4 py-3 text-sm font-medium transition cursor-pointer ${
+                isActive 
+                  ? "bg-white/10 text-white border-l-4 border-[#0D9488] rounded-r-xl rounded-l-none font-bold" 
+                  : "text-slate-300 hover:bg-white/5 hover:text-white rounded-xl"
+              }`}
             >
               <Icon size={21} />
               <span>{item.label}</span>

@@ -53,7 +53,7 @@ const MedicalRecords = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
         {/* Left Side: Upload Record Card */}
-        <div className="lg:col-span-1 bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_4px_20px_rgba(15,23,42,0.02)] space-y-5">
+        <div className="lg:col-span-1 bg-white/60 border border-white/45 rounded-3xl p-6 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md space-y-5">
           <div>
             <h3 className="font-extrabold text-slate-800 text-sm md:text-base leading-none">Upload New Record</h3>
             <p className="text-slate-400 text-xs mt-1.5 leading-snug">Store health documents safely in your digital vault.</p>
@@ -62,7 +62,7 @@ const MedicalRecords = () => {
           <form onSubmit={handleFileUpload} className="space-y-4">
             
             {/* Upload Area */}
-            <div className="border-2 border-dashed border-slate-200 hover:border-[#2563EB] rounded-2xl p-6 text-center transition flex flex-col items-center justify-center relative cursor-pointer group bg-slate-50/50">
+            <div className="border-2 border-dashed border-white/40 hover:border-[#2563EB] rounded-2xl p-6 text-center transition flex flex-col items-center justify-center relative cursor-pointer group bg-slate-50/20">
               <input 
                 type="file" 
                 required
@@ -90,7 +90,7 @@ const MedicalRecords = () => {
               <select 
                 value={activeCategory} 
                 onChange={(e) => setActiveCategory(e.target.value)}
-                className="w-full border border-slate-200 bg-slate-50 rounded-xl p-2.5 text-xs md:text-sm text-[#162235] outline-none"
+                className="w-full border border-white/40 bg-slate-50/40 rounded-xl p-2.5 text-xs md:text-sm text-[#162235] outline-none transition focus:border-[#2563EB]"
               >
                 <option value="Lab Reports">Lab Reports</option>
                 <option value="Prescriptions">Prescriptions</option>
@@ -110,7 +110,7 @@ const MedicalRecords = () => {
         </div>
 
         {/* Right Side: Records Table */}
-        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-3xl shadow-[0_4px_20px_rgba(15,23,42,0.02)] flex flex-col overflow-hidden">
+        <div className="lg:col-span-2 bg-white/60 border border-white/45 rounded-3xl shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md flex flex-col overflow-hidden">
           
           {/* Controls Bar */}
           <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -123,7 +123,7 @@ const MedicalRecords = () => {
                   onClick={() => setActiveCategory(cat)}
                   className={`px-3 py-1.5 text-[11px] md:text-xs font-bold rounded-lg transition cursor-pointer ${
                     activeCategory === cat 
-                      ? "bg-white text-slate-900 shadow-sm" 
+                      ? "bg-white/60 text-slate-900 shadow-sm" 
                       : "text-slate-500 hover:text-slate-800"
                   }`}
                 >
@@ -140,7 +140,7 @@ const MedicalRecords = () => {
                 placeholder="Search documents..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full border border-slate-200 bg-slate-50 rounded-xl py-2 pl-9 pr-3 text-xs md:text-sm text-[#162235] outline-none placeholder:text-slate-400 focus:border-[#2563EB]"
+                className="w-full border border-white/40 bg-slate-50/40 rounded-xl py-2 pl-9 pr-3 text-xs md:text-sm text-[#162235] outline-none placeholder:text-slate-400 focus:border-[#2563EB]"
               />
             </div>
 

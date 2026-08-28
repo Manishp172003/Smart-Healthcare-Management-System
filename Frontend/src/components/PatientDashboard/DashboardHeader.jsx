@@ -20,6 +20,10 @@ const tabMeta = {
   "Profile": {
     title: "Patient Profile",
     subtitle: "Manage your contact info and medical checklists."
+  },
+  "Help Center": {
+    title: "Help Center",
+    subtitle: "Search FAQs, browse help guides, or submit a support ticket."
   }
 };
 

@@ -5,7 +5,7 @@ function QuickActions() {
     <div className="flex flex-col gap-6">
 
       {/* ================= BLOOD REPORT ================= */}
-      <div className="flex flex-1 flex-col justify-between rounded-3xl bg-blue-50/50 border border-blue-100/50 p-7">
+      <div className="flex flex-1 flex-col justify-between rounded-3xl bg-blue-50/30 backdrop-blur-md border border-white/40 p-7 shadow-[0_8px_32px_rgba(15,23,42,0.01)]">
 
         <div className="flex items-center justify-between">
 
@@ -41,7 +41,7 @@ function QuickActions() {
 
 
       {/* ================= BOOK APPOINTMENT ================= */}
-      <button className="group flex items-center justify-between rounded-3xl bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none p-7 text-left text-white shadow-[0_6px_18px_rgba(37,99,235,0.12)] transition hover:-translate-y-px duration-300 cursor-pointer">
+      <button className="group flex items-center justify-between rounded-3xl bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none p-7 text-left text-white shadow-[0_8px_32px_rgba(37,99,235,0.15)] transition hover:-translate-y-px duration-300 cursor-pointer">
 
         <div>
 

@@ -20,12 +20,12 @@ const history = [
 
 function RecentHistory() {
   return (
-    <div className="flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+    <div className="flex flex-col overflow-hidden rounded-3xl border border-white/45 bg-white/60 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md">
 
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-200 p-6">
 
-        <h2 className="text-xl font-bold text-slate-900">
+        <h2 className="text-base md:text-lg font-extrabold text-slate-800">
           Recent History
         </h2>
 
@@ -42,7 +42,7 @@ function RecentHistory() {
 
           {/* Table Header */}
           <thead>
-            <tr className="bg-slate-100 text-xs uppercase tracking-wider text-slate-600">
+            <tr className="bg-slate-100/40 text-xs uppercase tracking-wider text-slate-600 border-b border-slate-100/30">
 
               <th className="px-5 py-4 font-semibold">
                 Date
@@ -69,7 +69,7 @@ function RecentHistory() {
             {history.map((item, index) => (
               <tr
                 key={index}
-                className="cursor-pointer border-t border-slate-200 transition hover:bg-slate-50"
+                className="cursor-pointer border-t border-slate-200/50 transition hover:bg-slate-50/40"
               >
 
                 <td className="whitespace-nowrap px-5 py-5 text-sm text-slate-700">

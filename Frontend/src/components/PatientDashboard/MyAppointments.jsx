@@ -113,7 +113,7 @@ const MyAppointments = ({ setActiveTab }) => {
       {/* Row List cards */}
       <div className="space-y-4">
         {filteredData.length === 0 ? (
-          <div className="p-16 text-center bg-white border border-slate-100 rounded-2xl">
+          <div className="p-16 text-center bg-white/60 border border-white/45 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md rounded-3xl">
             <p className="text-slate-400 text-sm font-bold">No appointments found under this status.</p>
           </div>
         ) : (
@@ -124,7 +124,7 @@ const MyAppointments = ({ setActiveTab }) => {
             return (
               <div 
                 key={app.id}
-                className={`bg-white rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgba(15,23,42,0.02)] flex flex-col md:flex-row items-stretch overflow-hidden relative ${
+                className={`bg-white/60 rounded-3xl border border-white/45 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md flex flex-col md:flex-row items-stretch overflow-hidden relative ${
                   isTelehealth ? "border-l-4 border-l-[#0D9488]" : "border-l-4 border-l-[#2563EB]"
                 }`}
               >
@@ -200,19 +200,19 @@ const MyAppointments = ({ setActiveTab }) => {
                 </div>
 
                 {/* Column 3: Actions block */}
-                <div className="p-6 md:min-w-[200px] border-t md:border-t-0 md:border-l border-slate-50 flex flex-row md:flex-col justify-center items-stretch gap-3">
+                <div className="p-6 md:min-w-[200px] border-t md:border-t-0 md:border-l border-white/40 flex flex-row md:flex-col justify-center items-stretch gap-3 bg-white/20">
                   {isTelehealth ? (
                     <>
                       <button className="flex-1 flex items-center justify-center gap-1.5 h-10 bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none text-white rounded-xl text-xs font-bold transition hover:shadow-md hover:-translate-y-px cursor-pointer">
                         Join Call
                       </button>
-                      <button className="flex-1 h-10 bg-slate-100 hover:bg-slate-200 border-none text-slate-600 rounded-xl text-xs font-bold transition cursor-pointer">
+                      <button className="flex-1 h-10 bg-white/40 border border-white/20 hover:bg-white/60 text-slate-600 rounded-xl text-xs font-bold transition cursor-pointer">
                         Reschedule
                       </button>
                     </>
                   ) : (
                     <>
-                      <button className="flex-1 h-10 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-bold transition cursor-pointer">
+                      <button className="flex-1 h-10 bg-white/40 border border-white/20 hover:bg-white/60 text-slate-600 rounded-xl text-xs font-bold transition cursor-pointer">
                         Modify Request
                       </button>
                       <button 

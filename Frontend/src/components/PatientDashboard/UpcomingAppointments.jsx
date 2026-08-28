@@ -21,12 +21,12 @@ const appointments = [
 
 function UpcomingAppointments() {
   return (
-    <div className="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm">
+    <div className="flex flex-col rounded-3xl border border-white/45 bg-white/60 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md">
 
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-200 p-6">
 
-        <h2 className="text-xl font-bold text-slate-900">
+        <h2 className="text-base md:text-lg font-extrabold text-slate-800">
           Upcoming
         </h2>
 
@@ -42,7 +42,7 @@ function UpcomingAppointments() {
         {appointments.map((appointment, index) => (
           <div
             key={index}
-            className="flex cursor-pointer items-start gap-4 rounded-2xl bg-slate-50 p-4 transition hover:bg-slate-100"
+            className="flex cursor-pointer items-start gap-4 rounded-2xl bg-slate-50/40 border border-slate-100/30 p-4 transition hover:bg-slate-100/50"
           >
 
             {/* Date */}

@@ -6,7 +6,7 @@ import {
 
 function NextAppointment() {
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+    <div className="relative overflow-hidden rounded-3xl border border-white/45 bg-white/60 p-7 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md">
 
       {/* Decorative Background */}
       <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#0d9488]/10 opacity-50 blur-3xl" />
@@ -25,25 +25,25 @@ function NextAppointment() {
             </div>
 
             {/* Title */}
-            <h2 className="text-2xl font-bold text-slate-900">
+            <h2 className="text-lg md:text-xl font-extrabold text-slate-900 leading-tight">
               Cardiology Checkup
             </h2>
 
             {/* Doctor */}
-            <p className="mt-2 text-base text-slate-500">
+            <p className="mt-1.5 text-xs md:text-sm text-slate-500 font-medium">
               Dr. Emily Chen • Heart Health Clinic
             </p>
 
           </div>
 
           {/* Date & Time */}
-          <div className="text-left sm:text-right">
+          <div className="text-left sm:text-right flex flex-col md:justify-center">
 
-            <p className="text-xl font-semibold text-[#0D9488]">
+            <p className="text-sm md:text-base font-bold text-[#0D9488]">
               Tomorrow
             </p>
 
-            <p className="mt-1 text-lg text-slate-600">
+            <p className="mt-0.5 text-xs md:text-sm text-slate-600 font-semibold">
               10:00 AM
             </p>
 
@@ -52,7 +52,7 @@ function NextAppointment() {
         </div>
 
         {/* Divider */}
-        <div className="my-7 border-t border-slate-200" />
+        <div className="my-7 border-t border-white/40" />
 
         {/* Buttons */}
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -62,7 +62,7 @@ function NextAppointment() {
             Join Telehealth
           </button>
 
-          <button className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-slate-100 px-5 py-3 font-medium text-slate-700 transition hover:bg-slate-200">
+          <button className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white/40 border border-white/20 px-5 py-3 font-medium text-slate-700 transition hover:bg-white/60 cursor-pointer">
             <CalendarDays size={18} />
             Reschedule
           </button>

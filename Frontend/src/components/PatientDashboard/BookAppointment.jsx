@@ -58,7 +58,7 @@ const BookAppointment = ({ setActiveTab }) => {
       
 
       {/* Progress Steps Header */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_4px_20px_rgba(15,23,42,0.02)]">
+      <div className="bg-white/60 border border-white/45 rounded-3xl p-6 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md">
         <div className="flex items-center justify-between max-w-lg mx-auto">
           {[1, 2, 3, 4].map(s => (
             <div key={s} className="flex items-center gap-2">
@@ -90,8 +90,8 @@ const BookAppointment = ({ setActiveTab }) => {
                     setSelectedDoc(null);
                     handleNextStep();
                   }}
-                  className={`flex items-start gap-4 p-5 bg-white border rounded-2xl text-left transition hover:shadow-md cursor-pointer ${
-                    selectedDept === dept.id ? "border-[#2563EB] ring-2 ring-blue-50" : "border-slate-100"
+                  className={`flex items-start gap-4 p-5 bg-white/50 backdrop-blur-sm border rounded-2xl text-left transition hover:shadow-md cursor-pointer ${
+                    selectedDept === dept.id ? "border-[#2563EB] ring-2 ring-blue-50/50" : "border-white/40"
                   }`}
                 >
                   <div className={`w-11 h-11 rounded-xl flex items-center justify-center border ${dept.bg}`}>
@@ -112,7 +112,7 @@ const BookAppointment = ({ setActiveTab }) => {
       {step === 2 && (
         <div className="space-y-4 animate-[fadeIn_0.3s_ease-out]">
           <div className="flex items-center gap-3">
-            <button onClick={handleBackStep} className="p-2 bg-white border border-slate-100 rounded-xl hover:bg-slate-50 transition cursor-pointer">
+            <button onClick={handleBackStep} className="p-2 bg-white/40 border border-white/20 rounded-xl hover:bg-white/60 transition cursor-pointer">
               <ArrowLeft size={16} className="text-slate-600" />
             </button>
             <h3 className="text-base font-extrabold text-slate-800">2. Select a Specialist ({selectedDept})</h3>
@@ -129,8 +129,8 @@ const BookAppointment = ({ setActiveTab }) => {
                     setSelectedDoc(doc);
                     handleNextStep();
                   }}
-                  className={`flex items-center justify-between gap-4 p-5 bg-white border rounded-2xl text-left transition hover:shadow-md cursor-pointer ${
-                    selectedDoc?.name === doc.name ? "border-[#2563EB] ring-2 ring-blue-50" : "border-slate-100"
+                  className={`flex items-center justify-between gap-4 p-5 bg-white/50 backdrop-blur-sm border rounded-2xl text-left transition hover:shadow-md cursor-pointer ${
+                    selectedDoc?.name === doc.name ? "border-[#2563EB] ring-2 ring-blue-50/50" : "border-white/40"
                   }`}
                 >
                   <div className="flex items-center gap-3.5">
@@ -155,13 +155,13 @@ const BookAppointment = ({ setActiveTab }) => {
       {step === 3 && (
         <div className="space-y-4 animate-[fadeIn_0.3s_ease-out]">
           <div className="flex items-center gap-3">
-            <button onClick={handleBackStep} className="p-2 bg-white border border-slate-100 rounded-xl hover:bg-slate-50 transition cursor-pointer">
+            <button onClick={handleBackStep} className="p-2 bg-white/40 border border-white/20 rounded-xl hover:bg-white/60 transition cursor-pointer">
               <ArrowLeft size={16} className="text-slate-600" />
             </button>
             <h3 className="text-base font-extrabold text-slate-800">3. Choose Date & Time slot</h3>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_4px_20px_rgba(15,23,42,0.02)]">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-white/60 border border-white/45 rounded-3xl p-6 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md">
             
             {/* Choose Date Input */}
             <div className="lg:col-span-1 space-y-2">
@@ -171,7 +171,7 @@ const BookAppointment = ({ setActiveTab }) => {
                 value={selectedDate}
                 min={new Date().toISOString().split("T")[0]}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full border border-slate-200 bg-slate-50 rounded-xl p-3 text-sm text-[#162235] outline-none transition focus:border-[#2563EB]"
+                className="w-full border border-white/40 bg-slate-50/40 rounded-xl p-3 text-sm text-[#162235] outline-none transition focus:border-[#2563EB]"
               />
             </div>
 
@@ -188,7 +188,7 @@ const BookAppointment = ({ setActiveTab }) => {
                       className={`h-11 rounded-xl flex items-center justify-center text-xs font-bold transition-all cursor-pointer ${
                         selectedSlot === slot 
                           ? "bg-gradient-to-br from-[#2563EB] to-[#0D9488] text-white shadow-md border-none" 
-                          : "bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100"
+                          : "bg-white/40 border border-white/20 text-slate-600 hover:bg-white/60"
                       }`}
                     >
                       <Clock size={13} className="mr-1" />
@@ -220,7 +220,7 @@ const BookAppointment = ({ setActiveTab }) => {
       {step === 4 && (
         <div className="space-y-4 animate-[fadeIn_0.3s_ease-out]">
           <div className="flex items-center gap-3">
-            <button onClick={handleBackStep} className="p-2 bg-white border border-slate-100 rounded-xl hover:bg-slate-50 transition cursor-pointer">
+            <button onClick={handleBackStep} className="p-2 bg-white/40 border border-white/20 rounded-xl hover:bg-white/60 transition cursor-pointer">
               <ArrowLeft size={16} className="text-slate-600" />
             </button>
             <h3 className="text-base font-extrabold text-slate-800">4. Enter Reason & Confirm</h3>
@@ -229,7 +229,7 @@ const BookAppointment = ({ setActiveTab }) => {
           <form onSubmit={handleConfirm} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Form side */}
-            <div className="lg:col-span-2 bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_4px_20px_rgba(15,23,42,0.02)] space-y-4">
+            <div className="lg:col-span-2 bg-white/60 border border-white/45 rounded-3xl p-6 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md space-y-4">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Tell us the reason for your visit</label>
               <textarea
                 required
@@ -237,12 +237,12 @@ const BookAppointment = ({ setActiveTab }) => {
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Briefly describe your symptoms or reason for scheduling..."
                 rows={5}
-                className="w-full border border-slate-200 bg-slate-50 rounded-2xl p-4 text-xs md:text-sm text-[#162235] outline-none transition placeholder:text-slate-400 focus:border-[#2563EB]"
+                className="w-full border border-white/40 bg-slate-50/40 rounded-2xl p-4 text-xs md:text-sm text-[#162235] outline-none transition placeholder:text-slate-400 focus:border-[#2563EB]"
               />
             </div>
 
             {/* Summary card side */}
-            <div className="lg:col-span-1 bg-slate-50 border border-slate-200/50 rounded-3xl p-6 flex flex-col justify-between">
+            <div className="lg:col-span-1 bg-slate-50/40 backdrop-blur-sm border border-slate-200/50 rounded-3xl p-6 flex flex-col justify-between">
               <div className="space-y-4">
                 <h4 className="font-extrabold text-slate-800 text-sm md:text-base border-b border-slate-200/60 pb-3 flex items-center gap-2">
                   <CalendarCheck2 size={18} className="text-[#0D9488]" />

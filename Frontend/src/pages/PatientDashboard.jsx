@@ -11,12 +11,32 @@ import MyAppointments from "../components/PatientDashboard/MyAppointments";
 import BookAppointment from "../components/PatientDashboard/BookAppointment";
 import MedicalRecords from "../components/PatientDashboard/MedicalRecords";
 import PatientProfile from "../components/PatientDashboard/PatientProfile";
+import HelpCenter from "../components/PatientDashboard/HelpCenter";
 
 function PatientDashboard() {
   const [activeTab, setActiveTab] = useState("Dashboard");
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-gradient-to-tr from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0]/80 flex relative overflow-hidden z-0">
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes viewFadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(12px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-view-fade-in-up {
+          animation: viewFadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `}} />
+      
+      {/* Background Glow Blobs */}
+      <div className="absolute top-[8%] right-[12%] w-[380px] h-[380px] rounded-full bg-gradient-to-tr from-[#2563EB]/8 to-[#0D9488]/8 blur-[100px] pointer-events-none -z-10" />
+      <div className="absolute bottom-[10%] left-[20%] w-[420px] h-[420px] rounded-full bg-[#0D9488]/6 blur-[120px] pointer-events-none -z-10" />
 
       {/* Sidebar Navigation */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -30,9 +50,9 @@ function PatientDashboard() {
           <DashboardHeader activeTab={activeTab} setActiveTab={setActiveTab} />
 
           {/* View Router */}
-          <div className="mt-8">
+          <div className="mt-8 relative min-h-[500px]">
             {activeTab === "Dashboard" && (
-              <div className="space-y-6">
+              <div className="space-y-6 animate-view-fade-in-up">
                 
                 {/* Top Row Grid */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -55,10 +75,31 @@ function PatientDashboard() {
               </div>
             )}
 
-            {activeTab === "My Appointments" && <MyAppointments setActiveTab={setActiveTab} />}
-            {activeTab === "Book Appointment" && <BookAppointment setActiveTab={setActiveTab} />}
-            {activeTab === "Medical Records" && <MedicalRecords />}
-            {activeTab === "Profile" && <PatientProfile />}
+            {activeTab === "My Appointments" && (
+              <div className="animate-view-fade-in-up">
+                <MyAppointments setActiveTab={setActiveTab} />
+              </div>
+            )}
+            {activeTab === "Book Appointment" && (
+              <div className="animate-view-fade-in-up">
+                <BookAppointment setActiveTab={setActiveTab} />
+              </div>
+            )}
+            {activeTab === "Medical Records" && (
+              <div className="animate-view-fade-in-up">
+                <MedicalRecords />
+              </div>
+            )}
+            {activeTab === "Profile" && (
+              <div className="animate-view-fade-in-up">
+                <PatientProfile />
+              </div>
+            )}
+            {activeTab === "Help Center" && (
+              <div className="animate-view-fade-in-up">
+                <HelpCenter />
+              </div>
+            )}
           </div>
 
         </div>
