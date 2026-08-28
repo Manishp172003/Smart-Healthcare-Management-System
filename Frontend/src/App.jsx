@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import Auth from "./pages/auth/Auth";
 import PatientDashboard from "./pages/PatientDashboard";
 import DoctorDashboard from "./pages/DoctorDashboard";
-import AdminLogin from "./pages/auth/AdminLogin";
+import AdminLogin from "./pages/AdminLogin";
 
 function App() {
   return (
