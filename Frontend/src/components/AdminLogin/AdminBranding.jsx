@@ -4,7 +4,7 @@ import { HeartPulse } from "lucide-react";
 function AdminBranding() {
   return (
     <section
-      className="relative hidden lg:flex lg:w-[40%] xl:w-[42%] h-full overflow-hidden"
+      className="relative hidden lg:flex lg:w-[45%] min-h-[600px] overflow-hidden rounded-[24px]"
       style={{
         backgroundImage: "url(/images/admin-login-bg.png)",
         backgroundSize: "cover",

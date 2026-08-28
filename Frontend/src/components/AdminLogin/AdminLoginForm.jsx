@@ -38,7 +38,7 @@ function AdminLoginForm() {
   };
 
   return (
-    <div className="flex w-full h-full flex-col justify-center items-center px-6 py-10 sm:px-10 lg:w-[60%] xl:w-[58%] lg:px-16 xl:px-20">
+    <div className="flex w-full flex-col justify-center px-6 py-10 sm:px-10 lg:w-[55%] lg:px-12 xl:px-16">
 
       {/* ================= FORM CONTAINER ================= */}
       <div className="mx-auto w-full max-w-md">
