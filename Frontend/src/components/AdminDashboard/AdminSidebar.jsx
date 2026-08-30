@@ -23,7 +23,7 @@ const bottomItems = [
   { label: "Sign Out", icon: LogOut }
 ];
 
-const AdminSidebar = ({ activeTab, setActiveTab }) => {
+const AdminSidebar = ({ activeTab, setActiveTab, onEmergencyTrigger, onSignOutTrigger }) => {
   return (
     <aside className="fixed bottom-0 left-0 top-0 z-20 hidden w-64 flex-col justify-between border-r border-[#0D9488]/20 bg-gradient-to-b from-[#0F172A] via-[#1E293B] to-[#0D9488] p-5 text-white md:flex">
       
@@ -81,7 +81,7 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
         
         {/* Emergency Alert */}
         <button 
-          onClick={() => alert("SYSTEM CRITICAL: Initiating system-wide emergency safety lock protocols...")}
+          onClick={onEmergencyTrigger}
           className="mb-3 flex w-full items-center justify-center gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-400 transition hover:bg-red-500/20 cursor-pointer"
         >
           <Siren size={20} />
@@ -98,9 +98,7 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
             if (isHelp) {
               setActiveTab("Help Center");
             } else {
-              if (confirm("Are you sure you want to sign out?")) {
-                window.location.href = "/admin/login";
-              }
+              onSignOutTrigger();
             }
           };
 
