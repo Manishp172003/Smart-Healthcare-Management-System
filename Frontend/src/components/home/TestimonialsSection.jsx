@@ -119,14 +119,17 @@ const TestimonialsSection = () => {
           </button>
 
           {/* Scrolling Container */}
-          <div 
+          <div
             ref={scrollContainerRef}
             className="w-full flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-4 px-2"
           >
-            {testimonials.map((t, idx) => (
-              <div 
-                key={idx} 
-                className="testimonial-card flex-shrink-0 snap-start w-full md:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)] min-h-[200px] p-6 bg-white border border-slate-100 rounded-[28px] shadow-[0_4px_20px_rgba(15,23,42,0.03)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.07)] transition-all duration-300 flex flex-col justify-between text-slate-800"
+            {testimonials.map((t, idx) => {
+              const delayClasses = ['animate-delay-100', 'animate-delay-200', 'animate-delay-300', 'animate-delay-400', 'animate-delay-500'];
+
+              return (
+              <div
+                key={idx}
+                className={`testimonial-card flex-shrink-0 snap-start w-full md:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)] min-h-[200px] p-6 bg-white border border-slate-100 rounded-[28px] shadow-[0_4px_20px_rgba(15,23,42,0.03)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.07)] transition-all duration-300 flex flex-col justify-between text-slate-800 animate-on-scroll ${delayClasses[idx % delayClasses.length]}`}
               >
                 <div>
                   {/* Quote Icon */}
@@ -161,7 +164,8 @@ const TestimonialsSection = () => {
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Navigation Next Button */}

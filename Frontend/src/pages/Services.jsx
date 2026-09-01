@@ -120,6 +120,12 @@ const Services = () => {
     <div className="min-h-screen bg-slate-50 font-['Poppins',sans-serif] text-slate-800 antialiased selection:bg-cyan-500 selection:text-white">
       <Navbar />
 
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      >
+
       {/* 1. HERO SECTION (Full Background Image with Dark Contrast Overlay & Poppins Font) */}
       <section className="relative overflow-hidden bg-slate-950 pt-32 pb-36 lg:pt-40 lg:pb-48 text-white font-['Poppins',sans-serif]">
         {/* Background Image spanning the entire Hero Section */}
@@ -471,8 +477,9 @@ const Services = () => {
           </div>
         </motion.div>
       </section>
+    </motion.div>
 
-      <Footer />
+    <Footer />
     </div>
   );
 };

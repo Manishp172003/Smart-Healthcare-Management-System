@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import { motion } from "framer-motion";
 import { 
   Search, Calendar, Clock, User, Phone, Mail, FileText, 
   CheckCircle, AlertCircle, ChevronRight, ArrowLeft, ShieldCheck, 
@@ -243,10 +244,16 @@ export default function AppointmentBooking() {
 
     <Navbar />
 
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+    >
+
     
       
       {/* --- PREMIUM HERO SECTION --- */}
-      <section className="relative bg-gradient-to-br from-blue-900 via-slate-900 to-teal-900 text-white overflow-hidden py-16 lg:py-24 mb-10 shadow-md">
+      <section className="relative bg-gradient-to-br from-blue-900 via-slate-900 to-teal-900 text-white overflow-hidden pt-20 pb-16 lg:py-24 mb-10 shadow-md">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -854,6 +861,7 @@ export default function AppointmentBooking() {
           </div>
         </div>
       )}
+    </motion.div>
 <Footer/>
     </div>
   );

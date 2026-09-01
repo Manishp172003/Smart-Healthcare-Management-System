@@ -25,6 +25,7 @@ import {
 
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import { motion } from "framer-motion";
 
 const FindDoctors = () => {
   const navigate = useNavigate();
@@ -230,8 +231,14 @@ const FindDoctors = () => {
 
       <Navbar />
 
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      >
+
       {/* 1. PAGE HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50/80 via-slate-50 to-teal-50/30 pt-16 pb-24 lg:pt-24 lg:pb-32">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50/80 via-slate-50 to-teal-50/30 pt-20 pb-24 lg:pt-24 lg:pb-32">
         <div className="absolute top-1/4 left-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none -z-10" />
         <div className="absolute bottom-10 right-0 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
@@ -649,8 +656,9 @@ const FindDoctors = () => {
           </div>
         </div>
       </section>
+    </motion.div>
 
-      <Footer />
+    <Footer />
     </div>
   );
 };

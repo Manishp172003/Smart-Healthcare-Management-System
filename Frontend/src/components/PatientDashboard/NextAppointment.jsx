@@ -4,7 +4,44 @@ import {
   CalendarDays,
 } from "lucide-react";
 
-function NextAppointment() {
+function NextAppointment({ appointments = [], loading = false }) {
+  if (loading) {
+    return (
+      <div className="relative overflow-hidden rounded-3xl border border-white/45 bg-white/60 p-7 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md flex items-center justify-center min-h-[220px]">
+        <p className="text-slate-500 font-semibold text-sm animate-pulse">Loading next appointment...</p>
+      </div>
+    );
+  }
+
+  // Find the first upcoming active consultation
+  const upcoming = appointments.find(
+    (apt) => apt.status === "PENDING" || apt.status === "CONFIRMED"
+  );
+
+  if (!upcoming) {
+    return (
+      <div className="relative overflow-hidden rounded-3xl border border-white/45 bg-white/60 p-7 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md flex flex-col justify-center min-h-[220px] justify-between">
+        <div>
+          <div className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#0D9488]">
+            <CalendarClock size={18} />
+            Next Appointment
+          </div>
+          <h2 className="text-base md:text-lg font-extrabold text-slate-800 leading-tight">
+            No Scheduled Consultations
+          </h2>
+          <p className="mt-1.5 text-xs text-slate-500 font-medium">
+            Keep your health checklist updated. Book a new appointment to schedule a session.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const doctorName = upcoming.doctor?.user?.name || "Medical Specialist";
+  const specialization = upcoming.doctor?.specialization || "General Health";
+  const dateStr = upcoming.appointmentDate;
+  const timeStr = upcoming.startTime;
+
   return (
     <div className="relative overflow-hidden rounded-3xl border border-white/45 bg-white/60 p-7 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md">
 
@@ -26,12 +63,12 @@ function NextAppointment() {
 
             {/* Title */}
             <h2 className="text-lg md:text-xl font-extrabold text-slate-900 leading-tight">
-              Cardiology Checkup
+              {specialization} Roster
             </h2>
 
             {/* Doctor */}
             <p className="mt-1.5 text-xs md:text-sm text-slate-500 font-medium">
-              Dr. Emily Chen • Heart Health Clinic
+              Dr. {doctorName} • Clinic Center
             </p>
 
           </div>
@@ -40,11 +77,11 @@ function NextAppointment() {
           <div className="text-left sm:text-right flex flex-col md:justify-center">
 
             <p className="text-sm md:text-base font-bold text-[#0D9488]">
-              Tomorrow
+              {dateStr}
             </p>
 
             <p className="mt-0.5 text-xs md:text-sm text-slate-600 font-semibold">
-              10:00 AM
+              {timeStr}
             </p>
 
           </div>

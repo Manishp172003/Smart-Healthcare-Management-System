@@ -16,6 +16,7 @@ import {
 
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import { motion } from "framer-motion";
 import contactBg from "../assets/About-Section/Contact-section.png";
 
 const Contact = () => {
@@ -52,6 +53,12 @@ const Contact = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-['Poppins',sans-serif] text-slate-800 antialiased selection:bg-cyan-500 selection:text-white">
       <Navbar />
+
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      >
 
       {/* HEADER INTRO SECTION */}
       <section className="relative overflow-hidden pt-40 pb-32 lg:pt-52 lg:pb-44 text-white">
@@ -323,8 +330,9 @@ const Contact = () => {
           </div>
         </div>
       </section>
+    </motion.div>
 
-      <Footer />
+    <Footer />
     </div>
   );
 };

@@ -12,7 +12,7 @@ const AboutSection = () => {
       <div className="w-full bg-white border border-[#E2E8F0] rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.04)] p-8 md:p-12 grid grid-cols-1 items-center gap-10 lg:grid-cols-[48%_52%] lg:gap-16">
 
         {/* Image */}
-        <div className="relative min-h-[280px] overflow-hidden rounded-[22px] bg-[#e8f4f7] shadow-[0_15px_40px_rgba(15,23,42,0.08)] md:min-h-[350px] lg:min-h-[390px]">
+        <div className="relative min-h-[280px] overflow-hidden rounded-[22px] bg-[#e8f4f7] shadow-[0_15px_40px_rgba(15,23,42,0.08)] md:min-h-[350px] lg:min-h-[390px] animate-slide-left">
           <img
             src="/images/about-healthcare.png"
             alt="Healthcare professional providing care"
@@ -30,7 +30,7 @@ const AboutSection = () => {
         </div>
 
         {/* Content */}
-        <div className="max-w-full lg:max-w-[560px] flex flex-col items-start gap-5">
+        <div className="max-w-full lg:max-w-[560px] flex flex-col items-start gap-5 animate-slide-right">
 
           <div>
             <span className="inline-block mb-2 text-[#0D9488] text-xs font-bold tracking-[2px] uppercase">

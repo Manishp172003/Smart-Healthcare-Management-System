@@ -4,8 +4,8 @@ import { User, Phone, MapPin, Award, CheckCircle, ShieldAlert, HeartHandshake } 
 const PatientProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    fullName: "Sarah Connor",
-    email: "sarah.connor@smarthealth.com",
+    fullName: localStorage.getItem("name") || "Patient Name",
+    email: localStorage.getItem("email") || "patient@smarthealth.com",
     phone: "+91 98765 43210",
     dob: "1994-10-12",
     gender: "Female",

@@ -71,9 +71,12 @@ const DoctorsSection = () => {
         {/* Doctor Cards */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 
-          {doctors.map((doctor) => (
+          {doctors.map((doctor, index) => {
+            const delayClasses = ['animate-delay-100', 'animate-delay-200', 'animate-delay-300'];
+
+            return (
             <article
-              className="overflow-hidden bg-white border border-[#E2E8F0] rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.03)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-1.5"
+              className={`overflow-hidden bg-white border border-[#E2E8F0] rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.03)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-1.5 animate-scale-up ${delayClasses[index % delayClasses.length]}`}
               key={doctor.name}
             >
 
@@ -145,7 +148,8 @@ const DoctorsSection = () => {
               </div>
 
             </article>
-          ))}
+            );
+          })}
 
         </div>
 

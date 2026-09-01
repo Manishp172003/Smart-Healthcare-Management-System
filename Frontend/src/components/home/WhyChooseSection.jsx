@@ -97,8 +97,11 @@ const WhyChooseSection = () => {
 
         {/* Statistics Grid */}
         <div className="grid grid-cols-1 mt-10 bg-white/10 border border-white/10 rounded-2xl backdrop-blur-sm sm:grid-cols-2 md:grid-cols-4 relative z-2">
-          {stats.map((stat) => (
-            <div className="relative p-6 px-5 text-center border-b border-white/10 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0" key={stat.label}>
+          {stats.map((stat, index) => {
+            const delayClasses = ['animate-delay-100', 'animate-delay-200', 'animate-delay-300', 'animate-delay-400'];
+
+            return (
+            <div className={`relative p-6 px-5 text-center border-b border-white/10 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 animate-on-scroll ${delayClasses[index % delayClasses.length]}`} key={stat.label}>
               <strong className="block text-white text-[32px] font-extrabold tracking-[-1px]">
                 {stat.value}
               </strong>
@@ -106,20 +109,23 @@ const WhyChooseSection = () => {
                 {stat.label}
               </span>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
       {/* Benefits Grid (White Cards Below) */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {benefits.map((benefit) => {
+        {benefits.map((benefit, index) => {
           const Icon = benefit.icon;
+          const delayClasses = ['animate-delay-100', 'animate-delay-200', 'animate-delay-300', 'animate-delay-400'];
+
           return (
-            <div 
-              className="flex gap-4 p-6 bg-white border border-[#E2E8F0] rounded-[22px] shadow-[0_4px_20px_rgba(15,23,42,0.02)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.06)] hover:-translate-y-1 transition-all duration-300 group" 
+            <div
+              className={`flex gap-4 p-6 bg-white border border-[#E2E8F0] rounded-[22px] shadow-[0_4px_20px_rgba(15,23,42,0.02)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.06)] hover:-translate-y-1 transition-all duration-300 group animate-on-scroll ${delayClasses[index % delayClasses.length]}`}
               key={benefit.title}
             >
-              <div 
+              <div
                 className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl transition-all duration-300"
                 style={{ backgroundColor: benefit.color.bg, color: benefit.color.text }}
               >

@@ -1,6 +1,6 @@
 import { Plus, FileText } from "lucide-react";
 
-function QuickActions() {
+function QuickActions({ setActiveTab }) {
   return (
     <div className="flex flex-col gap-6">
 
@@ -31,7 +31,10 @@ function QuickActions() {
             Available for review
           </p>
 
-          <button className="mt-5 text-[11px] md:text-xs font-bold text-[#2563EB] hover:text-[#0D9488] hover:underline cursor-pointer">
+          <button 
+            onClick={() => setActiveTab("Medical Records")}
+            className="mt-5 text-[11px] md:text-xs font-bold text-[#2563EB] hover:text-[#0D9488] hover:underline cursor-pointer bg-transparent border-none"
+          >
             View Report →
           </button>
 
@@ -41,7 +44,10 @@ function QuickActions() {
 
 
       {/* ================= BOOK APPOINTMENT ================= */}
-      <button className="group flex items-center justify-between rounded-3xl bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none p-7 text-left text-white shadow-[0_8px_32px_rgba(37,99,235,0.15)] transition hover:-translate-y-px duration-300 cursor-pointer">
+      <button 
+        onClick={() => setActiveTab("Book Appointment")}
+        className="group flex items-center justify-between rounded-3xl bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none p-7 text-left text-white shadow-[0_8px_32px_rgba(37,99,235,0.15)] transition hover:-translate-y-px duration-300 cursor-pointer w-full"
+      >
 
         <div>
 

@@ -1,4 +1,6 @@
-import { Bell, Plus } from "lucide-react";
+import { useState } from "react";
+import { Bell, Plus, Calendar, FileText, CheckCircle, X, BellOff, Menu } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const tabMeta = {
   "Dashboard": {
@@ -27,25 +29,104 @@ const tabMeta = {
   }
 };
 
-function DashboardHeader({ activeTab, setActiveTab }) {
-  const currentMeta = tabMeta[activeTab] || tabMeta["Dashboard"];
+function DashboardHeader({ activeTab, setActiveTab, onMenuToggle }) {
+  const userName = localStorage.getItem("name") || "Patient";
+  const userInitial = userName.charAt(0).toUpperCase();
+
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      title: "Appointment Confirmed",
+      description: "Dr. Jenkins confirmed your Cardiology checkup.",
+      time: "10 mins ago",
+      type: "appointment",
+      unread: true,
+    },
+    {
+      id: 2,
+      title: "Lab Report Uploaded",
+      description: "Your annual blood panel results are now available.",
+      time: "2 hours ago",
+      type: "record",
+      unread: true,
+    },
+    {
+      id: 3,
+      title: "Profile Completed",
+      description: "You've successfully set up your patient account.",
+      time: "Yesterday",
+      type: "system",
+      unread: false,
+    }
+  ]);
+
+  const titleText = activeTab === "Dashboard" 
+    ? `Welcome back, ${userName}.` 
+    : (tabMeta[activeTab] || tabMeta["Dashboard"]).title;
+
+  const subtitleText = (tabMeta[activeTab] || tabMeta["Dashboard"]).subtitle;
+
+  const unreadCount = notifications.filter(n => n.unread).length;
+
+  const handleMarkAsRead = (id) => {
+    setNotifications(notifications.map(n => n.id === id ? { ...n, unread: false } : n));
+  };
+
+  const handleMarkAllAsRead = () => {
+    setNotifications(notifications.map(n => ({ ...n, unread: false })));
+  };
+
+  const handleClearAll = () => {
+    setNotifications([]);
+  };
+
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case "appointment":
+        return <Calendar size={15} className="text-blue-600" />;
+      case "record":
+        return <FileText size={15} className="text-teal-600" />;
+      default:
+        return <CheckCircle size={15} className="text-green-600" />;
+    }
+  };
+
+  const getNotificationBg = (type) => {
+    switch (type) {
+      case "appointment":
+        return "bg-blue-50 border-blue-100";
+      case "record":
+        return "bg-teal-50 border-teal-100";
+      default:
+        return "bg-green-50 border-green-100";
+    }
+  };
 
   return (
-    <header className="mb-8 flex items-center justify-between border-b border-slate-200 pb-6">
+    <header className="mb-8 flex items-center justify-between border-b border-slate-200 pb-6 relative">
       
-      {/* Dynamic Title & Subtitle */}
-      <div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 leading-tight">
-          {currentMeta.title}
-        </h1>
+      {/* Title & Mobile Menu Trigger */}
+      <div className="flex items-center">
+        <button
+          onClick={onMenuToggle}
+          className="md:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 mr-3 border-none bg-transparent cursor-pointer flex items-center justify-center shrink-0"
+        >
+          <Menu size={22} />
+        </button>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            {titleText}
+          </h1>
 
-        <p className="mt-2 text-sm text-slate-500 font-semibold">
-          {currentMeta.subtitle}
-        </p>
+          <p className="mt-1.5 text-xs sm:text-sm text-slate-500 font-semibold">
+            {subtitleText}
+          </p>
+        </div>
       </div>
 
       {/* Right Side Actions & Badges */}
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-5 relative">
 
         {/* Special Inline Context Action: "+ Book New" on My Appointments */}
         {activeTab === "My Appointments" && (
@@ -58,16 +139,120 @@ function DashboardHeader({ activeTab, setActiveTab }) {
           </button>
         )}
 
-        {/* Notification Bell */}
-        <button className="relative rounded-full p-2 text-slate-600 transition hover:bg-slate-100 cursor-pointer border-none bg-transparent">
-          <Bell size={23} />
-          <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-[#EA4335]" />
-        </button>
+        {/* Notification Bell Trigger */}
+        <div className="relative">
+          <button 
+            onClick={() => setShowNotifications(!showNotifications)}
+            className={`relative rounded-full p-2 text-slate-600 transition hover:bg-slate-100 cursor-pointer border-none bg-transparent z-50 ${showNotifications ? "bg-slate-100" : ""}`}
+          >
+            <Bell size={23} />
+            {unreadCount > 0 && (
+              <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse" />
+            )}
+          </button>
+
+          {/* Invisible background overlay to close notifications when clicking outside */}
+          {showNotifications && (
+            <div 
+              className="fixed inset-0 z-40 bg-transparent" 
+              onClick={() => setShowNotifications(false)}
+            />
+          )}
+
+          {/* Notifications Dropdown Card */}
+          <AnimatePresence>
+            {showNotifications && (
+              <motion.div
+                initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute right-0 top-12 w-80 sm:w-96 bg-white/95 border border-slate-200/80 rounded-2xl shadow-xl overflow-hidden z-50 text-left backdrop-blur-md"
+              >
+                
+                {/* Header */}
+                <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+                  <h4 className="font-extrabold text-slate-800 text-sm flex items-center gap-1.5">
+                    Notifications
+                    {unreadCount > 0 && (
+                      <span className="bg-rose-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+                        {unreadCount} New
+                      </span>
+                    )}
+                  </h4>
+                  {notifications.length > 0 && (
+                    <button 
+                      onClick={handleMarkAllAsRead}
+                      className="text-xs font-bold text-[#2563EB] hover:text-[#0D9488] bg-transparent border-none cursor-pointer"
+                    >
+                      Mark all read
+                    </button>
+                  )}
+                </div>
+
+                {/* List Body */}
+                <div className="max-h-[300px] overflow-y-auto divide-y divide-slate-100">
+                  {notifications.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-10 px-5 text-center text-slate-400">
+                      <BellOff className="w-8 h-8 text-slate-300 mb-2" />
+                      <p className="text-xs font-bold">All clear!</p>
+                      <p className="text-[11px] text-slate-400 font-medium">You don't have any notifications right now.</p>
+                    </div>
+                  ) : (
+                    notifications.map(item => (
+                      <div 
+                        key={item.id}
+                        onClick={() => handleMarkAsRead(item.id)}
+                        className={`p-4 hover:bg-slate-50/60 transition cursor-pointer flex gap-3.5 relative ${item.unread ? "bg-blue-50/15" : ""}`}
+                      >
+                        {/* Dot status indicator */}
+                        {item.unread && (
+                          <span className="absolute left-1.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-blue-600 rounded-full" />
+                        )}
+
+                        {/* Icon circle */}
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${getNotificationBg(item.type)}`}>
+                          {getNotificationIcon(item.type)}
+                        </div>
+
+                        {/* Details */}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-slate-900 text-xs truncate">
+                            {item.title}
+                          </p>
+                          <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-relaxed">
+                            {item.description}
+                          </p>
+                          <span className="text-[9px] text-slate-400 font-bold block mt-1">
+                            {item.time}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Footer action button */}
+                {notifications.length > 0 && (
+                  <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex justify-center">
+                    <button 
+                      onClick={handleClearAll}
+                      className="text-xs font-bold text-slate-500 hover:text-slate-700 bg-transparent border-none cursor-pointer"
+                    >
+                      Clear all notifications
+                    </button>
+                  </div>
+                )}
+
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* Patient Profile Avatar */}
         <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-blue-100 bg-blue-50">
           <span className="font-bold text-[#2563EB]">
-            S
+            {userInitial}
           </span>
         </div>
 

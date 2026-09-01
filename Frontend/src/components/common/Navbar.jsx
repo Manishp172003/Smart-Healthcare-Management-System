@@ -1,12 +1,14 @@
 import { HeartPulse, UserRound, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-white/80 border-b border-slate-200/50 shadow-[0_4px_20px_rgba(15,23,42,0.02)] backdrop-blur-md">
+    <header className="fixed top-0 left-0 w-full z-50 bg-white/80 border-b border-slate-200/50 shadow-[0_4px_20px_rgba(15,23,42,0.02)] backdrop-blur-md font-sans">
       <div className="w-full max-w-[1440px] min-h-[76px] mx-auto flex items-center justify-between px-6 md:px-12 py-3">
 
         {/* Logo */}
@@ -22,31 +24,32 @@ const Navbar = () => {
         </Link>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center gap-7 lg:gap-4">
-          <Link to="/" className="relative text-[#2563EB] text-xs font-bold md:text-sm transition-colors hover:text-[#2563EB]">
+        <nav className="hidden md:flex items-center gap-7 lg:gap-6">
+          <Link to="/" className={`nav-link relative text-xs md:text-sm transition-colors hover:text-[#2563EB] ${currentPath === "/" ? "text-[#2563EB] font-semibold active" : "text-[#475569] font-medium"}`}>
             Home
-            <span className="absolute left-1/2 -bottom-2.5 w-5.5 h-0.75 -translate-x-1/2 bg-[#2563EB] rounded-full"></span>
+            <span className="nav-link-underline"></span>
           </Link>
 
-          <a href="#about" className="relative text-[#475569] text-xs font-bold md:text-sm transition-colors hover:text-[#2563EB]">
+          <Link to="/about" className={`nav-link relative text-xs md:text-sm transition-colors hover:text-[#2563EB] ${currentPath === "/about" ? "text-[#2563EB] font-semibold active" : "text-[#475569] font-medium"}`}>
             About Us
-          </a>
+            <span className="nav-link-underline"></span>
+          </Link>
 
-          <a href="#doctors" className="relative text-[#475569] text-xs font-bold md:text-sm transition-colors hover:text-[#2563EB]">
+          <Link to="/doctors" className={`nav-link relative text-xs md:text-sm transition-colors hover:text-[#2563EB] ${currentPath === "/doctors" ? "text-[#2563EB] font-semibold active" : "text-[#475569] font-medium"}`}>
             Find Doctors
-          </a>
+            <span className="nav-link-underline"></span>
+          </Link>
 
-          <a href="#services" className="relative text-[#475569] text-xs font-bold md:text-sm transition-colors hover:text-[#2563EB]">
+          <Link to="/service" className={`nav-link relative text-xs md:text-sm transition-colors hover:text-[#2563EB] ${currentPath === "/service" ? "text-[#2563EB] font-semibold active" : "text-[#475569] font-medium"}`}>
             Services
-          </a>
+            <span className="nav-link-underline"></span>
+          </Link>
 
-          <a href="#packages" className="relative text-[#475569] text-xs font-bold md:text-sm transition-colors hover:text-[#2563EB]">
-            Our Packages
-          </a>
 
-          <a href="#contact" className="relative text-[#475569] text-xs font-bold md:text-sm transition-colors hover:text-[#2563EB]">
+          <Link to="/contact" className={`nav-link relative text-xs md:text-sm transition-colors hover:text-[#2563EB] ${currentPath === "/contact" ? "text-[#2563EB] font-semibold active" : "text-[#475569] font-medium"}`}>
             Contact Us
-          </a>
+            <span className="nav-link-underline"></span>
+          </Link>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -69,12 +72,11 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-20 left-0 right-0 bg-white border border-[rgba(226,232,240,0.8)] rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] p-4 mx-4 md:mx-7 z-50">
           <nav className="flex flex-col gap-4">
-            <Link to="/" className="text-[#2563EB] text-xs font-bold">Home</Link>
-            <a href="#about" className="text-[#0F172A] text-xs font-medium hover:text-[#2563EB]">About Us</a>
-            <a href="#doctors" className="text-[#0F172A] text-xs font-medium hover:text-[#2563EB]">Find Doctors</a>
-            <a href="#services" className="text-[#0F172A] text-xs font-medium hover:text-[#2563EB]">Services</a>
-            <a href="#packages" className="text-[#0F172A] text-xs font-medium hover:text-[#2563EB]">Our Packages</a>
-            <a href="#contact" className="text-[#0F172A] text-xs font-medium hover:text-[#2563EB]">Contact Us</a>
+            <Link to="/" className={`text-xs ${currentPath === "/" ? "text-[#2563EB] font-semibold" : "text-[#0F172A] font-medium hover:text-[#2563EB]"}`}>Home</Link>
+            <Link to="/about" className={`text-xs ${currentPath === "/about" ? "text-[#2563EB] font-semibold" : "text-[#0F172A] font-medium hover:text-[#2563EB]"}`}>About Us</Link>
+            <Link to="/doctors" className={`text-xs ${currentPath === "/doctors" ? "text-[#2563EB] font-semibold" : "text-[#0F172A] font-medium hover:text-[#2563EB]"}`}>Find Doctors</Link>
+            <Link to="/service" className={`text-xs ${currentPath === "/service" ? "text-[#2563EB] font-semibold" : "text-[#0F172A] font-medium hover:text-[#2563EB]"}`}>Services</Link>
+            <Link to="/contact" className={`text-xs ${currentPath === "/contact" ? "text-[#2563EB] font-semibold" : "text-[#0F172A] font-medium hover:text-[#2563EB]"}`}>Contact Us</Link>
           </nav>
         </div>
       )}

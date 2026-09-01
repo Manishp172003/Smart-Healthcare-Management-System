@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 
@@ -115,7 +116,12 @@ export default function AboutUsPage() {
       <Navbar />
 
       {/* Main Content Wrapper with top padding to prevent fixed navbar overlap */}
-      <main className="flex-grow pt-[76px]">
+      <motion.main 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        className="flex-grow pt-[76px]"
+      >
 
         {/* 1. HERO SECTION: Full width container with cover background */}
         <section className="relative w-full h-[40vh] sm:h-[55vh] lg:h-[70vh] bg-slate-900 overflow-hidden flex items-center justify-center">
@@ -507,7 +513,7 @@ export default function AboutUsPage() {
           </div>
         </section>
 
-      </main>
+      </motion.main>
 
       {/* Existing Footer Integration */}
       <Footer />

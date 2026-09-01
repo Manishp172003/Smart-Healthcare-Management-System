@@ -1,24 +1,18 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, XCircle } from "lucide-react";
 
-const history = [
-  {
-    date: "Sep 15, 2023",
-    provider: "Dr. Emily Chen",
-    type: "Cardiology Consult",
-  },
-  {
-    date: "Aug 02, 2023",
-    provider: "LabCorp",
-    type: "Blood Work",
-  },
-  {
-    date: "Jul 10, 2023",
-    provider: "Dr. Allen",
-    type: "Annual Physical",
-  },
-];
+function RecentHistory({ appointments = [], loading = false }) {
+  if (loading) {
+    return (
+      <div className="flex flex-col overflow-hidden rounded-3xl border border-white/45 bg-white/60 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md min-h-[220px] justify-center items-center">
+        <p className="text-slate-500 font-semibold text-xs md:text-sm animate-pulse">Loading recent history...</p>
+      </div>
+    );
+  }
 
-function RecentHistory() {
+  const pastList = appointments.filter(
+    (apt) => apt.status === "COMPLETED" || apt.status === "CANCELLED"
+  );
+
   return (
     <div className="flex flex-col overflow-hidden rounded-3xl border border-white/45 bg-white/60 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md">
 
@@ -29,7 +23,7 @@ function RecentHistory() {
           Recent History
         </h2>
 
-        <button className="font-bold text-[#2563EB] hover:text-[#0D9488] hover:underline cursor-pointer">
+        <button className="font-bold text-[#2563EB] hover:text-[#0D9488] hover:underline cursor-pointer bg-transparent border-none">
           View All
         </button>
 
@@ -38,67 +32,87 @@ function RecentHistory() {
       {/* Table */}
       <div className="overflow-x-auto">
 
-        <table className="w-full min-w-[650px] text-left">
+        {pastList.length === 0 ? (
+          <p className="text-slate-400 text-xs font-semibold p-6 text-center">No past consultations or medical history found.</p>
+        ) : (
+          <table className="w-full min-w-[650px] text-left">
 
-          {/* Table Header */}
-          <thead>
-            <tr className="bg-slate-100/40 text-xs uppercase tracking-wider text-slate-600 border-b border-slate-100/30">
+            {/* Table Header */}
+            <thead>
+              <tr className="bg-slate-100/40 text-xs uppercase tracking-wider text-slate-600 border-b border-slate-100/30">
 
-              <th className="px-5 py-4 font-semibold">
-                Date
-              </th>
+                <th className="px-5 py-4 font-semibold">
+                  Date
+                </th>
 
-              <th className="px-5 py-4 font-semibold">
-                Provider
-              </th>
+                <th className="px-5 py-4 font-semibold">
+                  Provider
+                </th>
 
-              <th className="px-5 py-4 font-semibold">
-                Type
-              </th>
+                <th className="px-5 py-4 font-semibold">
+                  Type
+                </th>
 
-              <th className="px-5 py-4 text-right font-semibold">
-                Status
-              </th>
-
-            </tr>
-          </thead>
-
-          {/* Table Body */}
-          <tbody>
-
-            {history.map((item, index) => (
-              <tr
-                key={index}
-                className="cursor-pointer border-t border-slate-200/50 transition hover:bg-slate-50/40"
-              >
-
-                <td className="whitespace-nowrap px-5 py-5 text-sm text-slate-700">
-                  {item.date}
-                </td>
-
-                <td className="px-5 py-5 text-sm font-medium text-slate-900">
-                  {item.provider}
-                </td>
-
-                <td className="px-5 py-5 text-sm text-slate-500">
-                  {item.type}
-                </td>
-
-                <td className="px-5 py-5 text-right">
-
-                  <span className="inline-flex items-center gap-1 text-sm font-bold text-[#0D9488]">
-                    <CheckCircle size={16} />
-                    Completed
-                  </span>
-
-                </td>
+                <th className="px-5 py-4 text-right font-semibold">
+                  Status
+                </th>
 
               </tr>
-            ))}
+            </thead>
 
-          </tbody>
+            {/* Table Body */}
+            <tbody>
 
-        </table>
+              {pastList.map((item, index) => {
+                const doctorName = item.doctor?.user?.name || "Specialist";
+                const specialty = item.doctor?.specialization || "General Health";
+
+                return (
+                  <tr
+                    key={index}
+                    className="cursor-pointer border-t border-slate-200/50 transition hover:bg-slate-50/40"
+                  >
+
+                    <td className="whitespace-nowrap px-5 py-5 text-sm text-slate-700">
+                      {item.appointmentDate}
+                    </td>
+
+                    <td className="px-5 py-5 text-sm font-medium text-slate-900">
+                      Dr. {doctorName}
+                    </td>
+
+                    <td className="px-5 py-5 text-sm text-slate-500">
+                      {specialty} Consult
+                    </td>
+
+                    <td className="px-5 py-5 text-right">
+
+                      <span className={`inline-flex items-center gap-1 text-sm font-bold ${
+                        item.status === "COMPLETED" ? "text-[#0D9488]" : "text-rose-600"
+                      }`}>
+                        {item.status === "COMPLETED" ? (
+                          <>
+                            <CheckCircle size={16} />
+                            Completed
+                          </>
+                        ) : (
+                          <>
+                            <XCircle size={16} />
+                            Cancelled
+                          </>
+                        )}
+                      </span>
+
+                    </td>
+
+                  </tr>
+                );
+              })}
+
+            </tbody>
+
+          </table>
+        )}
 
       </div>
 

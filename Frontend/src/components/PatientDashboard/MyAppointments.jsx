@@ -39,17 +39,45 @@ const initialAppointments = [
   }
 ];
 
-const MyAppointments = ({ setActiveTab }) => {
+const MyAppointments = ({ setActiveTab, appointments: propAppointments = [], loading = false }) => {
   const [activeFilter, setActiveFilter] = useState("Upcoming");
-  const [appointments, setAppointments] = useState(initialAppointments);
+
+  // Map backend structure to UI schema
+  const appointments = propAppointments.map((apt) => ({
+    id: apt.id,
+    doctor: `Dr. ${apt.doctor?.user?.name || "Specialist"}`,
+    specialty: apt.doctor?.specialization || "General Medicine",
+    type: "Consultation",
+    date: apt.appointmentDate,
+    time: apt.startTime,
+    duration: "30 mins",
+    mode: "In-Person",
+    status: apt.status === "PENDING" ? "Pending Review" : apt.status === "CONFIRMED" ? "Confirmed" : apt.status === "COMPLETED" ? "Completed" : "Cancelled",
+  }));
 
   const upcomingCount = appointments.filter(a => a.status !== "Completed" && a.status !== "Cancelled").length;
 
-  const handleCancel = (id) => {
+  const handleCancel = async (id) => {
     if (window.confirm("Are you sure you want to cancel this appointment?")) {
-      setAppointments(appointments.map(app => 
-        app.id === id ? { ...app, status: "Cancelled" } : app
-      ));
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(`http://localhost:8080/api/appointments/${id}/status?status=CANCELLED`, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          alert("Appointment cancelled successfully.");
+          window.location.reload();
+        } else {
+          const data = await response.json();
+          alert(data.error || "Could not cancel appointment.");
+        }
+      } catch (err) {
+        console.error("Cancel appointment error:", err);
+        alert("Failed to connect to the backend server.");
+      }
     }
   };
 
@@ -64,6 +92,14 @@ const MyAppointments = ({ setActiveTab }) => {
   };
 
   const filteredData = getFilteredData();
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-white/60 border border-white/45 rounded-3xl p-10 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md">
+        <p className="text-slate-500 font-semibold text-sm animate-pulse">Loading appointments...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

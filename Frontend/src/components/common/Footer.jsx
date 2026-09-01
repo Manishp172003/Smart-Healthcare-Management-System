@@ -6,6 +6,7 @@ import {
   Clock, 
   Send 
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -65,10 +66,10 @@ const Footer = () => {
           <div className="flex flex-col gap-3 sm:pl-4 lg:pl-12">
             <h4 className="text-white text-xs md:text-sm font-bold uppercase tracking-wider">Quick Links</h4>
             <nav className="flex flex-col gap-2.5 mt-2">
-              <a href="/" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Home</a>
-              <a href="#about" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">About Us</a>
-              <a href="#services" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Our Services</a>
-              <a href="#doctors" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Find Doctors</a>
+              <Link to="/" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Home</Link>
+              <Link to="/about" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">About Us</Link>
+              <Link to="/service" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Our Services</Link>
+              <Link to="/doctors" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Find Doctors</Link>
               <a href="#packages" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Packages</a>
               <a href="#testimonials" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Testimonials</a>
             </nav>

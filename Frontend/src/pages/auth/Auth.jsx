@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   UserRound,
   Mail,
@@ -16,6 +16,7 @@ import AuthBrandPanel from "../../components/auth/AuthBrandPanel";
 
 const Auth = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isLogin = location.pathname === "/login";
 
   const [showPassword, setShowPassword] = useState(false);
@@ -50,12 +51,50 @@ const Auth = () => {
     });
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login:", loginData);
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: loginData.email,
+          password: loginData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store JWT token and user details in localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("email", data.email);
+        localStorage.setItem("name", data.name);
+        localStorage.setItem("userId", data.id);
+
+        alert(`Welcome back, ${data.name}!`);
+
+        // Redirect based on user role
+        if (data.role === "ROLE_ADMIN") {
+          navigate("/admin/dashboard");
+        } else if (data.role === "ROLE_DOCTOR") {
+          navigate("/doctor/dashboard");
+        } else {
+          navigate("/patient/dashboard");
+        }
+      } else {
+        alert(data.error || "Login failed. Please verify your credentials.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Error: Could not connect to the authentication server.");
+    }
   };
 
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     if (registerData.password !== registerData.confirmPassword) {
       alert("Passwords do not match.");
@@ -65,7 +104,33 @@ const Auth = () => {
       alert("Please accept the Terms & Conditions.");
       return;
     }
-    console.log("Register:", registerData);
+
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: registerData.fullName,
+          email: registerData.email,
+          password: registerData.password,
+          role: "PATIENT"
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Registration successful! Please login.");
+        navigate("/login");
+      } else {
+        alert(data.error || "Registration failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      alert("Error: Could not connect to the authentication server.");
+    }
   };
 
   return (

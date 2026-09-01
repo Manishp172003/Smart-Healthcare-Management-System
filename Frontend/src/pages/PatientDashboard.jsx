@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/PatientDashboard/Sidebar";
 import DashboardHeader from "../components/PatientDashboard/DashboardHeader";
+import CustomConfirmModal from "../components/common/CustomConfirmModal";
+import EmergencyModal from "../components/PatientDashboard/EmergencyModal";
 import NextAppointment from "../components/PatientDashboard/NextAppointment";
 import QuickActions from "../components/PatientDashboard/QuickActions";
 import UpcomingAppointments from "../components/PatientDashboard/UpcomingAppointments";
@@ -15,6 +17,70 @@ import HelpCenter from "../components/PatientDashboard/HelpCenter";
 
 function PatientDashboard() {
   const [activeTab, setActiveTab] = useState("Dashboard");
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isSignOutConfirmOpen, setIsSignOutConfirmOpen] = useState(false);
+  const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("token");
+      if (!userId || !token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:8080/api/appointments/patient/${userId}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setAppointments(data);
+        }
+      } catch (err) {
+        console.error("Error fetching appointments:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
+
+  const handleEmergencyConfirm = async (coords) => {
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch("http://localhost:8080/api/emergencies/trigger", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          userId: userId,
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        }),
+      });
+
+      if (response.ok) {
+        setIsEmergencyModalOpen(false);
+        alert("🚨 EMERGENCY DISTRESS ALERT REGISTERED! Medical responders have been dispatched and notified of your exact coordinates.");
+      } else {
+        const data = await response.json();
+        alert(data.error || "Failed to trigger emergency alert. Please contact emergency services immediately.");
+      }
+    } catch (err) {
+      console.error("Emergency trigger error:", err);
+      alert("Network Error: Could not connect to system dispatcher. Please dial 102/108 immediately.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-tr from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0]/80 flex relative overflow-hidden z-0">
@@ -39,7 +105,22 @@ function PatientDashboard() {
       <div className="absolute bottom-[10%] left-[20%] w-[420px] h-[420px] rounded-full bg-[#0D9488]/6 blur-[120px] pointer-events-none -z-10" />
 
       {/* Sidebar Navigation */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        onSignOutTrigger={() => setIsSignOutConfirmOpen(true)} 
+        onEmergencyTrigger={() => setIsEmergencyModalOpen(true)}
+        isOpen={isMobileSidebarOpen}
+        onClose={() => setIsMobileSidebarOpen(false)}
+      />
+
+      {/* Backdrop overlay for mobile sidebar drawer */}
+      {isMobileSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 md:hidden" 
+          onClick={() => setIsMobileSidebarOpen(false)}
+        />
+      )}
 
       {/* Main Content Pane */}
       <main className="min-h-screen flex-1 md:pl-64 overflow-x-hidden">
@@ -47,7 +128,11 @@ function PatientDashboard() {
         <div className="p-6 md:p-10 w-full max-w-[1440px] mx-auto">
 
           {/* Header */}
-          <DashboardHeader activeTab={activeTab} setActiveTab={setActiveTab} />
+          <DashboardHeader 
+            activeTab={activeTab} 
+            setActiveTab={setActiveTab} 
+            onMenuToggle={() => setIsMobileSidebarOpen(true)}
+          />
 
           {/* View Router */}
           <div className="mt-8 relative min-h-[500px]">
@@ -57,18 +142,18 @@ function PatientDashboard() {
                 {/* Top Row Grid */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                   <div className="lg:col-span-2">
-                    <NextAppointment />
+                    <NextAppointment appointments={appointments} loading={loading} />
                   </div>
-                  <QuickActions />
+                  <QuickActions setActiveTab={setActiveTab} />
                 </div>
 
                 {/* Bottom Row Grid */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                   <div className="lg:col-span-1">
-                    <UpcomingAppointments />
+                    <UpcomingAppointments appointments={appointments} loading={loading} />
                   </div>
                   <div className="lg:col-span-2">
-                    <RecentHistory />
+                    <RecentHistory appointments={appointments} loading={loading} />
                   </div>
                 </div>
 
@@ -77,7 +162,7 @@ function PatientDashboard() {
 
             {activeTab === "My Appointments" && (
               <div className="animate-view-fade-in-up">
-                <MyAppointments setActiveTab={setActiveTab} />
+                <MyAppointments setActiveTab={setActiveTab} appointments={appointments} loading={loading} />
               </div>
             )}
             {activeTab === "Book Appointment" && (
@@ -105,6 +190,26 @@ function PatientDashboard() {
         </div>
 
       </main>
+
+      {/* Sign Out Confirmation Modal */}
+      <CustomConfirmModal 
+        isOpen={isSignOutConfirmOpen} 
+        onClose={() => setIsSignOutConfirmOpen(false)} 
+        onConfirm={() => {
+          setIsSignOutConfirmOpen(false);
+          localStorage.clear();
+          window.location.href = "/login";
+        }}
+        title="Sign Out Session"
+        message="Are you sure you want to end your patient portal session? You will be returned to the authentication portal."
+      />
+
+      {/* Emergency Trigger Modal */}
+      <EmergencyModal 
+        isOpen={isEmergencyModalOpen}
+        onClose={() => setIsEmergencyModalOpen(false)}
+        onConfirm={handleEmergencyConfirm}
+      />
 
     </div>
   );

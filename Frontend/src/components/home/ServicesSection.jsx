@@ -85,12 +85,13 @@ const ServicesSection = () => {
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {services.map((service) => {
+          {services.map((service, index) => {
             const Icon = service.icon;
+            const delayClasses = ['animate-delay-100', 'animate-delay-200', 'animate-delay-300', 'animate-delay-400'];
 
             return (
               <div
-                className="flex flex-col items-center text-center justify-between p-8 bg-white border border-[#E2E8F0] rounded-[28px] overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:border-transparent hover:shadow-[0_12px_32px_rgba(15,23,42,0.06)] min-h-[300px] group"
+                className={`flex flex-col items-center text-center justify-between p-8 bg-white border border-[#E2E8F0] rounded-[28px] overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:border-transparent hover:shadow-[0_12px_32px_rgba(15,23,42,0.06)] min-h-[300px] group animate-on-scroll ${delayClasses[index % delayClasses.length]}`}
                 key={service.title}
               >
                 <div className="flex flex-col items-center">

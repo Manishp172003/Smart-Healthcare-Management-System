@@ -6,8 +6,11 @@ import WhyChooseSection from "../components/home/WhyChooseSection";
 import DoctorsSection from "../components/home/DoctorsSection";
 import TestimonialsSection from "../components/home/TestimonialsSection";
 import Footer from "../components/common/Footer";
+import useScrollAnimation from "../hooks/useScrollAnimation";
 
 const Home = () => {
+  useScrollAnimation();
+
   return (
     <div className="min-h-screen bg-[#EFF3F7] pt-4 pb-0 flex flex-col gap-6">
       <Navbar />
