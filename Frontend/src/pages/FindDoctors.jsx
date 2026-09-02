@@ -246,20 +246,11 @@ const FindDoctors = () => {
       >
 
       {/* 1. PAGE HERO */}
-
-      {/* 1. PAGE HERO */}
-
-<section 
-  className="relative overflow-hidden pt-32 pb-28 lg:pt-40 lg:pb-36 bg-cover bg-center bg-no-repeat flex items-center"
-  style={{ backgroundImage: `url(${doctorHeroImg})` }}
->
-
       <section 
-        className="relative overflow-hidden pt-32 pb-28 lg:pt-40 lg:pb-36 bg-cover bg-center bg-no-repeat flex items-center"
+        className="relative overflow-hidden pt-32 pb-28 lg:pt-40 lg:pb-36 bg-cover bg-center bg-no-repeat flex items-center w-full"
         style={{ backgroundImage: `url(${doctorHeroImg})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/75 to-slate-950/40 pointer-events-none -z-0" />
-
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/60 to-transparent pointer-events-none" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="max-w-2xl space-y-6">
@@ -300,7 +291,6 @@ const FindDoctors = () => {
           </div>
         </div>
       </section>
-            </section>
     
 
       {/* 2. SEARCH DOCTOR PANEL */}
@@ -387,42 +377,6 @@ const FindDoctors = () => {
         </div>
       </section>
 
-      {/* 3. TRUST STATISTICS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
-        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-8 lg:p-12">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
-            
-            <div className="space-y-1 pt-4 lg:pt-0">
-              <p className="text-3xl sm:text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-                10K+
-              </p>
-              <p className="text-sm sm:text-base font-medium text-slate-600">Patients Served</p>
-            </div>
-
-            <div className="space-y-1 pt-4 lg:pt-0">
-              <p className="text-3xl sm:text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-                250+
-              </p>
-              <p className="text-sm sm:text-base font-medium text-slate-600">Verified Doctors</p>
-            </div>
-
-            <div className="space-y-1 pt-4 lg:pt-0">
-              <p className="text-3xl sm:text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-                50+
-              </p>
-              <p className="text-sm sm:text-base font-medium text-slate-600">Medical Specialties</p>
-            </div>
-
-            <div className="space-y-1 pt-4 lg:pt-0">
-              <p className="text-3xl sm:text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-                4.9/5
-              </p>
-              <p className="text-sm sm:text-base font-medium text-slate-600">Patient Rating</p>
-            </div>
-
-          </div>
-        </div>
-      </section>
 
       {/* 4. BROWSE BY SPECIALTY (CONTINUOUSLY MOVING INFINITE CAROUSEL) */}
       <section id="specialties" className="bg-gradient-to-b from-slate-100/60 via-blue-50/20 to-slate-100/60 py-20 border-y border-slate-200/60 scroll-mt-24 mb-20 overflow-hidden">
