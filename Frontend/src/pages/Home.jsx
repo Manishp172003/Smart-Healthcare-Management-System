@@ -2,7 +2,7 @@ import Navbar from "../components/common/Navbar";
 import Hero from "../components/home/Hero";
 import AboutSection from "../components/home/AboutSection";
 import ServicesSection from "../components/home/ServicesSection";
-import WhyChooseSection from "../components/home/WhyChooseSection";
+
 import DoctorsSection from "../components/home/DoctorsSection";
 import TestimonialsSection from "../components/home/TestimonialsSection";
 import Footer from "../components/common/Footer";
@@ -19,7 +19,7 @@ const Home = () => {
       <ServicesSection />
       <DoctorsSection />
       <TestimonialsSection />
-      <WhyChooseSection />
+      
       <Footer />
     </div>
   );

@@ -218,143 +218,63 @@ const Services = () => {
       </section>
 
       {/* 2. SERVICES OVERVIEW */}
-      <section className="py-24 font-['Poppins',sans-serif] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center">
-          <div className="max-w-3xl mx-auto space-y-4">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+      {/* 2. SERVICES OVERVIEW */}
+      <section className="py-28 bg-white font-['Poppins',sans-serif]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Header */}
+          <div className="text-center max-w-[650px] mx-auto mb-20 space-y-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#0F172A] tracking-tight">
               Everything You Need for Better Healthcare
             </h2>
-            <p className="text-slate-500 text-base sm:text-lg">
+            <p className="text-slate-500 text-base sm:text-lg leading-relaxed">
               Access essential healthcare services through one simple and secure platform.
             </p>
           </div>
-        </div>
 
-        {/* Live Infinite Marquee Carousel */}
-        <div className="relative w-full overflow-hidden flex [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
-          <motion.div
-            className="flex gap-8 py-4 shrink-0"
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{
-              ease: "linear",
-              duration: 25,
-              repeat: Infinity,
-            }}
-          >
-            {/* Double the array for a completely seamless loop */}
-            {[...servicesList, ...servicesList].map((service, index) => {
+          {/* Static Responsive Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
+            {servicesList.map((service) => {
               const Icon = service.icon;
               return (
-                <div
-                  key={`${service.id}-${index}`}
-                  className="group bg-white rounded-[24px] border border-slate-200/80 p-8 shadow-sm hover:shadow-xl hover:border-cyan-500/30 transition-all duration-300 flex flex-col justify-between w-[350px] sm:w-[380px] shrink-0"
+                <motion.div
+                  key={service.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4 }}
+                  className="group flex flex-col items-start"
                 >
-                  <div>
-                    <div className="w-14 h-14 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 mb-6 group-hover:bg-cyan-500 group-hover:text-white group-hover:border-cyan-500 transition-colors duration-300">
-                      <Icon className="w-7 h-7" />
-                    </div>
-
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-cyan-600 transition-colors">
-                      {service.title}
-                    </h3>
-
-                    <p className="text-slate-500 text-sm leading-relaxed mb-6">
-                      {service.description}
-                    </p>
+                  {/* Icon Container */}
+                  <div className="w-[64px] h-[64px] rounded-xl bg-[#F3F7FF] flex items-center justify-center text-[#2563EB] group-hover:bg-[#2563EB] group-hover:text-white transition-colors duration-200">
+                    <Icon className="w-7 h-7" />
                   </div>
 
+                  {/* Title */}
+                  <h3 className="text-lg sm:text-[19px] font-semibold text-[#0F172A] mt-5 group-hover:text-[#2563EB] transition-colors">
+                    {service.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-[#64748B] text-sm sm:text-base leading-[1.7] mt-3 mb-6">
+                    {service.description}
+                  </p>
+
+                  {/* Learn More Link */}
                   <Link
                     to={service.link}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-600 group-hover:text-cyan-700 pt-4 border-t border-slate-100"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-[#2563EB] mt-auto"
                   >
                     <span>Learn More</span>
-                    <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200" />
                   </Link>
-                </div>
+                </motion.div>
               );
             })}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 3. FEATURED SERVICE (SMART HEALTHCARE) */}
-      <section className="py-20 bg-gradient-to-b from-slate-100/60 via-teal-50/20 to-slate-100/60 border-y border-slate-200/60 font-['Poppins',sans-serif]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            
-            {/* LEFT: Local Image Replacement */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="lg:col-span-6 relative"
-            >
-              <div className="absolute -inset-4 bg-gradient-to-r from-teal-500/10 to-blue-500/10 rounded-[2.5rem] blur-xl -z-10" />
-              <div className="rounded-[2.5rem] overflow-hidden border border-slate-200 shadow-2xl bg-white aspect-[4/3] relative">
-                <img 
-                  src={smartHealthcareImg} 
-                  alt="Connected Healthcare Platform" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </motion.div>
-
-            {/* RIGHT: Content */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="lg:col-span-6 space-y-6"
-            >
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-50 border border-teal-100 text-teal-700 text-xs font-bold tracking-wider uppercase">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>SMART HEALTHCARE</span>
-              </div>
-
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                Everything Connected in One Place
-              </h2>
-
-              <p className="text-slate-600 text-base leading-relaxed">
-                Our platform brings doctors, appointments, healthcare information, and essential services together to create a smoother and more connected healthcare experience.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
-                  <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
-                  <span className="text-sm font-semibold text-slate-800">Easy Appointment Management</span>
-                </div>
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
-                  <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
-                  <span className="text-sm font-semibold text-slate-800">Trusted Healthcare Professionals</span>
-                </div>
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
-                  <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
-                  <span className="text-sm font-semibold text-slate-800">Secure Patient Information</span>
-                </div>
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
-                  <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
-                  <span className="text-sm font-semibold text-slate-800">Simple & Convenient Access</span>
-                </div>
-              </div>
-
-              <div className="pt-4">
-                <Link 
-                  to="/doctors" 
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-lg shadow-slate-900/10 transition-all duration-200 text-sm sm:text-base"
-                >
-                  Get Started
-                  <ChevronRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </motion.div>
-
           </div>
+
         </div>
       </section>
-
       {/* 4. WHY CHOOSE OUR SERVICES (Redesigned Bento Section) */}
       <section className="relative py-28 overflow-hidden bg-gradient-to-b from-slate-50 via-teal-50/20 to-slate-50 font-['Poppins',sans-serif]">
         
