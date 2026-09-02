@@ -10,6 +10,7 @@ import {
   ArrowRight,
   HeartPulse,
   Check,
+  Stethoscope,
 } from "lucide-react";
 
 import AuthBrandPanel from "../../components/auth/AuthBrandPanel";
@@ -22,6 +23,9 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // Role selection state
+  const [selectedRole, setSelectedRole] = useState("PATIENT"); // PATIENT, DOCTOR
+
   // Separate states for Login and Register
   const [loginData, setLoginData] = useState({
     email: "",
@@ -33,6 +37,9 @@ const Auth = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    phone: "",
+    licenseNumber: "",
+    specialization: "",
   });
 
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -105,18 +112,35 @@ const Auth = () => {
       return;
     }
 
+    // Doctor-specific validation
+    if (selectedRole === "DOCTOR") {
+      if (!registerData.licenseNumber || !registerData.specialization) {
+        alert("License number and specialization are required for doctor registration.");
+        return;
+      }
+    }
+
     try {
+      const requestBody = {
+        name: registerData.fullName,
+        email: registerData.email,
+        password: registerData.password,
+        role: selectedRole,
+        phone: registerData.phone
+      };
+
+      // Add doctor-specific fields
+      if (selectedRole === "DOCTOR") {
+        requestBody.licenseNumber = registerData.licenseNumber;
+        requestBody.specialization = registerData.specialization;
+      }
+
       const response = await fetch("http://localhost:8080/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: registerData.fullName,
-          email: registerData.email,
-          password: registerData.password,
-          role: "PATIENT"
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
@@ -197,6 +221,32 @@ const Auth = () => {
                   <p className="mt-2 text-sm text-slate-500">
                     Welcome back. Sign in to continue.
                   </p>
+                </div>
+
+                {/* Role Selection Tabs */}
+                <div className="mt-6 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole("PATIENT")}
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-xs font-semibold transition-all ${
+                      selectedRole === "PATIENT"
+                        ? "bg-gradient-to-r from-[#2563EB] to-[#0D9488] text-white shadow-md"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    Patient
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole("DOCTOR")}
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-xs font-semibold transition-all ${
+                      selectedRole === "DOCTOR"
+                        ? "bg-gradient-to-r from-[#2563EB] to-[#0D9488] text-white shadow-md"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    Doctor
+                  </button>
                 </div>
 
                 {/* Form */}
@@ -282,6 +332,13 @@ const Auth = () => {
                     Create Account
                   </Link>
                 </p>
+
+                {/* Admin Login Link */}
+                <p className="mt-2 text-center text-xs text-slate-400">
+                  <Link to="/admin-login" className="hover:text-[#2563EB] transition">
+                    Admin Login
+                  </Link>
+                </p>
               </div>
 
               {/* REGISTER VIEW */}
@@ -307,6 +364,32 @@ const Auth = () => {
                   <p className="mt-2 text-sm text-slate-500">
                     Create your SmartHealth account.
                   </p>
+                </div>
+
+                {/* Role Selection Tabs */}
+                <div className="mt-6 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole("PATIENT")}
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-xs font-semibold transition-all ${
+                      selectedRole === "PATIENT"
+                        ? "bg-gradient-to-r from-[#2563EB] to-[#0D9488] text-white shadow-md"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    Patient
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole("DOCTOR")}
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-xs font-semibold transition-all ${
+                      selectedRole === "DOCTOR"
+                        ? "bg-gradient-to-r from-[#2563EB] to-[#0D9488] text-white shadow-md"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    Doctor
+                  </button>
                 </div>
 
                 {/* Form */}
@@ -379,6 +462,51 @@ const Auth = () => {
                     </button>
                   </div>
 
+                  {/* Phone Number (Required for both) */}
+                  <div className="relative">
+                    <Mail size={19} className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-500" />
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={registerData.phone}
+                      onChange={handleRegisterChange}
+                      placeholder="Phone Number"
+                      required
+                      className="w-full border-0 border-b border-slate-300 bg-transparent py-3 pl-9 pr-3 text-sm text-[#162235] outline-none transition placeholder:text-slate-400 focus:border-[#2563EB] focus:ring-0"
+                    />
+                  </div>
+
+                  {/* Doctor-specific fields */}
+                  {selectedRole === "DOCTOR" && (
+                    <>
+                      <div className="relative">
+                        <Stethoscope size={19} className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-500" />
+                        <input
+                          type="text"
+                          name="licenseNumber"
+                          value={registerData.licenseNumber}
+                          onChange={handleRegisterChange}
+                          placeholder="Medical License Number"
+                          required
+                          className="w-full border-0 border-b border-slate-300 bg-transparent py-3 pl-9 pr-3 text-sm text-[#162235] outline-none transition placeholder:text-slate-400 focus:border-[#2563EB] focus:ring-0"
+                        />
+                      </div>
+
+                      <div className="relative">
+                        <Stethoscope size={19} className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-500" />
+                        <input
+                          type="text"
+                          name="specialization"
+                          value={registerData.specialization}
+                          onChange={handleRegisterChange}
+                          placeholder="Specialization (e.g., Cardiology)"
+                          required
+                          className="w-full border-0 border-b border-slate-300 bg-transparent py-3 pl-9 pr-3 text-sm text-[#162235] outline-none transition placeholder:text-slate-400 focus:border-[#2563EB] focus:ring-0"
+                        />
+                      </div>
+                    </>
+                  )}
+
                   <div className="flex items-center justify-between gap-4 pt-2">
                     <label className="flex cursor-pointer items-center gap-2">
                       <input
@@ -436,6 +564,13 @@ const Auth = () => {
                   Already have an account?
                   <Link to="/login" className="ml-1 font-bold text-[#2563EB] hover:underline">
                     Login
+                  </Link>
+                </p>
+
+                {/* Admin Login Link */}
+                <p className="mt-2 text-center text-xs text-slate-400">
+                  <Link to="/admin-login" className="hover:text-[#2563EB] transition">
+                    Admin Login
                   </Link>
                 </p>
               </div>

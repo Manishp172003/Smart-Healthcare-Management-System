@@ -41,6 +41,12 @@ public class Appointment {
     @Column(nullable = false)
     private AppointmentStatus status = AppointmentStatus.PENDING;
 
+    @Column(name = "reason", columnDefinition = "TEXT")
+    private String reason;
+
+    @Column(name = "appointment_type", columnDefinition = "VARCHAR(20)")
+    private String appointmentType;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -53,7 +59,7 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(Long id, Patient patient, Doctor doctor, LocalDate appointmentDate, LocalTime startTime, LocalTime endTime, AppointmentStatus status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Appointment(Long id, Patient patient, Doctor doctor, LocalDate appointmentDate, LocalTime startTime, LocalTime endTime, AppointmentStatus status, String reason, String appointmentType, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.patient = patient;
         this.doctor = doctor;
@@ -61,6 +67,8 @@ public class Appointment {
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
+        this.reason = reason;
+        this.appointmentType = appointmentType;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -87,6 +95,12 @@ public class Appointment {
     public AppointmentStatus getStatus() { return status; }
     public void setStatus(AppointmentStatus status) { this.status = status; }
 
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
+
+    public String getAppointmentType() { return appointmentType; }
+    public void setAppointmentType(String appointmentType) { this.appointmentType = appointmentType; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
@@ -105,6 +119,8 @@ public class Appointment {
         private LocalTime startTime;
         private LocalTime endTime;
         private AppointmentStatus status = AppointmentStatus.PENDING;
+        private String reason;
+        private String appointmentType;
 
         public AppointmentBuilder patient(Patient patient) { this.patient = patient; return this; }
         public AppointmentBuilder doctor(Doctor doctor) { this.doctor = doctor; return this; }
@@ -112,9 +128,11 @@ public class Appointment {
         public AppointmentBuilder startTime(LocalTime startTime) { this.startTime = startTime; return this; }
         public AppointmentBuilder endTime(LocalTime endTime) { this.endTime = endTime; return this; }
         public AppointmentBuilder status(AppointmentStatus status) { this.status = status; return this; }
+        public AppointmentBuilder reason(String reason) { this.reason = reason; return this; }
+        public AppointmentBuilder appointmentType(String appointmentType) { this.appointmentType = appointmentType; return this; }
 
         public Appointment build() {
-            return new Appointment(null, patient, doctor, appointmentDate, startTime, endTime, status, null, null);
+            return new Appointment(null, patient, doctor, appointmentDate, startTime, endTime, status, reason, appointmentType, null, null);
         }
     }
 }

@@ -8,15 +8,19 @@ public class AppointmentRequest {
     private Long doctorId;
     private LocalDate appointmentDate;
     private LocalTime startTime;
+    private String reason;
+    private String appointmentType; // "in-person" or "telehealth"
 
     public AppointmentRequest() {
     }
 
-    public AppointmentRequest(Long patientUserId, Long doctorId, LocalDate appointmentDate, LocalTime startTime) {
+    public AppointmentRequest(Long patientUserId, Long doctorId, LocalDate appointmentDate, LocalTime startTime, String reason, String appointmentType) {
         this.patientUserId = patientUserId;
         this.doctorId = doctorId;
         this.appointmentDate = appointmentDate;
         this.startTime = startTime;
+        this.reason = reason;
+        this.appointmentType = appointmentType;
     }
 
     public Long getPatientUserId() { return patientUserId; }
@@ -30,4 +34,10 @@ public class AppointmentRequest {
 
     public LocalTime getStartTime() { return startTime; }
     public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
+
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
+
+    public String getAppointmentType() { return appointmentType; }
+    public void setAppointmentType(String appointmentType) { this.appointmentType = appointmentType; }
 }

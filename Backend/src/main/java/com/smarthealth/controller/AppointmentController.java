@@ -61,6 +61,18 @@ public class AppointmentController {
         }
     }
 
+    @GetMapping("/doctor-id/{doctorId}")
+    public ResponseEntity<?> getAppointmentsByDoctorId(@PathVariable Long doctorId) {
+        try {
+            List<Appointment> list = appointmentService.getAppointmentsByDoctorId(doctorId);
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     @PutMapping("/{id}/status")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam AppointmentStatus status) {
         try {

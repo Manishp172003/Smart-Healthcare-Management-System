@@ -18,6 +18,9 @@ const Hero = () => {
             backgroundPosition: "right 10px"
 }}
     >
+      {/* Dark overlay for better text contrast */}
+      <div className="absolute inset-0 bg-slate-900/40 z-0" />
+
       <div className="w-full max-w-[1440px] mx-auto px-6 md:px-12 relative z-10 flex flex-col justify-center">
 
         {/* Hero Content Box */}

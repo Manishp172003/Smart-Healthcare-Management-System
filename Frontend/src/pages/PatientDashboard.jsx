@@ -125,7 +125,7 @@ function PatientDashboard() {
       {/* Main Content Pane */}
       <main className="min-h-screen flex-1 md:pl-64 overflow-x-hidden">
 
-        <div className="p-6 md:p-10 w-full max-w-[1440px] mx-auto">
+        <div className="p-4 sm:p-6 md:p-10 w-full max-w-[1440px] mx-auto">
 
           {/* Header */}
           <DashboardHeader 

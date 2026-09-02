@@ -61,22 +61,22 @@ const Contact = () => {
       >
 
       {/* HEADER INTRO SECTION */}
-      <section className="relative overflow-hidden pt-40 pb-32 lg:pt-52 lg:pb-44 text-white">
+      <section className="relative overflow-hidden pt-48 pb-40 lg:pt-64 lg:pb-52 text-white min-h-[75vh]">
         {/* Healthcare Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0" 
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
           style={{ backgroundImage: `url(${contactBg})` }}
         />
-        {/* Slightly darker transparent overlay to make text pop */}
-        <div className="absolute inset-0 bg-slate-950/60 z-0" />
-        
+        {/* Enhanced dark overlay for better text contrast */}
+        <div className="absolute inset-0 bg-slate-950/70 z-0" />
+
         {/* Decorative Glow Elements */}
         <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none z-0" />
         <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none z-0" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="max-w-3xl mx-auto space-y-6">
-            
+          <div className="max-w-4xl mx-auto space-y-6">
+
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-xs font-bold tracking-wider uppercase backdrop-blur-md shadow-inner font-['Poppins',sans-serif]">
               <Sparkles className="w-4 h-4 text-cyan-300 animate-pulse" />
@@ -84,12 +84,12 @@ const Contact = () => {
             </div>
 
             {/* Heading - solid dark rich contrast */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.2] text-white font-['Poppins',sans-serif] drop-shadow-md">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-white font-['Poppins',sans-serif] drop-shadow-md">
               Let's Connect <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-400 bg-clip-text text-transparent">With You</span>
             </h1>
 
             {/* Supporting Text - solid deep slate text with strong legibility */}
-            <p className="text-slate-200 text-base sm:text-lg leading-relaxed font-['Poppins',sans-serif] font-medium drop-shadow">
+            <p className="text-slate-200 text-lg sm:text-xl leading-relaxed font-['Poppins',sans-serif] font-medium drop-shadow max-w-2xl mx-auto">
               Have questions or need assistance? Reach out to our team for any healthcare-related queries, appointment support, or guidance.
             </p>
 

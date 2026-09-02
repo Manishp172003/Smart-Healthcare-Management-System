@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 
-import AboutSectionSmart from '../assets/About-Section/About-Hero.png';
+import AboutSectionSmart from '/images/about_us heroIllustration.png';
 import PlatformMissionImg from '../assets/About-Section/Platform-mission-img.png';
 import WhyChooseUs from '../assets/About-Section/Why-choose-section.png';
 
@@ -115,23 +115,23 @@ export default function AboutUsPage() {
       {/* Existing Navbar Integration */}
       <Navbar />
 
-      {/* Main Content Wrapper with top padding to prevent fixed navbar overlap */}
-      <motion.main 
+      {/* Main Content Wrapper - no top padding to let hero start from top */}
+      <motion.main
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="flex-grow pt-[76px]"
+        className="flex-grow"
       >
 
         {/* 1. HERO SECTION: Full width container with cover background */}
-        <section className="relative w-full h-[40vh] sm:h-[55vh] lg:h-[70vh] bg-slate-900 overflow-hidden flex items-center justify-center">
-          <div 
+        <section className="relative w-full h-[60vh] sm:h-[75vh] lg:h-[90vh] overflow-hidden flex items-center justify-center pt-[76px]">
+          <div
             className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${AboutSectionSmart})` }}
+            style={{ backgroundImage: `url(${AboutSectionSmart})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
           >
-            {/* Subtle dark blue transparent overlay for text readability */}
-            <div className="absolute inset-0 bg-slate-950/50 mix-blend-multiply"></div>
-            <div className="absolute inset-0 bg-blue-950/30"></div>
+            {/* Enhanced dark overlay for better text contrast */}
+            <div className="absolute inset-0 bg-slate-950/60 mix-blend-multiply"></div>
+            <div className="absolute inset-0 bg-blue-950/40"></div>
           </div>
 
           {/* Centered Content */}

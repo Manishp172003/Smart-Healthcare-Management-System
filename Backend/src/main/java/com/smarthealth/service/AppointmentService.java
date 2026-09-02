@@ -42,10 +42,15 @@ public class AppointmentService {
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new RuntimeException("Error: Doctor not found with ID: " + request.getDoctorId()));
 
-        // 3. Acquire Pessimistic Write Lock & Check for conflicting bookings
+        // 3. Validate appointment type against doctor's capabilities
+        if ("telehealth".equalsIgnoreCase(request.getAppointmentType()) && !Boolean.TRUE.equals(doctor.getSupportsTelehealth())) {
+            throw new RuntimeException("Error: This doctor does not support telehealth appointments.");
+        }
+
+        // 4. Acquire Pessimistic Write Lock & Check for conflicting bookings
         Optional<Appointment> conflicting = appointmentRepository.findConflictingAppointmentWithLock(
-                request.getDoctorId(), 
-                request.getAppointmentDate(), 
+                request.getDoctorId(),
+                request.getAppointmentDate(),
                 request.getStartTime()
         );
 
@@ -53,10 +58,10 @@ public class AppointmentService {
             throw new RuntimeException("Conflict Error: This doctor slot is already booked. Please choose another time!");
         }
 
-        // 4. Compute end time based on doctor's slot duration
+        // 5. Compute end time based on doctor's slot duration
         LocalTime endTime = request.getStartTime().plusMinutes(doctor.getSlotDurationMinutes());
 
-        // 5. Build and save the appointment
+        // 6. Build and save the appointment
         Appointment appointment = Appointment.builder()
                 .patient(patient)
                 .doctor(doctor)
@@ -64,6 +69,8 @@ public class AppointmentService {
                 .startTime(request.getStartTime())
                 .endTime(endTime)
                 .status(AppointmentStatus.PENDING)
+                .reason(request.getReason())
+                .appointmentType(request.getAppointmentType())
                 .build();
 
         return appointmentRepository.save(appointment);
@@ -81,6 +88,11 @@ public class AppointmentService {
         Doctor doctor = doctorRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Error: Doctor not found!"));
         return appointmentRepository.findByDoctorId(doctor.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Appointment> getAppointmentsByDoctorId(Long doctorId) {
+        return appointmentRepository.findByDoctorId(doctorId);
     }
 
     @Transactional

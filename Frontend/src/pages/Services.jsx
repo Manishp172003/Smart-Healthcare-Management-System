@@ -137,8 +137,8 @@ const Services = () => {
           />
         </div>
 
-        {/* Strong Dark Gradient Overlay so text stands out perfectly */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-teal-950/60 -z-20" />
+        {/* Enhanced Dark Gradient Overlay so text stands out perfectly */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/95 to-teal-950/70 -z-20" />
 
         {/* Subtle background glow accents */}
         <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none -z-10" />
