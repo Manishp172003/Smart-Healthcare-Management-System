@@ -137,8 +137,10 @@ export default function AboutUsPage() {
           {/* Centered Content */}
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-4 sm:mb-6 drop-shadow-md">
-              About Our Healthcare <br className="hidden sm:inline" />
-              Platform
+              About Our <br className="hidden sm:inline" />
+              <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-400 bg-clip-text text-transparent">
+                Healthcare Platform
+              </span>
             </h1>
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-100 max-w-2xl mx-auto font-normal leading-relaxed drop-shadow">
               Making healthcare simpler, smarter, and more accessible by connecting patients and healthcare professionals through one digital platform.

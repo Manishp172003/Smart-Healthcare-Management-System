@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import {
   CheckCircle2,
   ArrowRight,
@@ -13,7 +14,15 @@ import {
 
 // --- COUNTER COMPONENT ---
 // A reusable component to handle the smooth count-up animation
-const CounterItem = ({ end, duration = 2000, label, icon: Icon, suffix = "+" }) => {
+const CounterItem = ({ 
+  end, 
+  duration = 2000, 
+  label, 
+  icon: Icon, 
+  suffix = "+",
+  iconColor = "text-blue-600",
+  iconBg = "bg-blue-50/90 border-blue-100"
+}) => {
   const [count, setCount] = useState(0);
   const nodeRef = useRef(null);
   const [hasStarted, setHasStarted] = useState(false);
@@ -58,8 +67,8 @@ const CounterItem = ({ end, duration = 2000, label, icon: Icon, suffix = "+" }) 
   }, [hasStarted, end, duration]);
 
   return (
-    <div ref={nodeRef} className="flex items-center gap-4 p-6 bg-white border border-[#E2E8F0] rounded-2xl shadow-[0_4px_20px_rgba(15,23,42,0.03)]">
-      <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-[#0D9488] bg-[rgba(13,148,136,0.08)] rounded-xl">
+    <div ref={nodeRef} className="flex items-center gap-4 p-5 md:p-6 bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300">
+      <div className={`flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-xl border ${iconColor} ${iconBg}`}>
         <Icon size={24} />
       </div>
       <div>
@@ -75,12 +84,40 @@ const CounterItem = ({ end, duration = 2000, label, icon: Icon, suffix = "+" }) 
 // --- STATS / COUNTER SECTION ---
 const StatsSection = () => {
   return (
-    <div className="w-full px-4 md:px-7 max-w-[1440px] mx-auto mb-12">
+    <div className="w-full px-4 md:px-7 max-w-[1440px] mx-auto mb-14">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <CounterItem end={15000} label="Active Patients" icon={Users} suffix="+" />
-        <CounterItem end={250} label="Expert Doctors" icon={Award} suffix="+" />
-        <CounterItem end={98} label="Satisfaction Rate" icon={Smile} suffix="%" />
-        <CounterItem end={24} label="Hours Support" icon={Clock} suffix="/7" />
+        <CounterItem 
+          end={15000} 
+          label="Active Patients" 
+          icon={Users} 
+          suffix="+" 
+          iconColor="text-blue-600" 
+          iconBg="bg-blue-50/90 border-blue-100" 
+        />
+        <CounterItem 
+          end={250} 
+          label="Expert Doctors" 
+          icon={Award} 
+          suffix="+" 
+          iconColor="text-teal-600" 
+          iconBg="bg-teal-50/90 border-teal-100" 
+        />
+        <CounterItem 
+          end={98} 
+          label="Satisfaction Rate" 
+          icon={Smile} 
+          suffix="%" 
+          iconColor="text-amber-500" 
+          iconBg="bg-amber-50/90 border-amber-100" 
+        />
+        <CounterItem 
+          end={24} 
+          label="Hours Support" 
+          icon={Clock} 
+          suffix="/7" 
+          iconColor="text-indigo-600" 
+          iconBg="bg-indigo-50/90 border-indigo-100" 
+        />
       </div>
     </div>
   );
@@ -93,23 +130,23 @@ const AboutSection = () => {
       {/* Counter Section placed right before the About Section */}
       <StatsSection />
 
-      <div className="w-full px-4 md:px-7 max-w-[1440px] mx-auto" id="about">
-        <div className="w-full bg-white border border-[#E2E8F0] rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.04)] p-8 md:p-12 grid grid-cols-1 items-center gap-10 lg:grid-cols-[48%_52%] lg:gap-16">
+      <div className="w-full px-4 md:px-7 max-w-[1440px] mx-auto py-6 md:py-12" id="about">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[48%_52%] lg:gap-16">
 
           {/* Image */}
-          <div className="relative min-h-[280px] overflow-hidden rounded-[22px] bg-[#e8f4f7] shadow-[0_15px_40px_rgba(15,23,42,0.08)] md:min-h-[350px] lg:min-h-[390px]">
+          <div className="relative min-h-[300px] overflow-hidden rounded-3xl bg-slate-100 shadow-[0_15px_40px_rgba(15,23,42,0.08)] border border-slate-200/70 md:min-h-[370px] lg:min-h-[420px] group">
             <img
               src="/images/about-healthcare.png"
               alt="Healthcare professional providing care"
-              className="w-full h-full min-h-[280px] object-cover md:min-h-[350px] lg:min-h-[390px]"
+              className="w-full h-full min-h-[300px] object-cover md:min-h-[370px] lg:min-h-[420px] group-hover:scale-105 transition-transform duration-700"
             />
 
-            <div className="absolute left-5 bottom-5 flex items-center gap-2.5 p-3 px-3.75 bg-white/94 border border-[rgba(226,232,240,0.8)] rounded-xl shadow-[0_8px_25px_rgba(15,23,42,0.12)] backdrop-blur-md text-[#0D9488]">
+            <div className="absolute left-5 bottom-5 flex items-center gap-2.5 p-3 px-4 bg-white/95 border border-slate-200/80 rounded-2xl shadow-xl backdrop-blur-md text-teal-600">
               <ShieldCheck size={20} />
 
               <div className="flex flex-col">
-                <strong className="text-[#0F172A] text-[11px]">Trusted Care</strong>
-                <span className="mt-0.5 text-[#64748B] text-[9px]">Your health matters to us</span>
+                <strong className="text-[#0F172A] text-xs font-bold">Trusted Care</strong>
+                <span className="mt-0.5 text-[#64748B] text-[10px]">Your health matters to us</span>
               </div>
             </div>
           </div>
@@ -133,11 +170,11 @@ const AboutSection = () => {
               SmartHealth connects you with verified healthcare professionals. Manage appointments, consult expert doctors, and access your secure records—all in one place.
             </p>
 
-            {/* Benefits */}
-            <div className="w-full flex flex-col gap-5 mt-3 border-l-2 border-slate-100 pl-4 md:pl-5">
+            {/* Benefits with Multi-Accent Colors */}
+            <div className="w-full flex flex-col gap-4 mt-2 border-l-2 border-slate-100 pl-4 md:pl-5">
 
               <div className="flex items-center gap-3.5">
-                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-[#0D9488] bg-[rgba(13,148,136,0.08)] rounded-xl">
+                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-blue-600 bg-blue-50 border border-blue-100 rounded-2xl shadow-sm">
                   <CalendarCheck size={22} />
                 </div>
 
@@ -148,7 +185,7 @@ const AboutSection = () => {
               </div>
 
               <div className="flex items-center gap-3.5">
-                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-[#0D9488] bg-[rgba(13,148,136,0.08)] rounded-xl">
+                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-teal-600 bg-teal-50 border border-teal-100 rounded-2xl shadow-sm">
                   <ShieldCheck size={22} />
                 </div>
 
@@ -159,7 +196,7 @@ const AboutSection = () => {
               </div>
 
               <div className="flex items-center gap-3.5">
-                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-[#0D9488] bg-[rgba(13,148,136,0.08)] rounded-xl">
+                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-2xl shadow-sm">
                   <FileHeart size={22} />
                 </div>
 
@@ -171,10 +208,13 @@ const AboutSection = () => {
 
             </div>
 
-            <button className="flex items-center gap-2 mt-2 p-3.5 px-6 text-white bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none rounded-xl text-xs md:text-sm font-bold shadow-[0_7px_18px_rgba(37,99,235,0.18)] transition-transform hover:-translate-y-0.5 hover:shadow-[0_10px_22px_rgba(37,99,235,0.25)]">
+            <Link 
+              to="/about"
+              className="inline-flex items-center gap-2 mt-2 p-3.5 px-6 text-white bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none rounded-xl text-xs md:text-sm font-bold shadow-[0_7px_18px_rgba(37,99,235,0.18)] transition-transform hover:-translate-y-0.5 hover:shadow-[0_10px_22px_rgba(37,99,235,0.25)]"
+            >
               Learn More
               <ArrowRight size={17} />
-            </button>
+            </Link>
 
           </div>
 

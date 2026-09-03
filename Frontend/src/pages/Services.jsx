@@ -44,35 +44,35 @@ const Services = () => {
       title: "Appointment Booking",
       description: "Schedule appointments with your preferred doctor quickly and conveniently.",
       icon: Calendar,
-      link: "/appointments"
+      link: "/appointment"
     },
     {
       id: "doctor-consultation",
       title: "Doctor Consultation",
       description: "Connect with healthcare professionals and get personalized medical guidance.",
       icon: HeartPulse,
-      link: "/consultations"
+      link: "/doctors"
     },
     {
       id: "health-records",
       title: "Health Records",
       description: "Keep important healthcare information organized and accessible in one secure place.",
       icon: FileText,
-      link: "/records"
+      link: "/patient/dashboard?tab=Medical Records"
     },
     {
       id: "medication-support",
       title: "Medication Support",
       description: "Stay organized with medication-related information and healthcare reminders.",
       icon: Pill,
-      link: "/medications"
+      link: "/patient/dashboard?tab=Profile"
     },
     {
       id: "healthcare-assistance",
       title: "Healthcare Assistance",
       description: "Get support throughout your healthcare journey whenever you need it.",
       icon: HelpCircle,
-      link: "/support"
+      link: "/contact"
     }
   ];
 
@@ -127,7 +127,7 @@ const Services = () => {
       >
 
       {/* 1. HERO SECTION (Full Background Image with Dark Contrast Overlay & Poppins Font) */}
-      <section className="relative overflow-hidden bg-slate-950 pt-32 pb-36 lg:pt-40 lg:pb-48 text-white font-['Poppins',sans-serif]">
+      <section className="relative w-full h-[60vh] sm:h-[75vh] lg:h-[90vh] min-h-[520px] overflow-hidden bg-slate-950 flex items-center justify-center pt-[76px] text-white font-['Poppins',sans-serif]">
         {/* Background Image spanning the entire Hero Section */}
         <div className="absolute inset-0 -z-25">
           <img 
@@ -137,26 +137,21 @@ const Services = () => {
           />
         </div>
 
-        {/* Enhanced Dark Gradient Overlay so text stands out perfectly */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/95 to-teal-950/70 -z-20" />
+        {/* Balanced Dark Overlay so centered text stands out cleanly across the full image */}
+        <div className="absolute inset-0 bg-slate-950/65 -z-20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-slate-950/75 -z-20" />
 
         {/* Subtle background glow accents */}
-        <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none -z-10" />
-        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl pointer-events-none -z-10" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none -z-10" />
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl pointer-events-none -z-10" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div 
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center justify-center">
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="max-w-3xl space-y-8"
+            className="max-w-3xl mx-auto space-y-8 text-center"
           >
-            
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold tracking-wider uppercase backdrop-blur-md shadow-inner font-['Poppins',sans-serif]">
-              <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
-              <span>Our Services</span>
-            </div>
 
             {/* Headline with Decreased Font Size */}
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.2] font-['Poppins',sans-serif]">
@@ -164,7 +159,7 @@ const Services = () => {
             </h1>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
               <Link 
                 to="/doctors" 
                 className="px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 font-bold shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:from-cyan-400 hover:to-teal-400 transition-all duration-300 flex items-center gap-2.5 text-base font-['Poppins',sans-serif]"
@@ -172,16 +167,16 @@ const Services = () => {
                 Find the Right Doctor
                 <ArrowRight className="w-5 h-5" />
               </Link>
-              <Link 
-                to="/appointments" 
-                className="px-8 py-4 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-white/20 text-white font-semibold hover:bg-slate-900 transition-all duration-300 text-base shadow-sm font-['Poppins',sans-serif]"
+              <a 
+                href="#services-overview" 
+                className="px-8 py-4 rounded-2xl bg-white/15 border border-white/25 text-white font-medium hover:bg-white/25 transition-all duration-200 shadow-sm backdrop-blur-md text-base font-['Poppins',sans-serif] flex items-center justify-center"
               >
                 Explore Services
-              </Link>
+              </a>
             </div>
 
             {/* Trust Indicators / Mini Feature Pills */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 border-t border-white/10 font-['Poppins',sans-serif]">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 border-t border-white/10 font-['Poppins',sans-serif] justify-items-center">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-teal-400 shrink-0">
                   <UserCheck className="w-5 h-5" />
@@ -218,8 +213,7 @@ const Services = () => {
       </section>
 
       {/* 2. SERVICES OVERVIEW */}
-      {/* 2. SERVICES OVERVIEW */}
-      <section className="py-28 bg-white font-['Poppins',sans-serif]">
+      <section id="services-overview" className="py-28 bg-white font-['Poppins',sans-serif] scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Header */}
@@ -387,12 +381,12 @@ const Services = () => {
               >
                 Find a Doctor
               </Link>
-              <Link 
-                to="/doctors" 
-                className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white font-semibold hover:bg-white/20 transition-all text-center text-sm sm:text-base"
+              <a 
+                href="#services-overview" 
+                className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 text-white font-medium hover:bg-white/25 transition-all text-center text-sm sm:text-base flex items-center justify-center"
               >
                 Explore Services
-              </Link>
+              </a>
             </div>
           </div>
         </motion.div>

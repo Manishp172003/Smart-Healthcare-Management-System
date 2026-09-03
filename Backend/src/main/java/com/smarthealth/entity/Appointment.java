@@ -47,6 +47,18 @@ public class Appointment {
     @Column(name = "appointment_type", columnDefinition = "VARCHAR(20)")
     private String appointmentType;
 
+    @Column(name = "payment_method", columnDefinition = "VARCHAR(30)")
+    private String paymentMethod; // "UPI", "CARD", "NET_BANKING", "PAY_AT_CLINIC"
+
+    @Column(name = "payment_status", columnDefinition = "VARCHAR(30)")
+    private String paymentStatus; // "PAID", "PAY_ON_ARRIVAL"
+
+    @Column(name = "amount_paid")
+    private Double amountPaid;
+
+    @Column(name = "transaction_id", columnDefinition = "VARCHAR(80)")
+    private String transactionId;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -59,7 +71,7 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(Long id, Patient patient, Doctor doctor, LocalDate appointmentDate, LocalTime startTime, LocalTime endTime, AppointmentStatus status, String reason, String appointmentType, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Appointment(Long id, Patient patient, Doctor doctor, LocalDate appointmentDate, LocalTime startTime, LocalTime endTime, AppointmentStatus status, String reason, String appointmentType, String paymentMethod, String paymentStatus, Double amountPaid, String transactionId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.patient = patient;
         this.doctor = doctor;
@@ -69,6 +81,10 @@ public class Appointment {
         this.status = status;
         this.reason = reason;
         this.appointmentType = appointmentType;
+        this.paymentMethod = paymentMethod;
+        this.paymentStatus = paymentStatus;
+        this.amountPaid = amountPaid;
+        this.transactionId = transactionId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -101,6 +117,18 @@ public class Appointment {
     public String getAppointmentType() { return appointmentType; }
     public void setAppointmentType(String appointmentType) { this.appointmentType = appointmentType; }
 
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+
+    public String getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
+
+    public Double getAmountPaid() { return amountPaid; }
+    public void setAmountPaid(Double amountPaid) { this.amountPaid = amountPaid; }
+
+    public String getTransactionId() { return transactionId; }
+    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
@@ -121,6 +149,10 @@ public class Appointment {
         private AppointmentStatus status = AppointmentStatus.PENDING;
         private String reason;
         private String appointmentType;
+        private String paymentMethod = "PAY_AT_CLINIC";
+        private String paymentStatus = "PAY_ON_ARRIVAL";
+        private Double amountPaid = 0.0;
+        private String transactionId;
 
         public AppointmentBuilder patient(Patient patient) { this.patient = patient; return this; }
         public AppointmentBuilder doctor(Doctor doctor) { this.doctor = doctor; return this; }
@@ -130,9 +162,13 @@ public class Appointment {
         public AppointmentBuilder status(AppointmentStatus status) { this.status = status; return this; }
         public AppointmentBuilder reason(String reason) { this.reason = reason; return this; }
         public AppointmentBuilder appointmentType(String appointmentType) { this.appointmentType = appointmentType; return this; }
+        public AppointmentBuilder paymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; return this; }
+        public AppointmentBuilder paymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; return this; }
+        public AppointmentBuilder amountPaid(Double amountPaid) { this.amountPaid = amountPaid; return this; }
+        public AppointmentBuilder transactionId(String transactionId) { this.transactionId = transactionId; return this; }
 
         public Appointment build() {
-            return new Appointment(null, patient, doctor, appointmentDate, startTime, endTime, status, reason, appointmentType, null, null);
+            return new Appointment(null, patient, doctor, appointmentDate, startTime, endTime, status, reason, appointmentType, paymentMethod, paymentStatus, amountPaid, transactionId, null, null);
         }
     }
 }

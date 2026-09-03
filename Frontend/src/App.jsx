@@ -8,16 +8,36 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import About from "./pages/About";
 import FindDoctors from "./pages/FindDoctors";
+import DoctorProfile from "./pages/DoctorProfile";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import AppointmentBooking from "./pages/AppointmentBooking";
+import NotFound from "./pages/NotFound";
 
-// Helper component to reset scroll position on route switches
-function ScrollToTop() {
+// Helper component to reset scroll position and update document title on route switches
+function RouteWatcher() {
   const { pathname } = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    const titleMap = {
+      "/": "SmartHealth | Intelligent Healthcare Platform",
+      "/about": "About Us • SmartHealth",
+      "/service": "Clinical Services • SmartHealth",
+      "/contact": "Contact Support • SmartHealth",
+      "/doctors": "Find Verified Doctors • SmartHealth",
+      "/appointment": "Book Consultation • SmartHealth",
+      "/login": "Sign In • SmartHealth",
+      "/register": "Create Account • SmartHealth",
+      "/admin/login": "Admin Authentication • SmartHealth",
+    };
+
+    if (titleMap[pathname]) {
+      document.title = titleMap[pathname];
+    } else if (pathname.startsWith("/doctors/")) {
+      document.title = "Physician Profile • SmartHealth";
+    }
   }, [pathname]);
 
   return null;
@@ -26,7 +46,7 @@ function ScrollToTop() {
 function App() {
   return (
     <Router>
-      <ScrollToTop />
+      <RouteWatcher />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Auth />} />
@@ -38,9 +58,11 @@ function App() {
 
         <Route path="/about" element={<About/>}/>
         <Route path="/doctors" element={<FindDoctors/>}/>
+        <Route path="/doctors/:doctorId" element={<DoctorProfile/>}/>
         <Route path="/service" element={<Services/>}/>
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/appointment" element={<AppointmentBooking/>}/>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

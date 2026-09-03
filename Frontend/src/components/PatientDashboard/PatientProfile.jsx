@@ -1,35 +1,96 @@
-import { useState } from "react";
-import { User, Phone, MapPin, Award, CheckCircle, ShieldAlert, HeartHandshake } from "lucide-react";
+import { useState, useRef } from "react";
+import { User, Phone, MapPin, Award, CheckCircle, ShieldAlert, HeartHandshake, Camera, Upload, Trash2, CheckCircle2 } from "lucide-react";
 
 const PatientProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState({
-    fullName: localStorage.getItem("name") || "Patient Name",
+  const [avatar, setAvatar] = useState(() => localStorage.getItem("userAvatar") || "");
+  const fileInputRef = useRef(null);
+
+  const DEFAULT_PROFILE = {
+    fullName: localStorage.getItem("name") || "Manish Pawar",
     email: localStorage.getItem("email") || "patient@smarthealth.com",
     phone: "+91 98765 43210",
-    dob: "1994-10-12",
-    gender: "Female",
+    dob: "1998-05-14",
+    gender: "Male",
     bloodGroup: "O+",
-    address: "Apartment 4B, Emerald Heights, Sector 12, Mumbai",
-    emergencyContact: "John Connor (+91 98765 00000)"
-  });
+    address: "Civil Lines, Nagpur, Maharashtra, India",
+    emergencyContact: "Family (+91 98765 00000)"
+  };
 
-  const [medicalHistory, setMedicalHistory] = useState({
+  const DEFAULT_MEDICAL = {
     allergies: [
-      { name: "Penicillin", checked: true },
+      { name: "Penicillin", checked: false },
       { name: "Peanuts", checked: false },
-      { name: "Sulfa Drugs", checked: true }
+      { name: "Sulfa Drugs", checked: false }
     ],
     conditions: [
       { name: "Asthma", checked: false },
-      { name: "Hypertension", checked: true },
+      { name: "Hypertension", checked: false },
       { name: "Diabetes", checked: false }
     ],
     medications: [
-      { name: "Lisinopril 10mg", checked: true },
-      { name: "Albuterol Inhaler", checked: false }
+      { name: "Vitamin D3 Supplement", checked: true },
+      { name: "Paracetamol (as needed)", checked: true }
     ]
+  };
+
+  const [profile, setProfile] = useState(() => {
+    const saved = localStorage.getItem("smarthealth_patient_profile");
+    if (saved) {
+      try {
+        return { ...DEFAULT_PROFILE, ...JSON.parse(saved) };
+      } catch (e) {
+        return DEFAULT_PROFILE;
+      }
+    }
+    return DEFAULT_PROFILE;
   });
+
+  const [medicalHistory, setMedicalHistory] = useState(() => {
+    const saved = localStorage.getItem("smarthealth_patient_medical_history");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return DEFAULT_MEDICAL;
+      }
+    }
+    return DEFAULT_MEDICAL;
+  });
+
+  const [saveToast, setSaveToast] = useState("");
+
+  const initials = profile.fullName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  const handleAvatarUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Profile image must be less than 5MB.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64Url = reader.result;
+      setAvatar(base64Url);
+      localStorage.setItem("userAvatar", base64Url);
+      window.dispatchEvent(new Event("avatarUpdated"));
+      window.dispatchEvent(new Event("storage"));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatar("");
+    localStorage.removeItem("userAvatar");
+    window.dispatchEvent(new Event("avatarUpdated"));
+    window.dispatchEvent(new Event("storage"));
+  };
 
   const handleProfileChange = (e) => {
     setProfile({
@@ -51,12 +112,106 @@ const PatientProfile = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsEditing(false);
-    alert("Profile and medical history successfully updated!");
+    localStorage.setItem("name", profile.fullName);
+    localStorage.setItem("email", profile.email);
+    localStorage.setItem("smarthealth_patient_profile", JSON.stringify(profile));
+    localStorage.setItem("smarthealth_patient_medical_history", JSON.stringify(medicalHistory));
+    window.dispatchEvent(new Event("storage"));
+    window.dispatchEvent(new Event("avatarUpdated"));
+    setSaveToast("Profile details and clinical history successfully saved to your record!");
+    setTimeout(() => setSaveToast(""), 4000);
   };
 
   return (
     <div className="space-y-6">
       
+      {/* Toast Notification */}
+      {saveToast && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs text-emerald-800 font-bold shadow-sm animate-in fade-in">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={16} className="text-emerald-600" />
+            <span>{saveToast}</span>
+          </div>
+          <button onClick={() => setSaveToast("")} className="text-emerald-600 hover:text-emerald-800">
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* Profile Photo & Identity Banner */}
+      <div className="bg-white/70 border border-white/60 rounded-3xl p-6 shadow-sm backdrop-blur-md flex flex-col sm:flex-row items-center gap-6">
+        
+        {/* Avatar Circle with Camera Overlay */}
+        <div className="relative group shrink-0">
+          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-white shadow-md bg-gradient-to-br from-blue-600 to-teal-600 flex items-center justify-center text-white text-2xl sm:text-3xl font-black">
+            {avatar ? (
+              <img src={avatar} alt={profile.fullName} className="w-full h-full object-cover" />
+            ) : (
+              <span>{initials}</span>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-md border-2 border-white transition cursor-pointer"
+            title="Upload / Change Photo"
+          >
+            <Camera size={14} />
+          </button>
+          
+          <input 
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarUpload}
+            className="hidden"
+          />
+        </div>
+
+        {/* Identity & Upload Actions */}
+        <div className="flex-1 text-center sm:text-left space-y-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center justify-center sm:justify-start gap-2">
+                <h2 className="text-xl sm:text-2xl font-black text-slate-900">{profile.fullName}</h2>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">
+                  <CheckCircle2 size={11} />
+                  <span>Verified Patient</span>
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">{profile.email}</p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-center sm:justify-end gap-2 pt-1 sm:pt-0">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="px-4 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                <Upload size={13} />
+                <span>Upload Photo</span>
+              </button>
+              {avatar && (
+                <button
+                  type="button"
+                  onClick={handleRemoveAvatar}
+                  className="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                >
+                  <Trash2 size={13} />
+                  <span>Remove</span>
+                </button>
+              )}
+            </div>
+          </div>
+          <p className="text-[11px] text-slate-400">
+            Supports JPG, PNG or WEBP (Max 5MB). Photo updates automatically across your patient header and dashboard.
+          </p>
+        </div>
+
+      </div>
+
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Left Side: Personal Info (2 Columns width on desktop) */}

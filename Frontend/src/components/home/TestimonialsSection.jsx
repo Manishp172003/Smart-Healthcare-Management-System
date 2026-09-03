@@ -1,46 +1,24 @@
-import { useRef } from "react";
-import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
-
-const testimonials = [
-  {
-    name: "Riya S.",
-    role: "Patient",
-    rating: 5,
-    text: "Dr. Ananya is not just an excellent doctor but also an amazing human being. She listened to me patiently and made my journey so comfortable.",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&h=120&q=80"
-  },
-  {
-    name: "Pooja M.",
-    role: "Mother of 2",
-    rating: 5,
-    text: "The entire team at SmartHealth is so supportive and caring. I felt safe and confident throughout my pregnancy.",
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&h=120&q=80"
-  },
-  {
-    name: "Anjali K.",
-    role: "Patient",
-    rating: 5,
-    text: "Finally found a place where healthcare is taken seriously and with so much compassion. Highly recommend!",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80"
-  },
-  {
-    name: "Aarav Mehta",
-    role: "Patient",
-    rating: 5,
-    text: "Booking an appointment through SmartHealth was incredibly easy. I was able to find a specialist in less than five minutes.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&h=120&q=80"
-  },
-  {
-    name: "Rajesh Patel",
-    role: "Retired Senior",
-    rating: 5,
-    text: "As an elderly patient, traveling long distances for appointment booking was tough. Now I book consults directly from home.",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&h=120&q=80"
-  }
-];
+import { useRef, useState, useEffect } from "react";
+import { Star, Quote, ChevronLeft, ChevronRight, MessageSquareHeart } from "lucide-react";
+import { Link } from "react-router-dom";
+import { getApprovedTestimonials } from "../../utils/testimonialsService";
 
 const TestimonialsSection = () => {
   const scrollContainerRef = useRef(null);
+  const [testimonials, setTestimonials] = useState(() => getApprovedTestimonials());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setTestimonials(getApprovedTestimonials());
+    };
+
+    window.addEventListener("testimonialsUpdated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener("testimonialsUpdated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
+  }, []);
 
   const scrollPrev = () => {
     if (scrollContainerRef.current) {
@@ -104,6 +82,16 @@ const TestimonialsSection = () => {
             </div>
             <div className="w-10 h-[1.5px] bg-white/20" />
           </div>
+
+          <div className="mt-4 flex items-center justify-center">
+            <Link
+              to="/patient/dashboard"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition duration-200"
+            >
+              <MessageSquareHeart size={14} className="text-[#a7f3d0]" />
+              <span>Share Your Patient Experience</span>
+            </Link>
+          </div>
         </div>
 
         {/* Slider Section */}
@@ -128,7 +116,7 @@ const TestimonialsSection = () => {
 
               return (
               <div
-                key={idx}
+                key={t.id || idx}
                 className={`testimonial-card flex-shrink-0 snap-start w-full md:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)] min-h-[200px] p-6 bg-white border border-slate-100 rounded-[28px] shadow-[0_4px_20px_rgba(15,23,42,0.03)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.07)] transition-all duration-300 flex flex-col justify-between text-slate-800 animate-on-scroll ${delayClasses[idx % delayClasses.length]}`}
               >
                 <div>
@@ -145,21 +133,30 @@ const TestimonialsSection = () => {
                 <div>
                   {/* Star Rating */}
                   <div className="flex gap-0.5 mb-3 text-[#d97706] justify-start">
-                    {[...Array(t.rating)].map((_, i) => (
+                    {[...Array(t.rating || 5)].map((_, i) => (
                       <Star key={i} size={15} fill="currentColor" className="stroke-none" />
                     ))}
                   </div>
 
                   {/* User Bio */}
                   <div className="flex items-center gap-3 pt-3 border-t border-slate-50">
-                    <img 
-                      src={t.image} 
-                      alt={t.name} 
-                      className="w-10.5 h-10.5 rounded-full object-cover border border-slate-100 bg-teal-50"
-                    />
+                    {t.image ? (
+                      <img 
+                        src={t.image} 
+                        alt={t.name} 
+                        className="w-10.5 h-10.5 rounded-full object-cover border border-slate-100 bg-teal-50" 
+                      />
+                    ) : (
+                      <div className="w-10.5 h-10.5 rounded-full bg-gradient-to-tr from-[#2563EB] to-[#0D9488] text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
+                        {t.name ? t.name.charAt(0) : "P"}
+                      </div>
+                    )}
+
                     <div>
                       <h4 className="text-slate-900 text-xs md:text-sm font-extrabold leading-none">{t.name}</h4>
-                      <span className="text-slate-400 text-[10px] md:text-xs font-semibold block mt-1">{t.role}</span>
+                      <span className="text-slate-400 text-[10px] md:text-xs font-semibold block mt-1">
+                        {t.role} {t.doctorName ? `• ${t.doctorName}` : ""}
+                      </span>
                     </div>
                   </div>
                 </div>

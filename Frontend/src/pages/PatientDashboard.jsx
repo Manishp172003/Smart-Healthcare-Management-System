@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Sidebar from "../components/PatientDashboard/Sidebar";
 import DashboardHeader from "../components/PatientDashboard/DashboardHeader";
 import CustomConfirmModal from "../components/common/CustomConfirmModal";
@@ -7,6 +8,7 @@ import NextAppointment from "../components/PatientDashboard/NextAppointment";
 import QuickActions from "../components/PatientDashboard/QuickActions";
 import UpcomingAppointments from "../components/PatientDashboard/UpcomingAppointments";
 import RecentHistory from "../components/PatientDashboard/RecentHistory";
+import HealthVitals from "../components/PatientDashboard/HealthVitals";
 
 // New Sub-view imports
 import MyAppointments from "../components/PatientDashboard/MyAppointments";
@@ -14,14 +16,62 @@ import BookAppointment from "../components/PatientDashboard/BookAppointment";
 import MedicalRecords from "../components/PatientDashboard/MedicalRecords";
 import PatientProfile from "../components/PatientDashboard/PatientProfile";
 import HelpCenter from "../components/PatientDashboard/HelpCenter";
+import LeaveFeedbackModal from "../components/PatientDashboard/LeaveFeedbackModal";
+
+const VALID_TABS = ["Dashboard", "My Appointments", "Book Appointment", "Medical Records", "Profile", "Help Center"];
 
 function PatientDashboard() {
-  const [activeTab, setActiveTab] = useState("Dashboard");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedTab = searchParams.get("tab");
+  const initialTab = (requestedTab && VALID_TABS.includes(requestedTab)) 
+    ? requestedTab 
+    : (requestedTab === "Settings" ? "Profile" : "Dashboard");
+
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isSignOutConfirmOpen, setIsSignOutConfirmOpen] = useState(false);
   const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("smarthealth_patient_sidebar_collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [doctors, setDoctors] = useState([]);
+
+  const handleToggleCollapse = (val) => {
+    setIsSidebarCollapsed(val);
+    try {
+      localStorage.setItem("smarthealth_patient_sidebar_collapsed", String(val));
+    } catch {}
+  };
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/doctors")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setDoctors(data))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    document.title = `${activeTab} • Patient Portal | SmartHealth`;
+  }, [activeTab]);
+
+  useEffect(() => {
+    const tabFromUrl = searchParams.get("tab");
+    if (tabFromUrl) {
+      if (tabFromUrl === "Settings") {
+        setActiveTab("Profile");
+      } else if (VALID_TABS.includes(tabFromUrl)) {
+        setActiveTab(tabFromUrl);
+      }
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -50,6 +100,13 @@ function PatientDashboard() {
     };
 
     fetchAppointments();
+    const handleSync = () => fetchAppointments();
+    window.addEventListener("appointmentsUpdated", handleSync);
+    window.addEventListener("storage", handleSync);
+    return () => {
+      window.removeEventListener("appointmentsUpdated", handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
   }, []);
 
   const handleEmergencyConfirm = async (coords) => {
@@ -112,6 +169,8 @@ function PatientDashboard() {
         onEmergencyTrigger={() => setIsEmergencyModalOpen(true)}
         isOpen={isMobileSidebarOpen}
         onClose={() => setIsMobileSidebarOpen(false)}
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={handleToggleCollapse}
       />
 
       {/* Backdrop overlay for mobile sidebar drawer */}
@@ -123,7 +182,9 @@ function PatientDashboard() {
       )}
 
       {/* Main Content Pane */}
-      <main className="min-h-screen flex-1 md:pl-64 overflow-x-hidden">
+      <main className={`min-h-screen flex-1 transition-all duration-300 overflow-x-hidden ${
+        isSidebarCollapsed ? "md:pl-20" : "md:pl-64"
+      }`}>
 
         <div className="p-4 sm:p-6 md:p-10 w-full max-w-[1440px] mx-auto">
 
@@ -132,6 +193,7 @@ function PatientDashboard() {
             activeTab={activeTab} 
             setActiveTab={setActiveTab} 
             onMenuToggle={() => setIsMobileSidebarOpen(true)}
+            appointments={appointments}
           />
 
           {/* View Router */}
@@ -142,10 +204,16 @@ function PatientDashboard() {
                 {/* Top Row Grid */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                   <div className="lg:col-span-2">
-                    <NextAppointment appointments={appointments} loading={loading} />
+                    <NextAppointment appointments={appointments} loading={loading} setActiveTab={setActiveTab} />
                   </div>
-                  <QuickActions setActiveTab={setActiveTab} />
+                  <QuickActions 
+                    setActiveTab={setActiveTab} 
+                    onOpenFeedback={() => setIsFeedbackModalOpen(true)} 
+                  />
                 </div>
+
+                {/* Middle Row: Health Vitals & Biometrics */}
+                <HealthVitals />
 
                 {/* Bottom Row Grid */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -153,7 +221,7 @@ function PatientDashboard() {
                     <UpcomingAppointments appointments={appointments} loading={loading} />
                   </div>
                   <div className="lg:col-span-2">
-                    <RecentHistory appointments={appointments} loading={loading} />
+                    <RecentHistory appointments={appointments} loading={loading} setActiveTab={setActiveTab} />
                   </div>
                 </div>
 
@@ -209,6 +277,13 @@ function PatientDashboard() {
         isOpen={isEmergencyModalOpen}
         onClose={() => setIsEmergencyModalOpen(false)}
         onConfirm={handleEmergencyConfirm}
+      />
+
+      {/* Leave Feedback Modal */}
+      <LeaveFeedbackModal 
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        doctors={doctors}
       />
 
     </div>

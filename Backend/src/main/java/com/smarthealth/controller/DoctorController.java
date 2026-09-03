@@ -15,9 +15,108 @@ import java.util.Map;
 public class DoctorController {
 
     private final DoctorRepository doctorRepository;
+    private final com.smarthealth.repository.UserRepository userRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public DoctorController(DoctorRepository doctorRepository) {
+    public DoctorController(
+            DoctorRepository doctorRepository,
+            com.smarthealth.repository.UserRepository userRepository,
+            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder
+    ) {
         this.doctorRepository = doctorRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createDoctor(@RequestBody Map<String, Object> request) {
+        try {
+            String name = (String) request.get("name");
+            String email = (String) request.get("email");
+            String password = (String) request.getOrDefault("password", "Doctor@123");
+            String specialization = (String) request.get("specialization");
+            String licenseNumber = (String) request.get("licenseNumber");
+            String bio = (String) request.getOrDefault("bio", "Certified Clinical Specialist");
+            Integer fee = request.get("consultationFee") != null ? Integer.parseInt(request.get("consultationFee").toString()) : 1500;
+            String education = (String) request.getOrDefault("education", "MBBS, MD");
+            String experience = (String) request.getOrDefault("experience", "8+ Years");
+
+            if (userRepository.existsByEmail(email)) {
+                Map<String, String> err = new HashMap<>();
+                err.put("error", "Email is already registered in the system!");
+                return ResponseEntity.badRequest().body(err);
+            }
+
+            com.smarthealth.entity.User user = com.smarthealth.entity.User.builder()
+                    .name(name)
+                    .email(email)
+                    .password(passwordEncoder.encode(password))
+                    .role(com.smarthealth.entity.Role.ROLE_DOCTOR)
+                    .status(com.smarthealth.entity.UserStatus.ACTIVE)
+                    .build();
+
+            com.smarthealth.entity.User savedUser = userRepository.save(user);
+
+            String avatar = (String) request.get("avatar");
+
+            Doctor doctor = new Doctor();
+            doctor.setUser(savedUser);
+            doctor.setSpecialization(specialization != null ? specialization : "General Medicine");
+            doctor.setLicenseNumber(licenseNumber != null ? licenseNumber : "MED-" + (System.currentTimeMillis() % 100000));
+            doctor.setBio(bio);
+            doctor.setConsultationFee(fee);
+            doctor.setEducation(education);
+            doctor.setExperience(experience);
+            doctor.setSlotDurationMinutes(30);
+            doctor.setRating(4.9);
+            doctor.setSupportsTelehealth(true);
+            doctor.setAvatar(avatar);
+
+            Doctor savedDoctor = doctorRepository.save(doctor);
+            return ResponseEntity.ok(savedDoctor);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateDoctorStatus(@PathVariable Long id, @RequestParam String status) {
+        try {
+            Doctor doctor = doctorRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Doctor not found with ID: " + id));
+
+            com.smarthealth.entity.User user = doctor.getUser();
+            com.smarthealth.entity.UserStatus newStatus = com.smarthealth.entity.UserStatus.valueOf(status.toUpperCase());
+            user.setStatus(newStatus);
+            userRepository.save(user);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Doctor status updated to " + newStatus);
+            response.put("doctor", doctor);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteDoctor(@PathVariable Long id) {
+        try {
+            Doctor doctor = doctorRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Doctor not found with ID: " + id));
+            doctorRepository.delete(doctor);
+            Map<String, String> res = new HashMap<>();
+            res.put("message", "Doctor removed successfully.");
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
     @GetMapping("/specialty/{specialty}")

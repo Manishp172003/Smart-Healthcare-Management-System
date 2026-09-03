@@ -1,14 +1,67 @@
-import { 
-  HeartPulse, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Clock, 
-  Send 
+import {
+  HeartPulse,
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  Send,
+  CheckCircle,
+  AlertCircle,
+  ShieldCheck
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      setSubmitStatus('error');
+      setErrorMessage('Please enter a valid email address');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    try {
+      const response = await fetch('http://localhost:8080/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          subscriptionSource: 'footer'
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSubmitStatus('success');
+        setEmail('');
+        // Reset success message after 5 seconds
+        setTimeout(() => setSubmitStatus(null), 5000);
+      } else {
+        setSubmitStatus('error');
+        setErrorMessage(data.message || 'Failed to subscribe. Please try again.');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+      setErrorMessage('Network error. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <footer className="w-full bg-[#0F172A] border-t border-slate-800/80 py-12 md:py-16 mt-8 text-slate-300 relative overflow-hidden" id="contact">
       
@@ -70,8 +123,11 @@ const Footer = () => {
               <Link to="/about" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">About Us</Link>
               <Link to="/service" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Our Services</Link>
               <Link to="/doctors" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Find Doctors</Link>
-              <a href="#packages" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Packages</a>
               <a href="#testimonials" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Testimonials</a>
+              <Link to="/admin/login" className="text-slate-400 hover:text-[#0D9488] text-xs md:text-sm transition-colors flex items-center gap-1.5 font-medium mt-1">
+                <ShieldCheck size={14} className="text-[#0D9488]" />
+                <span>Admin Portal</span>
+              </Link>
             </nav>
           </div>
 
@@ -113,16 +169,42 @@ const Footer = () => {
               Subscribe to get updates on health tips, schedules, and clinic news.
             </p>
             
-            <form onSubmit={(e) => e.preventDefault()} className="flex items-center gap-2 mt-2.5 p-1.5 bg-slate-800/80 border border-slate-700 rounded-xl focus-within:border-slate-600 transition-colors">
-              <input 
-                type="email" 
+            <form onSubmit={handleNewsletterSubmit} className="flex items-center gap-2 mt-2.5 p-1.5 bg-slate-800/80 border border-slate-700 rounded-xl focus-within:border-slate-600 transition-colors">
+              <input
+                type="email"
                 placeholder="Enter email"
-                className="w-full bg-transparent border-none outline-none text-white text-xs px-2 placeholder-slate-500"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
+                className="w-full bg-transparent border-none outline-none text-white text-xs px-2 placeholder-slate-500 disabled:opacity-50"
               />
-              <button className="w-9.5 h-9.5 flex items-center justify-center text-white bg-gradient-to-br from-[#2563EB] to-[#0D9488] rounded-lg transition-transform hover:-translate-y-px">
-                <Send size={15} />
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-9.5 h-9.5 flex items-center justify-center text-white bg-gradient-to-br from-[#2563EB] to-[#0D9488] rounded-lg transition-transform hover:-translate-y-px disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+              >
+                {isSubmitting ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Send size={15} />
+                )}
               </button>
             </form>
+
+            {/* Status Messages */}
+            {submitStatus === 'success' && (
+              <div className="flex items-center gap-2 text-green-400 text-xs mt-2 animate-fadeIn">
+                <CheckCircle size={14} />
+                <span>Successfully subscribed!</span>
+              </div>
+            )}
+
+            {submitStatus === 'error' && (
+              <div className="flex items-center gap-2 text-red-400 text-xs mt-2 animate-fadeIn">
+                <AlertCircle size={14} />
+                <span>{errorMessage}</span>
+              </div>
+            )}
           </div>
 
         </div>
@@ -131,7 +213,13 @@ const Footer = () => {
         <div className="border-t border-slate-800/80 mt-10 pt-6 flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between text-xs text-slate-500 relative z-2">
           <span>&copy; {new Date().getFullYear()} SmartHealth Healthcare System. All rights reserved.</span>
           <div className="flex items-center gap-4">
+            <Link to="/admin/login" className="text-slate-400 hover:text-white flex items-center gap-1.5 transition-colors font-medium">
+              <ShieldCheck size={13} className="text-[#0D9488]" />
+              <span>Admin Login</span>
+            </Link>
+            <span className="text-slate-700">•</span>
             <a href="#" className="hover:text-slate-300 transition-colors">Privacy Policy</a>
+            <span className="text-slate-700">•</span>
             <a href="#" className="hover:text-slate-300 transition-colors">Terms of Service</a>
           </div>
         </div>

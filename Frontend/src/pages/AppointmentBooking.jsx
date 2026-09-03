@@ -1,105 +1,131 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import MockPaymentGatewayModal from "../components/common/MockPaymentGatewayModal";
 import { motion } from "framer-motion";
-import { 
-  Search, Calendar, Clock, User, Phone, Mail, FileText, 
-  CheckCircle, AlertCircle, ChevronRight, ArrowLeft, ShieldCheck, 
-  Star, MapPin, Award, Stethoscope, CalendarCheck, Loader2, 
-  Edit3, Trash2, Eye, X, Check, Activity, HeartPulse, UserCheck 
+import {
+  Search, Calendar, Clock, User, Phone, Mail, FileText,
+  CheckCircle, AlertCircle, ChevronRight, ArrowLeft, ShieldCheck,
+  Star, MapPin, Award, Stethoscope, CalendarCheck, Loader2,
+  Edit3, Trash2, Eye, X, Check, Activity, HeartPulse, UserCheck, Sun, Sunset,
+  QrCode, CreditCard, Building2, Wallet, Printer, Download, Receipt, CheckCircle2
 } from 'lucide-react';
 
-// --- MOCK DOCTORS DATABASE ---
-const MOCK_DOCTORS = [
+import doctorImg1 from "../assets/FindDoctors/Doctor-img-1.png";
+import doctorImg2 from "../assets/FindDoctors/Doctor-img-7.png";
+import doctorImg3 from "../assets/FindDoctors/Doctor-img-2.png";
+import doctorImg4 from "../assets/FindDoctors/Doctor-img-4.png";
+import doctorImg5 from "../assets/FindDoctors/Doctor-img-5.png";
+import doctorImg6 from "../assets/FindDoctors/New-Doctor-img.png";
+import doctorImg7 from "../assets/FindDoctors/Doctor-img-7.png";
+
+// --- CANONICAL DOCTORS DATABASE ---
+const CANONICAL_DOCTORS = [
   {
-    id: 'doc_1',
+    id: 1,
+    name: 'Dr. Ananya Sharma',
+    specialization: 'Cardiologist',
+    concern: 'Heart-related problems',
+    qualification: 'MBBS - GMC Nagpur, MD (Cardiology) - KEM Hospital, Mumbai',
+    experienceYears: 12,
+    rating: 4.9,
+    reviewsCount: 142,
+    fee: 1500,
+    availabilityStatus: 'Available Today',
+    nextSlot: '09:30 AM',
+    imageUrl: doctorImg1,
+    hospital: 'Nagpur Heart Institute, Dharampeth, Nagpur'
+  },
+  {
+    id: 2,
     name: 'Dr. Sarah Jenkins',
     specialization: 'Cardiologist',
     concern: 'Heart-related problems',
     qualification: 'MBBS, MD - Cardiology (FACC)',
-    experienceYears: 12,
+    experienceYears: 15,
     rating: 4.9,
-    reviewsCount: 142,
-    fee: 120,
-    availabilityStatus: 'Available Today',
-    nextSlot: '09:30 AM',
-    imageUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300',
-    hospital: 'City General Medical Center, Heart Wing, Suite 402'
-  },
-  {
-    id: 'doc_2',
-    name: 'Dr. Michael Chen',
-    specialization: 'Dermatologist',
-    concern: 'Skin problems',
-    qualification: 'MBBS, DDVL, FRCP',
-    experienceYears: 8,
-    rating: 4.8,
-    reviewsCount: 98,
-    fee: 90,
+    reviewsCount: 128,
+    fee: 2200,
     availabilityStatus: 'Available Tomorrow',
     nextSlot: '10:00 AM',
-    imageUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=300',
-    hospital: 'Aura Skin & Aesthetic Clinic, Downtown'
+    imageUrl: doctorImg2,
+    hospital: 'Apollo Hospitals, Navi Mumbai'
   },
   {
-    id: 'doc_3',
-    name: 'Dr. Emily Rodriguez',
-    specialization: 'Pediatrician',
-    concern: 'Child health',
-    qualification: 'MBBS, DCH, MRCPCH',
-    experienceYears: 10,
+    id: 3,
+    name: 'Dr. Priya Kapoor',
+    specialization: 'Dermatologist',
+    concern: 'Skin problems',
+    qualification: 'MBBS, MD (Dermatology) - Topiwala National Medical College',
+    experienceYears: 8,
     rating: 4.9,
-    reviewsCount: 215,
-    fee: 100,
+    reviewsCount: 98,
+    fee: 1200,
     availabilityStatus: 'Available Today',
     nextSlot: '11:00 AM',
-    imageUrl: 'https://images.unsplash.com/photo-1594824813567-33d994334341?auto=format&fit=crop&q=80&w=300',
-    hospital: 'Sunshine Childrens Hospital, Block B'
+    imageUrl: doctorImg3,
+    hospital: 'Aura Skin & Aesthetic Clinic, Bandra West, Mumbai'
   },
   {
-    id: 'doc_4',
-    name: 'Dr. Robert Fox',
+    id: 4,
+    name: 'Dr. Arjun Verma',
     specialization: 'Orthopedic',
     concern: 'Bone & joint pain',
-    qualification: 'MBBS, MS - Orthopedics, DNB',
-    experienceYears: 15,
+    qualification: 'MBBS, MS (Orthopedics) - AIIMS',
+    experienceYears: 11,
     rating: 4.7,
     reviewsCount: 110,
-    fee: 130,
+    fee: 1400,
     availabilityStatus: 'Available Today',
     nextSlot: '02:00 PM',
-    imageUrl: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=300',
-    hospital: 'Metro Spine & Joint Institute'
+    imageUrl: doctorImg4,
+    hospital: 'Care Ortho Center, Dhantoli, Nagpur'
   },
   {
-    id: 'doc_5',
-    name: 'Dr. Jessica Taylor',
-    specialization: 'General Physician',
-    concern: 'Fever & infections',
-    qualification: 'MBBS, MRCP (UK)',
-    experienceYears: 7,
+    id: 5,
+    name: 'Dr. Neha Joshi',
+    specialization: 'Pediatrician',
+    concern: 'Child health',
+    qualification: 'MBBS, DCH, DNB (Pediatrics)',
+    experienceYears: 9,
     rating: 4.8,
-    reviewsCount: 178,
-    fee: 75,
+    reviewsCount: 215,
+    fee: 900,
     availabilityStatus: 'Available Today',
     nextSlot: '08:30 AM',
-    imageUrl: 'https://images.unsplash.com/photo-1594824813567-33d994334341?auto=format&fit=crop&q=80&w=300',
-    hospital: 'PrimeCare Community Health Center'
+    imageUrl: doctorImg5,
+    hospital: 'Sunshine Childrens Hospital, Ramdaspeth, Nagpur'
   },
   {
-    id: 'doc_6',
-    name: 'Dr. David Vance',
-    specialization: 'Neurologist',
-    concern: 'Mental wellness',
-    qualification: 'MBBS, DM - Neurology',
-    experienceYears: 14,
+    id: 6,
+    name: 'Dr. Kabir Malhotra',
+    specialization: 'General Physician',
+    concern: 'Fever & infections',
+    qualification: 'MBBS, MD (Internal Medicine)',
+    experienceYears: 7,
+    rating: 4.6,
+    reviewsCount: 178,
+    fee: 800,
+    availabilityStatus: 'Available Today',
+    nextSlot: '04:00 PM',
+    imageUrl: doctorImg6,
+    hospital: 'HealthFirst Multi-Specialty Clinic, Kothrud, Pune'
+  },
+  {
+    id: 7,
+    name: 'Dr. Sneha Kulkarni',
+    specialization: 'Gynecologist',
+    concern: "Women's health",
+    qualification: 'MBBS, MS (Obstetrics & Gynecology)',
+    experienceYears: 13,
     rating: 4.9,
     reviewsCount: 89,
-    fee: 150,
+    fee: 1600,
     availabilityStatus: 'Available Tomorrow',
     nextSlot: '01:30 PM',
-    imageUrl: 'https://images.unsplash.com/photo-1622902046580-2b47f47f5471?auto=format&fit=crop&q=80&w=300',
-    hospital: 'Advanced Neuroscience & Brain Center'
+    imageUrl: doctorImg7,
+    hospital: 'Grace Womens Care & Fertility Clinic, Andheri, Mumbai'
   }
 ];
 
@@ -120,26 +146,118 @@ const SPECIALIZATIONS = [
   "Neurologist",
   "Orthopedic",
   "General Physician",
-  "Pediatrician"
+  "Pediatrician",
+  "Gynecologist"
 ];
 
-const AVAILABLE_TIME_SLOTS = [
+const MORNING_TIME_SLOTS = [
   "09:00 AM",
   "09:30 AM",
-  "10:00 AM",
-  "10:30 AM",
-  "11:15 AM",
-  "02:00 PM",
-  "03:30 PM",
-  "04:30 PM"
+  "10:15 AM",
+  "11:00 AM",
+  "11:45 AM",
+  "12:30 PM"
 ];
 
+const EVENING_TIME_SLOTS = [
+  "02:00 PM",
+  "02:45 PM",
+  "03:30 PM",
+  "04:15 PM",
+  "05:00 PM",
+  "06:00 PM",
+  "07:00 PM"
+];
+
+const AVAILABLE_TIME_SLOTS = [...MORNING_TIME_SLOTS, ...EVENING_TIME_SLOTS];
+
 export default function AppointmentBooking() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const doctorIdParam = searchParams.get('doctorId');
+
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedConcern, setSelectedConcern] = useState('');
   const [selectedSpecialization, setSelectedSpecialization] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [doctorsList, setDoctorsList] = useState(CANONICAL_DOCTORS);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookingError, setBookingError] = useState('');
+
+  // Payment & Invoice Confirmation State
+  const [paymentMethod, setPaymentMethod] = useState("UPI"); // "UPI" | "CARD" | "NET_BANKING" | "PAY_AT_CLINIC"
+  const [upiId, setUpiId] = useState("piyush@oksbi");
+  const [upiVerified, setUpiVerified] = useState(true);
+  const [cardData, setCardData] = useState({
+    cardNumber: "4532 8920 1192 8821",
+    cardHolder: "PIYUSH DAHIWALE",
+    expiry: "09/28",
+    cvv: "824"
+  });
+  const [selectedBank, setSelectedBank] = useState("HDFC Bank");
+  const [confirmedTransaction, setConfirmedTransaction] = useState(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+
+  // Authentication check
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      localStorage.setItem("redirectAfterLogin", window.location.pathname + window.location.search);
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  // Fetch real doctors from backend and merge with local canonical assets
+  useEffect(() => {
+    const fetchBackendDoctors = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/doctors");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const merged = data.map((bDoc) => {
+              const localDoc = CANONICAL_DOCTORS.find(
+                (c) => c.id === bDoc.id || c.name.toLowerCase() === (bDoc.user?.name || "").toLowerCase()
+              );
+              return {
+                id: bDoc.id,
+                name: bDoc.user?.name || localDoc?.name || `Doctor ${bDoc.id}`,
+                specialization: bDoc.specialization || localDoc?.specialization || "Specialist",
+                concern: localDoc?.concern || "Health-related problems",
+                qualification: bDoc.education || localDoc?.qualification || "MBBS, MD",
+                experienceYears: parseInt(bDoc.experience) || localDoc?.experienceYears || 10,
+                rating: bDoc.rating || 4.8,
+                reviewsCount: localDoc?.reviewsCount || 120,
+                fee: bDoc.consultationFee || localDoc?.fee || 1500,
+                availabilityStatus: localDoc?.availabilityStatus || "Available Today",
+                nextSlot: localDoc?.nextSlot || "09:30 AM",
+                imageUrl: localDoc?.imageUrl || doctorImg1,
+                hospital: localDoc?.hospital || "SmartHealth Medical Center"
+              };
+            });
+            setDoctorsList(merged);
+          }
+        }
+      } catch (err) {
+        console.warn("Could not fetch backend doctors, using canonical database", err);
+      }
+    };
+    fetchBackendDoctors();
+  }, []);
+
+  // Pre-select doctor if doctorId is provided
+  useEffect(() => {
+    if (doctorIdParam) {
+      const doctor = doctorsList.find(doc => 
+        String(doc.id) === String(doctorIdParam) || 
+        String(doc.id).replace('doc_', '') === String(doctorIdParam).replace('doc_', '')
+      );
+      if (doctor) {
+        setSelectedDoctor(doctor);
+      }
+    }
+  }, [doctorIdParam, doctorsList]);
 
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
@@ -149,12 +267,12 @@ export default function AppointmentBooking() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   
   const [patientForm, setPatientForm] = useState({
-    fullName: 'Piyush Dahiwale',
-    email: 'piyush@healthcare.com',
+    fullName: localStorage.getItem("name") || 'Piyush Dahiwale',
+    email: localStorage.getItem("email") || 'piyush@healthcare.com',
     phoneNumber: '+91 98765 43210',
     age: '26',
     gender: 'Male',
-    address: 'Pune, Maharashtra, India',
+    address: 'Nagpur, Maharashtra, India',
     symptoms: 'Mild chest discomfort and fatigue over the past 3 days',
     notes: 'Please keep previous blood report history in mind.'
   });
@@ -171,7 +289,7 @@ export default function AppointmentBooking() {
     localStorage.setItem('smarthealth_appointments', JSON.stringify(appointments));
   }, [appointments]);
 
-  const filteredDoctors = MOCK_DOCTORS.filter(doc => {
+  const filteredDoctors = doctorsList.filter(doc => {
     const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           doc.specialization.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesSpec = selectedSpecialization ? doc.specialization === selectedSpecialization : true;
@@ -203,9 +321,13 @@ export default function AppointmentBooking() {
     return true;
   };
 
+  const consultationFee = selectedDoctor ? (Number(selectedDoctor.fee) || 1500) : 1500;
+  const facilityFee = 50;
+  const totalAmountPayable = consultationFee + facilityFee;
+
   const handleNext = () => {
     if (validateStep()) {
-      setCurrentStep(prev => Math.min(prev + 1, 4));
+      setCurrentStep(prev => Math.min(prev + 1, 5));
       window.scrollTo({ top: 400, behavior: 'smooth' });
     }
   };
@@ -215,21 +337,157 @@ export default function AppointmentBooking() {
     window.scrollTo({ top: 400, behavior: 'smooth' });
   };
 
-  const handleConfirmBooking = () => {
-    const newAppointment = {
-      appointmentId: 'SH-' + Math.floor(100000 + Math.random() * 900000),
-      doctor: selectedDoctor,
-      date: selectedDate,
-      time: selectedTimeSlot,
-      patient: { ...patientForm },
-      concern: selectedConcern || selectedDoctor.concern,
-      status: 'Pending',
-      bookingDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    };
+  const handleInitiatePayment = () => {
+    if (paymentMethod === "PAY_AT_CLINIC") {
+      handleConfirmBooking(null);
+    } else {
+      setIsPaymentModalOpen(true);
+    }
+  };
 
-    setAppointments([newAppointment, ...appointments]);
-    setCurrentStep(4);
-    window.scrollTo({ top: 400, behavior: 'smooth' });
+  const handleConfirmBooking = async (gatewayResult = null) => {
+    setIsSubmitting(true);
+    setBookingError('');
+
+    const userId = localStorage.getItem("userId") || "1";
+    const token = localStorage.getItem("token");
+
+    // Convert time slot e.g. "09:30 AM" to "09:30:00" for Java LocalTime
+    let formattedTime = "09:00:00";
+    if (selectedTimeSlot) {
+      const parts = selectedTimeSlot.trim().split(" ");
+      if (parts.length === 2) {
+        const [timePart, modifier] = parts;
+        let [hours, minutes] = timePart.split(":");
+        if (modifier.toUpperCase() === "PM" && hours !== "12") {
+          hours = String(parseInt(hours, 10) + 12);
+        }
+        if (modifier.toUpperCase() === "AM" && hours === "12") {
+          hours = "00";
+        }
+        formattedTime = `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:00`;
+      }
+    }
+
+    const doctorNumericId = parseInt(String(selectedDoctor.id).replace("doc_", ""), 10) || 1;
+    const isPayAtClinic = paymentMethod === "PAY_AT_CLINIC";
+    const generatedTxnId = gatewayResult?.transactionId || (isPayAtClinic 
+      ? `CLINIC-DESK-${Math.floor(100000 + Math.random() * 900000)}` 
+      : `TXN-${paymentMethod}-${Math.floor(10000000 + Math.random() * 90000000)}`);
+
+    // Convert selectedDate e.g. "Sep 2, 2026" or "2026-09-02" to standard "YYYY-MM-DD"
+    let formattedDate = selectedDate;
+    if (selectedDate) {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(selectedDate)) {
+        formattedDate = selectedDate;
+      } else {
+        const d = new Date(selectedDate);
+        if (!isNaN(d.getTime())) {
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          formattedDate = `${year}-${month}-${day}`;
+        }
+      }
+    }
+
+    try {
+      const res = await fetch("http://localhost:8080/api/appointments/book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          patientUserId: parseInt(userId, 10),
+          doctorId: doctorNumericId,
+          appointmentDate: formattedDate, // Standard YYYY-MM-DD
+          startTime: formattedTime,
+          reason: patientForm.symptoms || "General medical consultation",
+          appointmentType: "in-person",
+          paymentMethod: paymentMethod,
+          paymentStatus: isPayAtClinic ? "PAY_ON_ARRIVAL" : "PAID",
+          amountPaid: totalAmountPayable,
+          transactionId: generatedTxnId
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        const transactionRecord = {
+          appointmentId: data.id ? `SMH-2026-${data.id}` : 'SMH-2026-' + Math.floor(1000 + Math.random() * 9000),
+          doctor: selectedDoctor,
+          date: selectedDate,
+          time: selectedTimeSlot,
+          patient: { ...patientForm },
+          concern: selectedConcern || selectedDoctor?.concern || "General Checkup",
+          paymentMethod: paymentMethod,
+          paymentStatus: isPayAtClinic ? "PAY_ON_ARRIVAL" : "PAID",
+          amount: totalAmountPayable,
+          consultationFee: consultationFee,
+          facilityFee: facilityFee,
+          transactionId: generatedTxnId,
+          status: data.status || 'CONFIRMED',
+          bookingDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          bookedAtTime: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+        };
+
+        setConfirmedTransaction(transactionRecord);
+        setAppointments([transactionRecord, ...appointments]);
+        setIsPaymentModalOpen(false);
+        setCurrentStep(5);
+        window.scrollTo({ top: 400, behavior: 'smooth' });
+
+        // Dispatch real-time synchronization events
+        window.dispatchEvent(new Event("appointmentsUpdated"));
+        window.dispatchEvent(new Event("storage"));
+      } else {
+        setBookingError(data.error || "Failed to book appointment. Please choose a different slot or doctor.");
+        setIsPaymentModalOpen(false);
+      }
+    } catch (err) {
+      console.error("Booking error:", err);
+      // Fallback for offline mode
+      const transactionRecord = {
+        appointmentId: 'SMH-2026-' + Math.floor(1000 + Math.random() * 9000),
+        doctor: selectedDoctor,
+        date: selectedDate,
+        time: selectedTimeSlot,
+        patient: { ...patientForm },
+        concern: selectedConcern || selectedDoctor?.concern || "General Checkup",
+        paymentMethod: paymentMethod,
+        paymentStatus: isPayAtClinic ? "PAY_ON_ARRIVAL" : "PAID",
+        amount: totalAmountPayable,
+        consultationFee: consultationFee,
+        facilityFee: facilityFee,
+        transactionId: generatedTxnId,
+        status: 'CONFIRMED',
+        bookingDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        bookedAtTime: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      };
+      setConfirmedTransaction(transactionRecord);
+      setAppointments([transactionRecord, ...appointments]);
+      setIsPaymentModalOpen(false);
+      setCurrentStep(5);
+      window.scrollTo({ top: 400, behavior: 'smooth' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+
+  const handlePrintInvoice = () => {
+    window.print();
+  };
+
+  const handleAddToCalendar = () => {
+    if (!confirmedTransaction) return;
+    const title = `Consultation with ${confirmedTransaction.doctor.name}`;
+    const desc = `Appointment at ${confirmedTransaction.doctor.hospital}. Booking ID: ${confirmedTransaction.appointmentId}`;
+    const loc = confirmedTransaction.doctor.hospital;
+    const dateFormatted = confirmedTransaction.date.replace(/-/g, "");
+    const googleCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${dateFormatted}T090000Z/${dateFormatted}T100000Z&details=${encodeURIComponent(desc)}&location=${encodeURIComponent(loc)}`;
+    window.open(googleCalUrl, "_blank");
   };
 
   const simulateApproval = (appointmentId) => {
@@ -527,7 +785,7 @@ export default function AppointmentBooking() {
                             </div>
 
                             <div className="sm:text-right flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                              <span className="text-sm font-black text-slate-900">${doc.fee} <span className="text-[11px] font-normal text-slate-400">/ visit</span></span>
+                              <span className="text-sm font-black text-slate-900">₹{doc.fee} <span className="text-[11px] font-normal text-slate-400">/ visit</span></span>
                               <button className={`mt-2 text-xs font-bold px-4 py-2 rounded-xl transition ${
                                 isSelected ? 'bg-teal-600 text-white shadow-md shadow-teal-600/20' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                               }`}>
@@ -591,99 +849,178 @@ export default function AppointmentBooking() {
                     </div>
                   </div>
 
-                  {/* Time Slots Selection */}
-                  <div className="space-y-3">
-                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block">Available Time Slots</span>
-                    <div className="grid grid-cols-3 gap-2">
-                      {AVAILABLE_TIME_SLOTS.map(slot => {
-                        const isSelected = selectedTimeSlot === slot;
-                        return (
-                          <button
-                            key={slot}
-                            onClick={() => setSelectedTimeSlot(slot)}
-                            className={`py-2.5 px-3 rounded-xl text-xs font-semibold transition border text-center ${
-                              isSelected ? 'bg-gradient-to-r from-blue-600 to-teal-500 text-white border-transparent shadow-sm' :
-                              'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
-                            }`}
-                          >
-                            {slot}
-                          </button>
-                        );
-                      })}
+                  {/* Clinical Hours Notice */}
+                  <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-100 flex items-start gap-3">
+                    <div className="p-2 rounded-xl bg-blue-100 text-blue-700 shrink-0">
+                      <Clock size={16} />
+                    </div>
+                    <div className="text-xs">
+                      <span className="font-bold text-slate-800 block">Hospital Outpatient Timings</span>
+                      <span className="text-slate-600">
+                        Morning Shift: 09:00 AM – 01:00 PM • Afternoon/Evening Shift: 02:00 PM – 07:00 PM. Night hours (07:00 PM – 09:00 AM) are non-bookable and reserved exclusively for Emergency Casualty.
+                      </span>
                     </div>
                   </div>
 
-                  {/* Selected Appointment Preview box */}
-                  <div className="bg-slate-900 text-white p-4 rounded-2xl space-y-2 text-xs">
-                    <span className="text-[10px] font-bold text-teal-400 uppercase tracking-widest block">Selected Summary</span>
-                    <div className="flex justify-between"><span className="text-slate-400">Doctor:</span> <span className="font-bold">{selectedDoctor ? selectedDoctor.name : 'Not selected'}</span></div>
-                    <div className="flex justify-between"><span className="text-slate-400">Date:</span> <span className="font-bold">{selectedDate || 'Not selected'}</span></div>
-                    <div className="flex justify-between"><span className="text-slate-400">Time:</span> <span className="font-bold">{selectedTimeSlot || 'Not selected'}</span></div>
-                    <div className="flex justify-between pt-2 border-t border-white/10"><span className="text-slate-400">Consultation Fee:</span> <span className="font-bold text-teal-300">{selectedDoctor ? `$${selectedDoctor.fee}` : '$0'}</span></div>
+                  {/* Date Input */}
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                      Appointment Date
+                    </label>
+                    <input 
+                      type="date" 
+                      min={new Date().toISOString().split("T")[0]}
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      className="w-full sm:w-72 px-4 py-3 rounded-xl border border-slate-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-100 outline-none text-xs font-bold text-slate-800"
+                    />
                   </div>
 
-                  {/* Continue CTA Button */}
-                  <button
-                    disabled={!selectedDoctor || !selectedDate || !selectedTimeSlot}
-                    onClick={handleNext}
-                    className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center space-x-2 transition shadow-lg ${
-                      (!selectedDoctor || !selectedDate || !selectedTimeSlot)
-                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
-                        : 'bg-gradient-to-r from-blue-600 via-teal-500 to-emerald-500 text-white hover:opacity-95 shadow-teal-500/25'
-                    }`}
-                  >
-                    <span>Continue to Patient Details</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                  {/* Morning Slots */}
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-amber-700">
+                      <Sun size={15} />
+                      <span>Morning Session (09:00 AM – 01:00 PM)</span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+                      {MORNING_TIME_SLOTS.map(slot => (
+                        <button
+                          key={slot}
+                          onClick={() => setSelectedTimeSlot(slot)}
+                          className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                            selectedTimeSlot === slot
+                              ? 'bg-amber-500 text-white border-amber-500 shadow-sm'
+                              : 'bg-white border-slate-200 text-slate-700 hover:border-amber-300 hover:bg-amber-50/40'
+                          }`}
+                        >
+                          <Clock size={12} />
+                          <span>{slot}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Evening Slots */}
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-700">
+                      <Sunset size={15} />
+                      <span>Afternoon & Evening Session (02:00 PM – 07:00 PM)</span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2">
+                      {EVENING_TIME_SLOTS.map(slot => (
+                        <button
+                          key={slot}
+                          onClick={() => setSelectedTimeSlot(slot)}
+                          className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                            selectedTimeSlot === slot
+                              ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                              : 'bg-white border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/40'
+                          }`}
+                        >
+                          <Clock size={12} />
+                          <span>{slot}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-4">
+                    <button
+                      onClick={handleNext}
+                      disabled={!selectedDate || !selectedTimeSlot}
+                      className="px-6 py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-bold rounded-xl text-xs flex items-center space-x-2 transition shadow-md disabled:opacity-50"
+                    >
+                      <span>Continue to Patient Details</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
-
             </div>
           )}
 
           {/* --- STEP 2: PATIENT DETAILS --- */}
           {currentStep === 2 && (
-            <div className="max-w-4xl mx-auto bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm space-y-8">
-              <div className="border-b border-slate-100 pb-5">
-                <h2 className="text-xl font-bold text-slate-900">Tell Us About the Patient</h2>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1">Provide accurate information to help the doctor prepare for your consultation.</p>
+            <div className="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Patient Information & Symptoms</h2>
+                <p className="text-xs text-slate-500 mt-1">Provide clinical details for the consulting specialist.</p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
-                    <User className="w-3.5 h-3.5 text-blue-600" />
-                    <span>Full Name *</span>
-                  </label>
-                  <input
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
+                  <input 
                     type="text"
                     name="fullName"
                     value={patientForm.fullName}
                     onChange={handleInputChange}
-                    placeholder="Enter full name"
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-xs"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-teal-500"
                   />
-                  {formErrors.fullName && <span className="text-[10px] text-red-500 font-medium">{formErrors.fullName}</span>}
+                  {formErrors.fullName && <p className="text-red-500 text-[10px] mt-1">{formErrors.fullName}</p>}
                 </div>
-                
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
-                    <Mail className="w-3.5 h-3.5 text-blue-600" />
-                    <span>Email Address *</span>
-                  </label>
-                  <input
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
+                  <input 
                     type="email"
                     name="email"
                     value={patientForm.email}
                     onChange={handleInputChange}
-                    placeholder="Enter email address"
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-xs"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-teal-500"
                   />
-                  {formErrors.email && <span className="text-[10px] text-red-500 font-medium">{formErrors.email}</span>}
+                  {formErrors.email && <p className="text-red-500 text-[10px] mt-1">{formErrors.email}</p>}
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Phone Number</label>
+                  <input 
+                    type="text"
+                    name="phoneNumber"
+                    value={patientForm.phoneNumber}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-teal-500"
+                  />
+                  {formErrors.phoneNumber && <p className="text-red-500 text-[10px] mt-1">{formErrors.phoneNumber}</p>}
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Age & Gender</label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="number"
+                      name="age"
+                      value={patientForm.age}
+                      onChange={handleInputChange}
+                      placeholder="Age"
+                      className="w-24 px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-teal-500"
+                    />
+                    <select
+                      name="gender"
+                      value={patientForm.gender}
+                      onChange={handleInputChange}
+                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-teal-500"
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  {formErrors.age && <p className="text-red-500 text-[10px] mt-1">{formErrors.age}</p>}
                 </div>
               </div>
 
-              <div className="flex justify-between pt-6 border-t border-slate-100">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Health Symptoms & Concerns</label>
+                <textarea 
+                  name="symptoms"
+                  rows={3}
+                  value={patientForm.symptoms}
+                  onChange={handleInputChange}
+                  placeholder="Describe your current medical symptoms, duration, and any known allergies..."
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 outline-none focus:border-teal-500"
+                />
+                {formErrors.symptoms && <p className="text-red-500 text-[10px] mt-1">{formErrors.symptoms}</p>}
+              </div>
+
+              <div className="flex justify-between pt-4">
                 <button
                   onClick={handleBack}
                   className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center space-x-2 transition"
@@ -695,58 +1032,488 @@ export default function AppointmentBooking() {
                   onClick={handleNext}
                   className="px-6 py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-bold rounded-xl text-xs flex items-center space-x-2 transition shadow-md"
                 >
-                  <span>Review Booking</span>
+                  <span>Review Booking & Bill</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
           )}
 
-          {/* --- STEP 3: REVIEW & SUBMIT --- */}
+          {/* --- STEP 3: REVIEW & ITEMIZED BILL BREAKDOWN --- */}
           {currentStep === 3 && (
-            <div className="max-w-3xl mx-auto bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
-              <h2 className="text-xl font-bold text-slate-900">Review Your Appointment</h2>
-              <p className="text-xs text-slate-500">Please confirm your booking details below.</p>
+            <div className="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Review Booking & Cost Summary</h2>
+                <p className="text-xs text-slate-500 mt-1">Verify clinical consultation details and itemized hospital fees.</p>
+              </div>
               
-              <div className="bg-slate-50 p-6 rounded-2xl space-y-4 text-xs">
-                <div className="flex justify-between border-b border-slate-200 pb-3">
-                  <span className="text-slate-500">Doctor:</span>
-                  <span className="font-bold text-slate-900">{selectedDoctor?.name}</span>
+              {/* Doctor & Appointment Summary */}
+              <div className="bg-slate-50 p-5 rounded-2xl space-y-3.5 text-xs">
+                <div className="flex justify-between border-b border-slate-200 pb-2.5">
+                  <span className="text-slate-500 font-medium">Selected Specialist:</span>
+                  <span className="font-bold text-slate-900">{selectedDoctor?.name} ({selectedDoctor?.specialization})</span>
                 </div>
-                <div className="flex justify-between border-b border-slate-200 pb-3">
-                  <span className="text-slate-500">Date & Time:</span>
+                <div className="flex justify-between border-b border-slate-200 pb-2.5">
+                  <span className="text-slate-500 font-medium">Date & Slot:</span>
                   <span className="font-bold text-teal-600">{selectedDate} at {selectedTimeSlot}</span>
                 </div>
+                <div className="flex justify-between border-b border-slate-200 pb-2.5">
+                  <span className="text-slate-500 font-medium">Hospital Center:</span>
+                  <span className="font-semibold text-slate-700">{selectedDoctor?.hospital}</span>
+                </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Patient Name:</span>
-                  <span className="font-bold text-slate-900">{patientForm.fullName}</span>
+                  <span className="text-slate-500 font-medium">Patient:</span>
+                  <span className="font-bold text-slate-900">{patientForm.fullName} ({patientForm.gender}, {patientForm.age} yrs)</span>
+                </div>
+              </div>
+
+              {/* Itemized Bill Breakdown */}
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-200/80 space-y-3">
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                  <Receipt size={14} className="text-blue-600" />
+                  <span>Itemized Fee Breakdown</span>
+                </h3>
+
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between text-slate-600">
+                    <span>Specialist Consultation Fee ({selectedDoctor?.specialization})</span>
+                    <span className="font-bold text-slate-900">₹{consultationFee.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-slate-600">
+                    <span>Digital Hospital Facility & Safety Surcharge</span>
+                    <span className="font-bold text-slate-900">₹{facilityFee}</span>
+                  </div>
+                  <div className="flex justify-between text-slate-600">
+                    <span>Healthcare GST (0% Tax-Exempt)</span>
+                    <span className="font-bold text-emerald-600">₹0 (Free)</span>
+                  </div>
+                  <div className="pt-2.5 border-t border-slate-200 flex justify-between text-sm sm:text-base font-black text-slate-900">
+                    <span>Total Payable Amount</span>
+                    <span className="text-blue-600">₹{totalAmountPayable.toLocaleString()}</span>
+                  </div>
                 </div>
               </div>
 
               <div className="flex justify-between pt-4">
-                <button onClick={handleBack} className="px-6 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs">Back</button>
-                <button onClick={handleConfirmBooking} className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-xl text-xs shadow-md">Confirm Booking</button>
+                <button 
+                  onClick={handleBack} 
+                  className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center space-x-2 transition cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Back</span>
+                </button>
+                <button 
+                  onClick={handleNext} 
+                  className="px-7 py-3 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-bold rounded-xl text-xs shadow-md flex items-center gap-2 transition cursor-pointer"
+                >
+                  <span>Select Payment Method (₹{totalAmountPayable.toLocaleString()})</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
           )}
 
-          {/* --- STEP 4: CONFIRMATION SUCCESS --- */}
+          {/* --- STEP 4: PAYMENT METHOD SELECTION & CHECKOUT --- */}
           {currentStep === 4 && (
-            <div className="max-w-2xl mx-auto bg-white p-10 rounded-3xl border border-slate-200 text-center space-y-6 shadow-sm">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle className="w-8 h-8" />
-              </div>
-              <h2 className="text-2xl font-bold text-slate-900">Appointment Booked Successfully!</h2>
-              <p className="text-xs text-slate-500">We have sent a confirmation email with all details to your registered email address.</p>
+            <div className="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
               
-              <button 
-                onClick={() => { setCurrentStep(1); setSelectedDoctor(null); setSelectedDate(''); setSelectedTimeSlot(''); }}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition shadow-md"
-              >
-                Book Another Appointment
-              </button>
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900">Choose Payment Method</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Select your preferred payment channel or choose to pay at the clinic.</p>
+                </div>
+                <div className="p-2.5 px-3.5 bg-blue-50 border border-blue-100 rounded-xl flex items-center gap-2 self-start sm:self-auto">
+                  <ShieldCheck size={16} className="text-blue-600" />
+                  <span className="text-xs font-black text-blue-900">Total: ₹{totalAmountPayable.toLocaleString()}</span>
+                </div>
+              </div>
+
+              {/* Payment Methods Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {[
+                  { id: "UPI", label: "UPI / QR Code", icon: QrCode, badge: "Instant" },
+                  { id: "CARD", label: "Credit / Debit Card", icon: CreditCard, badge: "Secure" },
+                  { id: "NET_BANKING", label: "Net Banking", icon: Building2, badge: "Direct" },
+                  { id: "PAY_AT_CLINIC", label: "Pay at Clinic", icon: Wallet, badge: "Zero Upfront" }
+                ].map(method => {
+                  const Icon = method.icon;
+                  const isSelected = paymentMethod === method.id;
+                  return (
+                    <button
+                      key={method.id}
+                      type="button"
+                      onClick={() => setPaymentMethod(method.id)}
+                      className={`p-3.5 rounded-2xl border-2 transition text-left flex flex-col justify-between cursor-pointer ${
+                        isSelected 
+                          ? 'border-blue-600 bg-blue-50/40 shadow-xs' 
+                          : 'border-slate-100 hover:border-slate-200 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className={`p-2 rounded-xl ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                          <Icon size={16} />
+                        </div>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${isSelected ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'}`}>
+                          {method.badge}
+                        </span>
+                      </div>
+                      <span className={`text-xs font-bold mt-3 block ${isSelected ? 'text-blue-900' : 'text-slate-700'}`}>
+                        {method.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Dynamic Payment Channel Sub-Panel */}
+              <div className="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80">
+                
+                {/* 1. UPI / QR Tab */}
+                {paymentMethod === "UPI" && (
+                  <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row items-center gap-6">
+                      {/* Realistic Simulated QR Box */}
+                      <div className="p-3 bg-white border border-slate-200 rounded-2xl shadow-xs flex flex-col items-center shrink-0">
+                        <div className="w-32 h-32 bg-slate-900 rounded-xl p-2 flex flex-col items-center justify-between text-white">
+                          <div className="w-full flex justify-between">
+                            <div className="w-6 h-6 border-2 border-white rounded-xs p-0.5"><div className="w-full h-full bg-white"></div></div>
+                            <div className="w-6 h-6 border-2 border-white rounded-xs p-0.5"><div className="w-full h-full bg-white"></div></div>
+                          </div>
+                          <div className="text-[9px] font-black tracking-widest text-teal-300 uppercase">SMART HEALTH UPI</div>
+                          <div className="w-full flex justify-between">
+                            <div className="w-6 h-6 border-2 border-white rounded-xs p-0.5"><div className="w-full h-full bg-white"></div></div>
+                            <div className="w-5 h-5 bg-teal-400 rounded-full flex items-center justify-center text-slate-900 text-[8px] font-black">₹</div>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-400 mt-1.5">Scan with Any UPI App</span>
+                      </div>
+
+                      {/* UPI ID input */}
+                      <div className="space-y-3 flex-1 w-full">
+                        <span className="text-xs font-bold text-slate-800 block">Or Enter Your UPI ID</span>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={upiId}
+                            onChange={(e) => { setUpiId(e.target.value); setUpiVerified(false); }}
+                            placeholder="username@bank (e.g. name@oksbi)"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-800 outline-none focus:border-blue-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setUpiVerified(true)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black cursor-pointer"
+                          >
+                            {upiVerified ? "Verified ✓" : "Verify ID"}
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-[11px] text-slate-500">
+                          <span className="font-semibold">Supported:</span>
+                          <span className="px-2 py-0.5 rounded bg-white border border-slate-200 font-bold text-slate-700">Google Pay</span>
+                          <span className="px-2 py-0.5 rounded bg-white border border-slate-200 font-bold text-slate-700">PhonePe</span>
+                          <span className="px-2 py-0.5 rounded bg-white border border-slate-200 font-bold text-slate-700">Paytm</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. Card Tab */}
+                {paymentMethod === "CARD" && (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">Card Number</label>
+                        <input
+                          type="text"
+                          value={cardData.cardNumber}
+                          onChange={(e) => setCardData({ ...cardData, cardNumber: e.target.value })}
+                          placeholder="4532 •••• •••• 8821"
+                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-800 outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">Name on Card</label>
+                        <input
+                          type="text"
+                          value={cardData.cardHolder}
+                          onChange={(e) => setCardData({ ...cardData, cardHolder: e.target.value })}
+                          placeholder="Piyush Dahiwale"
+                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-800 outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">Expiry Date</label>
+                        <input
+                          type="text"
+                          value={cardData.expiry}
+                          onChange={(e) => setCardData({ ...cardData, expiry: e.target.value })}
+                          placeholder="MM/YY"
+                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-800 outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">CVV / CVC</label>
+                        <input
+                          type="password"
+                          maxLength={4}
+                          value={cardData.cvv}
+                          onChange={(e) => setCardData({ ...cardData, cvv: e.target.value })}
+                          placeholder="•••"
+                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-800 outline-none focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] text-slate-500 pt-1">
+                      <ShieldCheck size={14} className="text-emerald-600" />
+                      <span>Secured with 256-Bit SSL & 3D Secure OTP verification.</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. Net Banking Tab */}
+                {paymentMethod === "NET_BANKING" && (
+                  <div className="space-y-3">
+                    <span className="text-xs font-bold text-slate-700 block">Select Your Bank</span>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {["HDFC Bank", "State Bank of India", "ICICI Bank", "Axis Bank", "Kotak Mahindra", "Punjab National Bank"].map(b => (
+                        <button
+                          key={b}
+                          type="button"
+                          onClick={() => setSelectedBank(b)}
+                          className={`p-2.5 rounded-xl border text-xs font-bold transition text-left cursor-pointer ${
+                            selectedBank === b 
+                              ? 'bg-blue-600 text-white border-blue-600 shadow-xs' 
+                              : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                          }`}
+                        >
+                          {b}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 4. Pay at Clinic Tab */}
+                {paymentMethod === "PAY_AT_CLINIC" && (
+                  <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-2">
+                    <div className="flex items-center gap-2 text-amber-800 font-bold text-xs">
+                      <Wallet size={16} />
+                      <span>Zero Upfront Payment Required</span>
+                    </div>
+                    <p className="text-xs text-amber-900 leading-relaxed">
+                      Your appointment slot with <strong>{selectedDoctor?.name}</strong> will be immediately confirmed and locked. You can conveniently pay the consultation fee of <strong>₹{totalAmountPayable.toLocaleString()}</strong> in Cash, UPI, or Card at the hospital reception counter before your visit.
+                    </p>
+                  </div>
+                )}
+
+              </div>
+
+              {bookingError && (
+                <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 font-medium flex items-center gap-2">
+                  <AlertCircle size={16} className="shrink-0" />
+                  <span>{bookingError}</span>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex justify-between pt-4">
+                <button 
+                  disabled={isSubmitting}
+                  onClick={handleBack} 
+                  className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs disabled:opacity-50 transition cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4 inline mr-1" />
+                  <span>Back to Review</span>
+                </button>
+                <button 
+                  disabled={isSubmitting}
+                  onClick={handleInitiatePayment} 
+                  className="px-7 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl text-xs shadow-md flex items-center gap-2 disabled:opacity-75 transition cursor-pointer"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Processing Payment & Booking...</span>
+                    </>
+                  ) : paymentMethod === "PAY_AT_CLINIC" ? (
+                    <span>Confirm & Pay at Clinic (₹{totalAmountPayable.toLocaleString()})</span>
+                  ) : (
+                    <span>Pay ₹{totalAmountPayable.toLocaleString()} & Confirm Booking</span>
+                  )}
+                </button>
+              </div>
+
             </div>
           )}
+
+          {/* --- STEP 5: OFFICIAL CONFIRMATION & DIGITAL INVOICE --- */}
+          {currentStep === 5 && (
+            <div className="max-w-3xl mx-auto space-y-6">
+              
+              {/* Top Banner */}
+              <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-4 shadow-sm">
+                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-black text-slate-900">Appointment Confirmed Successfully!</h2>
+                <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+                  Your appointment with <strong className="text-slate-800">{confirmedTransaction?.doctor?.name}</strong> has been registered in the SmartHealth hospital records.
+                </p>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700">
+                  <span>Booking Reference:</span>
+                  <span className="text-blue-600 font-black">{confirmedTransaction?.appointmentId}</span>
+                </div>
+              </div>
+
+              {/* Digital Tax Invoice & Clinical Slip */}
+              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                
+                {/* Slip Header */}
+                <div className="p-6 bg-slate-900 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div>
+                    <div className="flex items-center gap-2 text-teal-400 font-black text-sm">
+                      <HeartPulse size={18} />
+                      <span>SmartHealth Medical Center</span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-0.5">Official Clinical Booking & Payment Receipt</p>
+                  </div>
+                  <div className="text-left sm:text-right">
+                    <span className={`inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider ${
+                      confirmedTransaction?.paymentStatus === 'PAID' 
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30' 
+                        : 'bg-amber-500/20 text-amber-300 border border-amber-400/30'
+                    }`}>
+                      {confirmedTransaction?.paymentStatus === 'PAID' ? '✓ Paid Online' : 'Pay at Clinic Desk'}
+                    </span>
+                    <p className="text-[11px] text-slate-400 mt-1">Txn ID: {confirmedTransaction?.transactionId}</p>
+                  </div>
+                </div>
+
+                {/* Slip Body */}
+                <div className="p-6 sm:p-8 space-y-6">
+                  
+                  {/* Grid info */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">Patient Details</span>
+                      <p className="font-bold text-slate-800 text-sm">{confirmedTransaction?.patient?.fullName}</p>
+                      <p className="text-slate-500">{confirmedTransaction?.patient?.phoneNumber} • {confirmedTransaction?.patient?.email}</p>
+                      <p className="text-slate-500">Reason: {confirmedTransaction?.patient?.symptoms}</p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">Consultation Schedule</span>
+                      <p className="font-bold text-slate-800 text-sm">{confirmedTransaction?.doctor?.name}</p>
+                      <p className="text-teal-600 font-bold">{confirmedTransaction?.date} at {confirmedTransaction?.time}</p>
+                      <p className="text-slate-500">{confirmedTransaction?.doctor?.hospital}</p>
+                    </div>
+                  </div>
+
+                  {/* Financial Table */}
+                  <div className="border border-slate-200 rounded-2xl overflow-hidden">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-200">
+                        <tr>
+                          <th className="p-3.5 px-4">Description</th>
+                          <th className="p-3.5 px-4 text-right">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 text-slate-700">
+                        <tr>
+                          <td className="p-3.5 px-4 font-medium">Outpatient Consultation Fee ({confirmedTransaction?.doctor?.specialization})</td>
+                          <td className="p-3.5 px-4 text-right font-bold text-slate-900">₹{confirmedTransaction?.consultationFee?.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="p-3.5 px-4 font-medium">Digital Clinic Facility & Surcharge</td>
+                          <td className="p-3.5 px-4 text-right font-bold text-slate-900">₹{confirmedTransaction?.facilityFee}</td>
+                        </tr>
+                        <tr>
+                          <td className="p-3.5 px-4 font-medium">Healthcare GST (0% Exempt)</td>
+                          <td className="p-3.5 px-4 text-right font-bold text-emerald-600">₹0</td>
+                        </tr>
+                        <tr className="bg-slate-50/80 font-black text-slate-900 text-sm">
+                          <td className="p-4">Total Amount</td>
+                          <td className="p-4 text-right text-blue-600">₹{confirmedTransaction?.amount?.toLocaleString()}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+
+                {/* Slip Action Buttons */}
+                <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handlePrintInvoice}
+                      className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-2xs"
+                    >
+                      <Printer size={15} />
+                      <span>Print / PDF Receipt</span>
+                    </button>
+                    <button
+                      onClick={handleAddToCalendar}
+                      className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-2xs"
+                    >
+                      <Calendar size={15} />
+                      <span>Add to Google Calendar</span>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to="/patient/dashboard?tab=My Appointments"
+                      className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center gap-2"
+                    >
+                      <CalendarCheck size={16} />
+                      <span>View in My Appointments</span>
+                    </Link>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Reset to book another */}
+              <div className="text-center pt-2">
+                <button
+                  onClick={() => {
+                    setCurrentStep(1);
+                    setSelectedDoctor(null);
+                    setSelectedDate('');
+                    setSelectedTimeSlot('');
+                    setConfirmedTransaction(null);
+                    setBookingError('');
+                  }}
+                  className="text-xs font-bold text-slate-400 hover:text-blue-600 transition cursor-pointer"
+                >
+                  ← Book Another Appointment
+                </button>
+              </div>
+
+            </div>
+          )}
+
+          {/* Mock Payment Gateway Modal */}
+          <MockPaymentGatewayModal
+            isOpen={isPaymentModalOpen}
+            onClose={() => setIsPaymentModalOpen(false)}
+            paymentMethod={paymentMethod}
+            amount={totalAmountPayable}
+            patientName={patientForm.fullName}
+            doctorName={selectedDoctor?.name}
+            clinicName={selectedDoctor?.hospital}
+            upiId={upiId}
+            cardData={cardData}
+            bankName={selectedBank}
+            onPaymentSuccess={(gatewayResult) => {
+              handleConfirmBooking(gatewayResult);
+            }}
+            onPaymentFailure={(errMsg) => {
+              setBookingError(errMsg);
+            }}
+          />
 
         </main>
       </motion.div>

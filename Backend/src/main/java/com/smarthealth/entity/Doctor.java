@@ -4,13 +4,15 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "doctors")
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Doctor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -27,12 +29,12 @@ public class Doctor {
     private Integer slotDurationMinutes = 30;
 
     @Column(name = "consultation_fee")
-    private Integer consultationFee = 500;
+    private Integer consultationFee = 5000;
 
     @Column(name = "rating")
     private Double rating = 4.5;
 
-    @Column(name = "avatar")
+    @Column(name = "avatar", columnDefinition = "LONGTEXT")
     private String avatar;
 
     @Column(name = "supports_telehealth")
@@ -111,7 +113,7 @@ public class Doctor {
         private String licenseNumber;
         private String bio;
         private Integer slotDurationMinutes = 30;
-        private Integer consultationFee = 500;
+        private Integer consultationFee = 5000;
         private Double rating = 4.5;
         private String avatar;
         private Boolean supportsTelehealth = true;

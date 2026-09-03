@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { Bell, Plus, Calendar, FileText, CheckCircle, X, BellOff, Menu } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Bell, Plus, Calendar, FileText, CheckCircle, X, BellOff, Menu, Home } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const tabMeta = {
   "Dashboard": {
@@ -29,37 +30,173 @@ const tabMeta = {
   }
 };
 
-function DashboardHeader({ activeTab, setActiveTab, onMenuToggle }) {
+function DashboardHeader({ activeTab, setActiveTab, onMenuToggle, appointments = [] }) {
   const userName = localStorage.getItem("name") || "Patient";
   const userInitial = userName.charAt(0).toUpperCase();
 
+  const [profilePhoto, setProfilePhoto] = useState(() => localStorage.getItem("userAvatar") || "");
+
+  useEffect(() => {
+    const handleAvatarUpdate = () => {
+      setProfilePhoto(localStorage.getItem("userAvatar") || "");
+    };
+    window.addEventListener("avatarUpdated", handleAvatarUpdate);
+    window.addEventListener("storage", handleAvatarUpdate);
+    return () => {
+      window.removeEventListener("avatarUpdated", handleAvatarUpdate);
+      window.removeEventListener("storage", handleAvatarUpdate);
+    };
+  }, []);
+
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "Appointment Confirmed",
-      description: "Dr. Jenkins confirmed your Cardiology checkup.",
-      time: "10 mins ago",
-      type: "appointment",
-      unread: true,
-    },
-    {
-      id: 2,
-      title: "Lab Report Uploaded",
-      description: "Your annual blood panel results are now available.",
-      time: "2 hours ago",
-      type: "record",
-      unread: true,
-    },
-    {
-      id: 3,
-      title: "Profile Completed",
-      description: "You've successfully set up your patient account.",
-      time: "Yesterday",
-      type: "system",
-      unread: false,
+  
+  // Stored read & cleared IDs
+  const [readNotificationIds, setReadNotificationIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem("smarthealth_read_notifications");
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
     }
-  ]);
+  });
+
+  const [clearedNotificationIds, setClearedNotificationIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem("smarthealth_cleared_notifications");
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [liveTrigger, setLiveTrigger] = useState(0);
+
+  useEffect(() => {
+    const handleSync = () => {
+      setLiveTrigger(prev => prev + 1);
+    };
+    window.addEventListener("storage", handleSync);
+    window.addEventListener("recordsUpdated", handleSync);
+    window.addEventListener("appointmentsUpdated", handleSync);
+    return () => {
+      window.removeEventListener("storage", handleSync);
+      window.removeEventListener("recordsUpdated", handleSync);
+      window.removeEventListener("appointmentsUpdated", handleSync);
+    };
+  }, []);
+
+  // Compute live real-time notifications
+  const notifications = useMemo(() => {
+    const list = [];
+
+    // 1. Real appointments from database
+    if (appointments && appointments.length > 0) {
+      appointments.forEach((apt) => {
+        const docName = apt.doctor?.user?.name || "Medical Specialist";
+        const spec = apt.doctor?.specialization || "Clinical";
+        const date = apt.appointmentDate || "Upcoming";
+        const time = apt.startTime || "";
+        const id = `apt-${apt.id}-${apt.status}`;
+
+        if (apt.status === "CONFIRMED") {
+          list.push({
+            id,
+            title: "Appointment Confirmed",
+            description: `Dr. ${docName} confirmed your ${spec} consultation for ${date} ${time ? 'at ' + time : ''}.`,
+            time: `${date}`,
+            type: "appointment",
+            unread: !readNotificationIds.includes(id),
+            actionTab: "My Appointments"
+          });
+        } else if (apt.status === "PENDING") {
+          list.push({
+            id,
+            title: "Booking Awaiting Confirmation",
+            description: `Consultation request with Dr. ${docName} on ${date} has been received.`,
+            time: `${date}`,
+            type: "appointment",
+            unread: !readNotificationIds.includes(id),
+            actionTab: "My Appointments"
+          });
+        } else if (apt.status === "CANCELLED") {
+          list.push({
+            id,
+            title: "Appointment Cancelled",
+            description: `Consultation with Dr. ${docName} scheduled for ${date} was cancelled.`,
+            time: `${date}`,
+            type: "appointment",
+            unread: !readNotificationIds.includes(id),
+            actionTab: "My Appointments"
+          });
+        } else if (apt.status === "COMPLETED") {
+          list.push({
+            id,
+            title: "Consultation Completed",
+            description: `Session with Dr. ${docName} on ${date} is completed. View summary in history.`,
+            time: `${date}`,
+            type: "appointment",
+            unread: !readNotificationIds.includes(id),
+            actionTab: "My Appointments"
+          });
+        }
+      });
+    }
+
+    // 2. Real Medical Records from vault
+    try {
+      const recordsRaw = localStorage.getItem("smarthealth_medical_records");
+      if (recordsRaw) {
+        const records = JSON.parse(recordsRaw);
+        if (Array.isArray(records)) {
+          records.slice(0, 2).forEach((rec) => {
+            const id = `rec-${rec.id}`;
+            list.push({
+              id,
+              title: "Health Document in Vault",
+              description: `${rec.name} (${rec.category}) uploaded by ${rec.provider}.`,
+              time: `${rec.date}`,
+              type: "record",
+              unread: !readNotificationIds.includes(id),
+              actionTab: "Medical Records"
+            });
+          });
+        }
+      }
+    } catch (e) {}
+
+    // 3. Real Health Vitals
+    try {
+      const vitalsRaw = localStorage.getItem("smarthealth_patient_vitals");
+      if (vitalsRaw) {
+        const vitals = JSON.parse(vitalsRaw);
+        const id = `vitals-${vitals.lastUpdated || 'recent'}`;
+        list.push({
+          id,
+          title: "Vitals Synchronized",
+          description: `Blood Pressure ${vitals.bpSystolic}/${vitals.bpDiastolic} mmHg • SpO2 ${vitals.spo2}% • Pulse ${vitals.heartRate} bpm.`,
+          time: vitals.lastUpdated || "Today",
+          type: "system",
+          unread: !readNotificationIds.includes(id),
+          actionTab: "Dashboard"
+        });
+      }
+    } catch (e) {}
+
+    // Default welcome if no items yet
+    if (list.length === 0) {
+      list.push({
+        id: "sys-welcome",
+        title: "Welcome to SmartHealth",
+        description: "Your digital patient portal is active. Schedule an appointment or upload health records anytime.",
+        time: "Just now",
+        type: "system",
+        unread: !readNotificationIds.includes("sys-welcome"),
+        actionTab: "Book Appointment"
+      });
+    }
+
+    return list.filter(item => !clearedNotificationIds.includes(item.id));
+  }, [appointments, readNotificationIds, clearedNotificationIds, liveTrigger]);
 
   const titleText = activeTab === "Dashboard" 
     ? `Welcome back, ${userName}.` 
@@ -70,15 +207,33 @@ function DashboardHeader({ activeTab, setActiveTab, onMenuToggle }) {
   const unreadCount = notifications.filter(n => n.unread).length;
 
   const handleMarkAsRead = (id) => {
-    setNotifications(notifications.map(n => n.id === id ? { ...n, unread: false } : n));
+    if (!readNotificationIds.includes(id)) {
+      const updated = [...readNotificationIds, id];
+      setReadNotificationIds(updated);
+      localStorage.setItem("smarthealth_read_notifications", JSON.stringify(updated));
+    }
+  };
+
+  const handleNotificationClick = (item) => {
+    handleMarkAsRead(item.id);
+    setShowNotifications(false);
+    if (item.actionTab && setActiveTab) {
+      setActiveTab(item.actionTab);
+    }
   };
 
   const handleMarkAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, unread: false })));
+    const allIds = notifications.map(n => n.id);
+    const updated = Array.from(new Set([...readNotificationIds, ...allIds]));
+    setReadNotificationIds(updated);
+    localStorage.setItem("smarthealth_read_notifications", JSON.stringify(updated));
   };
 
   const handleClearAll = () => {
-    setNotifications([]);
+    const allIds = notifications.map(n => n.id);
+    const updated = Array.from(new Set([...clearedNotificationIds, ...allIds]));
+    setClearedNotificationIds(updated);
+    localStorage.setItem("smarthealth_cleared_notifications", JSON.stringify(updated));
   };
 
   const getNotificationIcon = (type) => {
@@ -107,7 +262,7 @@ function DashboardHeader({ activeTab, setActiveTab, onMenuToggle }) {
     <header className="mb-6 md:mb-8 border-b border-slate-200 pb-5 md:pb-6 relative">
       
       {/* ================= MOBILE TOP APP BAR (md:hidden) ================= */}
-      {/* Dedicated top navigation bar on mobile: Hamburger on left, Notification & Profile on right */}
+      {/* Compact mobile header: Hamburger + Home + Notifications */}
       <div className="flex md:hidden items-center justify-between pb-4">
         {/* Left: Hamburger menu button */}
         <button
@@ -118,32 +273,27 @@ function DashboardHeader({ activeTab, setActiveTab, onMenuToggle }) {
           <Menu size={24} />
         </button>
 
-        {/* Right: Notification Bell & Profile Avatar */}
-        <div className="flex items-center gap-3">
-          {/* Notification Bell */}
-          <div className="relative">
-            <button 
-              onClick={() => setShowNotifications(!showNotifications)}
-              className={`relative rounded-full p-2 text-slate-600 transition hover:bg-slate-100 cursor-pointer border-none bg-transparent ${showNotifications ? "bg-slate-100" : ""}`}
-              aria-label="Notifications"
-            >
-              <Bell size={22} />
-              {unreadCount > 0 && (
-                <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse" />
-              )}
-            </button>
-          </div>
+        {/* Center: Back to Home button (smaller) */}
+        <Link
+          to="/"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 text-[11px] font-semibold transition"
+        >
+          <Home size={14} />
+          <span>Home</span>
+        </Link>
 
-          {/* Patient Profile Avatar */}
-          <div 
-            onClick={() => setActiveTab("Profile")}
-            className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 border-blue-100 bg-blue-50 cursor-pointer hover:ring-2 hover:ring-blue-400 transition shrink-0"
-            title="View Profile"
+        {/* Right: Notification Bell */}
+        <div className="relative">
+          <button
+            onClick={() => setShowNotifications(!showNotifications)}
+            className={`relative rounded-full p-2 text-slate-600 transition hover:bg-slate-100 cursor-pointer border-none bg-transparent ${showNotifications ? "bg-slate-100" : ""}`}
+            aria-label="Notifications"
           >
-            <span className="font-bold text-sm text-[#2563EB]">
-              {userInitial}
-            </span>
-          </div>
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+            )}
+          </button>
         </div>
       </div>
 
@@ -163,6 +313,15 @@ function DashboardHeader({ activeTab, setActiveTab, onMenuToggle }) {
 
         {/* Desktop-only Right Side Actions (hidden on mobile, visible on md:flex) */}
         <div className="hidden md:flex items-center gap-5 relative">
+
+          {/* Back to Home button */}
+          <Link
+            to="/"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 text-xs font-semibold transition"
+          >
+            <Home size={16} />
+            <span>Back to Home</span>
+          </Link>
 
           {/* Special Inline Context Action: "+ Book New" on My Appointments */}
           {activeTab === "My Appointments" && (
@@ -191,12 +350,16 @@ function DashboardHeader({ activeTab, setActiveTab, onMenuToggle }) {
           {/* Patient Profile Avatar */}
           <div 
             onClick={() => setActiveTab("Profile")}
-            className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-blue-100 bg-blue-50 cursor-pointer hover:ring-2 hover:ring-blue-400 transition shrink-0"
+            className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 border-blue-100 bg-blue-50 cursor-pointer hover:ring-2 hover:ring-blue-400 transition shrink-0 shadow-2xs"
             title="View Profile"
           >
-            <span className="font-bold text-[#2563EB]">
-              {userInitial}
-            </span>
+            {profilePhoto ? (
+              <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <span className="font-bold text-[#2563EB]">
+                {userInitial}
+              </span>
+            )}
           </div>
 
         </div>
@@ -254,8 +417,8 @@ function DashboardHeader({ activeTab, setActiveTab, onMenuToggle }) {
                 notifications.map(item => (
                   <div 
                     key={item.id}
-                    onClick={() => handleMarkAsRead(item.id)}
-                    className={`p-4 hover:bg-slate-50/60 transition cursor-pointer flex gap-3.5 relative ${item.unread ? "bg-blue-50/15" : ""}`}
+                    onClick={() => handleNotificationClick(item)}
+                    className={`p-4 hover:bg-slate-50/80 transition cursor-pointer flex gap-3.5 relative ${item.unread ? "bg-blue-50/20" : ""}`}
                   >
                     {/* Dot status indicator */}
                     {item.unread && (

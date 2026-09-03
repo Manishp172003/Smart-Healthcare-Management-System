@@ -1,10 +1,14 @@
+import { useState } from "react";
 import {
   CalendarClock,
   Video,
   CalendarDays,
 } from "lucide-react";
+import VideoConsultationModal from "./VideoConsultationModal";
 
-function NextAppointment({ appointments = [], loading = false }) {
+function NextAppointment({ appointments = [], loading = false, setActiveTab }) {
+  const [isTelehealthModalOpen, setIsTelehealthModalOpen] = useState(false);
+
   if (loading) {
     return (
       <div className="relative overflow-hidden rounded-3xl border border-white/45 bg-white/60 p-7 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md flex items-center justify-center min-h-[220px]">
@@ -94,12 +98,18 @@ function NextAppointment({ appointments = [], loading = false }) {
         {/* Buttons */}
         <div className="flex flex-col gap-3 sm:flex-row">
 
-          <button className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none px-5 py-3 font-bold text-white shadow-[0_4px_12px_rgba(37,99,235,0.15)] hover:shadow-[0_6px_18px_rgba(37,99,235,0.22)] transition-all duration-300 hover:-translate-y-px cursor-pointer">
+          <button 
+            onClick={() => setIsTelehealthModalOpen(true)}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#0D9488] border-none px-5 py-3 font-bold text-white shadow-[0_4px_12px_rgba(37,99,235,0.15)] hover:shadow-[0_6px_18px_rgba(37,99,235,0.22)] transition-all duration-300 hover:-translate-y-px cursor-pointer"
+          >
             <Video size={18} />
             Join Telehealth
           </button>
 
-          <button className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white/40 border border-white/20 px-5 py-3 font-medium text-slate-700 transition hover:bg-white/60 cursor-pointer">
+          <button 
+            onClick={() => setActiveTab && setActiveTab("My Appointments")}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white/40 border border-white/20 px-5 py-3 font-medium text-slate-700 transition hover:bg-white/60 cursor-pointer"
+          >
             <CalendarDays size={18} />
             Reschedule
           </button>
@@ -107,6 +117,22 @@ function NextAppointment({ appointments = [], loading = false }) {
         </div>
 
       </div>
+
+      {/* Live Telehealth Video Modal */}
+      <VideoConsultationModal
+        isOpen={isTelehealthModalOpen}
+        onClose={() => setIsTelehealthModalOpen(false)}
+        appointment={{
+          id: upcoming.id || 101,
+          doctor: `Dr. ${doctorName}`,
+          specialty: `${specialization} Consultation`,
+          date: dateStr,
+          time: timeStr,
+          duration: "30 mins",
+          mode: "Telehealth",
+          status: upcoming.status
+        }}
+      />
 
     </div>
   );

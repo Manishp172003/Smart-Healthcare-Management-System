@@ -1,216 +1,421 @@
+import { useState } from "react";
+import VideoConsultationModal from "../PatientDashboard/VideoConsultationModal";
 import { 
   Calendar, 
-  CheckSquare, 
   Users, 
   Clock, 
   CheckCircle2, 
   Activity, 
-  ChevronRight 
+  Check, 
+  X, 
+  AlertCircle, 
+  RefreshCw, 
+  Filter, 
+  Video, 
+  MapPin, 
+  Stethoscope, 
+  Phone, 
+  Mail 
 } from "lucide-react";
 
-const appointments = [
-  {
-    time: "09:00 AM",
-    timeDetail: "In Progress (15m left)",
-    patientName: "Elena Silva",
-    patientId: "PT-8472",
-    reason: "Post-op follow up",
-    status: "Active",
-    badgeClass: "bg-emerald-50 text-emerald-600 border-emerald-100",
-    initials: "ES",
-    avatar: null
-  },
-  {
-    time: "09:30 AM",
-    timeDetail: "30 min",
-    patientName: "Marcus Johnson",
-    patientId: "PT-1129",
-    reason: "Annual Physical",
-    status: "Waiting",
-    badgeClass: "bg-amber-50 text-amber-600 border-amber-100",
-    initials: "MJ",
-    avatar: null
-  },
-  {
-    time: "10:15 AM",
-    timeDetail: "15 min",
-    patientName: "Arthur Pendelton",
-    patientId: "PT-9031",
-    reason: "Medication Review",
-    status: "Scheduled",
-    badgeClass: "bg-slate-100 text-slate-600 border-slate-200",
-    initials: "AP",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-  }
-];
+const DoctorHome = ({ 
+  appointments = [], 
+  loading = false, 
+  handleUpdateStatus, 
+  activeDoctor, 
+  onRefresh 
+}) => {
+  const [filterStatus, setFilterStatus] = useState("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [updatingId, setUpdatingId] = useState(null);
+  const [liveConsultation, setLiveConsultation] = useState(null);
 
-const DoctorHome = () => {
+  // Compute live KPIs
+  const totalCount = appointments.length;
+  const pendingCount = appointments.filter((a) => a.status === "PENDING").length;
+  const confirmedCount = appointments.filter((a) => a.status === "CONFIRMED").length;
+  const completedCount = appointments.filter((a) => a.status === "COMPLETED").length;
+  const cancelledCount = appointments.filter((a) => a.status === "CANCELLED").length;
+
+  // Filter appointments
+  const filteredAppointments = appointments.filter((app) => {
+    const matchesStatus = filterStatus === "ALL" || app.status === filterStatus;
+    const patientName = app.patient?.user?.name || app.patient?.name || "";
+    const reason = app.reason || "";
+    const matchesSearch =
+      patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      reason.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
+
+  const onAction = async (id, status) => {
+    setUpdatingId(id);
+    await handleUpdateStatus(id, status);
+    setUpdatingId(null);
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "PENDING":
+        return {
+          label: "Pending Review",
+          className: "bg-amber-50 text-amber-700 border-amber-200"
+        };
+      case "CONFIRMED":
+        return {
+          label: "Confirmed",
+          className: "bg-emerald-50 text-emerald-700 border-emerald-200"
+        };
+      case "COMPLETED":
+        return {
+          label: "Completed",
+          className: "bg-blue-50 text-blue-700 border-blue-200"
+        };
+      case "CANCELLED":
+        return {
+          label: "Cancelled",
+          className: "bg-rose-50 text-rose-700 border-rose-200"
+        };
+      default:
+        return {
+          label: status,
+          className: "bg-slate-100 text-slate-700 border-slate-200"
+        };
+    }
+  };
+
   return (
     <div className="space-y-6">
       
-      {/* Quick Statistics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      {/* Dynamic Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         
-        {/* Metric 1 */}
-        <div className="bg-white/60 border border-white/45 rounded-3xl p-5 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md flex items-center justify-between">
+        {/* Metric 1: Total Appointments */}
+        <div className="bg-white/70 border border-white/60 rounded-3xl p-5 shadow-sm backdrop-blur-md flex items-center justify-between">
           <div>
-            <span className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider block">Today's Visits</span>
-            <span className="text-2xl font-black text-slate-800 block mt-1">6 Scheduled</span>
+            <span className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider block">Total Bookings</span>
+            <span className="text-2xl font-black text-slate-900 block mt-1">{totalCount}</span>
+            <span className="text-[10px] text-slate-500 font-semibold mt-0.5 block">All consultations</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center border border-blue-100">
-            <Users size={18} />
+          <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+            <Calendar size={20} />
           </div>
         </div>
 
-        {/* Metric 2 */}
-        <div className="bg-white/60 border border-white/45 rounded-3xl p-5 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md flex items-center justify-between">
+        {/* Metric 2: Pending Approval */}
+        <div className="bg-white/70 border border-white/60 rounded-3xl p-5 shadow-sm backdrop-blur-md flex items-center justify-between">
           <div>
-            <span className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider block">Currently Active</span>
-            <span className="text-2xl font-black text-slate-800 block mt-1">1 Patient</span>
+            <span className="text-[10px] md:text-xs font-bold text-amber-500 uppercase tracking-wider block">Pending Review</span>
+            <span className="text-2xl font-black text-amber-600 block mt-1">{pendingCount}</span>
+            <span className="text-[10px] text-amber-600/80 font-semibold mt-0.5 block">Requires action</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#0d9488] flex items-center justify-center border border-emerald-100">
-            <Activity size={18} />
+          <div className="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100">
+            <AlertCircle size={20} />
           </div>
         </div>
 
-        {/* Metric 3 */}
-        <div className="bg-white/60 border border-white/45 rounded-3xl p-5 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md flex items-center justify-between">
+        {/* Metric 3: Confirmed / Scheduled */}
+        <div className="bg-white/70 border border-white/60 rounded-3xl p-5 shadow-sm backdrop-blur-md flex items-center justify-between">
           <div>
-            <span className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider block">Hours Clocked</span>
-            <span className="text-2xl font-black text-slate-800 block mt-1">4.5 Hrs</span>
+            <span className="text-[10px] md:text-xs font-bold text-emerald-500 uppercase tracking-wider block">Confirmed Visits</span>
+            <span className="text-2xl font-black text-emerald-600 block mt-1">{confirmedCount}</span>
+            <span className="text-[10px] text-emerald-600/80 font-semibold mt-0.5 block">Ready for consult</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center border border-yellow-100">
-            <Clock size={18} />
+          <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+            <Activity size={20} />
+          </div>
+        </div>
+
+        {/* Metric 4: Completed */}
+        <div className="bg-white/70 border border-white/60 rounded-3xl p-5 shadow-sm backdrop-blur-md flex items-center justify-between">
+          <div>
+            <span className="text-[10px] md:text-xs font-bold text-purple-500 uppercase tracking-wider block">Completed</span>
+            <span className="text-2xl font-black text-purple-600 block mt-1">{completedCount}</span>
+            <span className="text-[10px] text-purple-600/80 font-semibold mt-0.5 block">History closed</span>
+          </div>
+          <div className="w-11 h-11 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">
+            <CheckCircle2 size={20} />
           </div>
         </div>
 
       </div>
 
-      {/* Main Grid: Today's Appointments and Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Container: Filter tabs & Appointments Table */}
+      <div className="bg-white/70 border border-white/60 rounded-3xl shadow-sm backdrop-blur-md overflow-hidden">
         
-        {/* Left Column: Today's Appointments Table (Occupies 2 columns on desktop) */}
-        <div className="lg:col-span-2 bg-white/60 border border-white/45 rounded-3xl shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md flex flex-col overflow-hidden">
+        {/* Controls Toolbar */}
+        <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
           
-          {/* Section Header */}
-          <div className="flex items-center justify-between border-b border-slate-200/50 p-6">
-            <h2 className="text-base md:text-lg font-extrabold text-slate-800 flex items-center gap-2">
-              <Calendar size={18} className="text-[#0d9488]" />
-              Today's Appointments
-            </h2>
-            <button className="text-xs font-extrabold text-[#2563EB] hover:text-[#0D9488] hover:underline cursor-pointer flex items-center gap-0.5 bg-transparent border-none">
-              View Full Schedule
-              <ChevronRight size={14} />
-            </button>
+          {/* Status Filter Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+            {[
+              { id: "ALL", label: "All", count: totalCount },
+              { id: "PENDING", label: "Pending", count: pendingCount },
+              { id: "CONFIRMED", label: "Confirmed", count: confirmedCount },
+              { id: "COMPLETED", label: "Completed", count: completedCount },
+              { id: "CANCELLED", label: "Cancelled", count: cancelledCount }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setFilterStatus(tab.id)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                  filterStatus === tab.id
+                    ? "bg-slate-900 text-white shadow-sm"
+                    : "bg-slate-100/70 hover:bg-slate-200/70 text-slate-600"
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-black ${
+                  filterStatus === tab.id ? "bg-white/20 text-white" : "bg-white text-slate-700 shadow-2xs"
+                }`}>
+                  {tab.count}
+                </span>
+              </button>
+            ))}
           </div>
 
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[550px] text-left">
-              
-              {/* Table Head */}
-              <thead>
-                <tr className="bg-slate-100/40 text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100/30">
-                  <th className="px-6 py-4">Time</th>
-                  <th className="px-6 py-4">Patient</th>
-                  <th className="px-6 py-4">Reason</th>
-                  <th className="px-6 py-4 text-center">Status</th>
-                </tr>
-              </thead>
-
-              {/* Table Body */}
-              <tbody>
-                {appointments.map((app, index) => (
-                  <tr 
-                    key={index}
-                    className="border-b border-slate-100/40 hover:bg-slate-50/30 transition cursor-pointer last:border-b-0"
-                  >
-                    
-                    {/* Time Column */}
-                    <td className="px-6 py-5 whitespace-nowrap">
-                      <p className="text-xs md:text-sm font-extrabold text-slate-800">{app.time}</p>
-                      <p className={`text-[10px] md:text-xs mt-0.5 font-bold ${
-                        app.status === "Active" ? "text-emerald-500" : "text-slate-400"
-                      }`}>{app.timeDetail}</p>
-                    </td>
-
-                    {/* Patient Name + Avatar Column */}
-                    <td className="px-6 py-5 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        {app.avatar ? (
-                          <img 
-                            src={app.avatar} 
-                            alt={app.patientName} 
-                            className="w-9 h-9 rounded-full object-cover border border-slate-200"
-                          />
-                        ) : (
-                          <div className="w-9 h-9 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs">
-                            {app.initials}
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-xs md:text-sm font-extrabold text-slate-800">{app.patientName}</p>
-                          <p className="text-[10px] md:text-xs text-slate-400 font-bold mt-0.5">ID: {app.patientId}</p>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Reason Column */}
-                    <td className="px-6 py-5 text-xs md:text-sm text-slate-600 font-semibold whitespace-nowrap">
-                      {app.reason}
-                    </td>
-
-                    {/* Status badge Column */}
-                    <td className="px-6 py-5 text-center whitespace-nowrap">
-                      <span className={`inline-flex px-2.5 py-1 text-[10px] md:text-xs font-bold rounded-lg border ${app.badgeClass}`}>
-                        {app.status}
-                      </span>
-                    </td>
-
-                  </tr>
-                ))}
-              </tbody>
-
-            </table>
+          {/* Search & Refresh */}
+          <div className="flex items-center gap-2.5">
+            <input
+              type="text"
+              placeholder="Search patient or symptom..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 outline-none focus:border-blue-500 w-full sm:w-56"
+            />
+            <button
+              onClick={onRefresh}
+              title="Refresh Appointments"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
+            >
+              <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+            </button>
           </div>
 
         </div>
 
-        {/* Right Column: Quick Actions Card */}
-        <div className="lg:col-span-1 bg-white/60 border border-white/45 rounded-3xl p-6 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md space-y-5">
-          <div>
-            <span className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider block">Clinical Tools</span>
-            <h2 className="text-base md:text-lg font-extrabold text-slate-800 mt-1">Quick Actions</h2>
-          </div>
+        {/* Appointments Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-slate-50/70 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                <th className="px-6 py-4">Appointment Schedule</th>
+                <th className="px-6 py-4">Patient Information</th>
+                <th className="px-6 py-4">Symptoms / Reason</th>
+                <th className="px-6 py-4 text-center">Type</th>
+                <th className="px-6 py-4 text-center">Status</th>
+                <th className="px-6 py-4 text-center">Doctor Actions</th>
+              </tr>
+            </thead>
 
-          <div className="grid grid-cols-2 gap-4">
-            
-            {/* Reschedule Button */}
-            <button 
-              onClick={() => alert("Redirecting to schedule management...")}
-              className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-white/50 border border-white/40 hover:bg-white/85 hover:shadow-md transition cursor-pointer text-[#0d9488]"
-            >
-              <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center border border-teal-100">
-                <Calendar size={20} />
-              </div>
-              <span className="text-xs font-extrabold text-slate-700">Reschedule</span>
-            </button>
+            <tbody className="divide-y divide-slate-100">
+              {filteredAppointments.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="py-12 text-center">
+                    <div className="max-w-xs mx-auto text-center space-y-2">
+                      <div className="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mx-auto">
+                        <Calendar size={22} />
+                      </div>
+                      <p className="text-sm font-bold text-slate-700">No appointments found</p>
+                      <p className="text-xs text-slate-400">
+                        {filterStatus === "ALL"
+                          ? "There are no incoming appointments scheduled for this doctor."
+                          : `No appointments with status "${filterStatus.toLowerCase()}" were found.`}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                filteredAppointments.map((app) => {
+                  const patientUser = app.patient?.user;
+                  const patientName = patientUser?.name || "Patient";
+                  const patientEmail = patientUser?.email || "patient@healthcare.com";
+                  const initials = patientName
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase();
+                  const badge = getStatusBadge(app.status);
+                  const isUpdating = updatingId === app.id;
 
-            {/* Confirm List Button */}
-            <button 
-              onClick={() => alert("Confirmed today's consulting schedule queue.")}
-              className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-white/50 border border-white/40 hover:bg-white/85 hover:shadow-md transition cursor-pointer text-[#2563EB]"
-            >
-              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100">
-                <CheckSquare size={20} />
-              </div>
-              <span className="text-xs font-extrabold text-slate-700">Confirm List</span>
-            </button>
+                  return (
+                    <tr key={app.id} className="hover:bg-slate-50/50 transition">
+                      
+                      {/* Schedule Column */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-start gap-2.5">
+                          <div className="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 border border-teal-100 mt-0.5">
+                            <Clock size={16} />
+                          </div>
+                          <div>
+                            <p className="text-xs sm:text-sm font-bold text-slate-900">
+                              {app.appointmentDate || "Pending Date"}
+                            </p>
+                            <p className="text-[11px] font-semibold text-teal-600 mt-0.5">
+                              {app.startTime ? app.startTime.slice(0, 5) : "09:30"} {app.endTime ? ` - ${app.endTime.slice(0, 5)}` : ""}
+                            </p>
+                            <span className="text-[10px] text-slate-400">ID: #APT-{app.id}</span>
+                          </div>
+                        </div>
+                      </td>
 
-          </div>
+                      {/* Patient Column */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs shrink-0">
+                            {initials}
+                          </div>
+                          <div>
+                            <p className="text-xs sm:text-sm font-bold text-slate-800">{patientName}</p>
+                            <div className="flex items-center gap-1.5 text-[10px] text-slate-400 mt-0.5">
+                              <Mail size={11} />
+                              <span>{patientEmail}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Reason Column */}
+                      <td className="px-6 py-4">
+                        <p className="text-xs font-medium text-slate-700 max-w-xs line-clamp-2 leading-relaxed">
+                          {app.reason || "General clinical consultation"}
+                        </p>
+                      </td>
+
+                      {/* Type Column */}
+                      <td className="px-6 py-4 text-center whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                          {app.appointmentType === "telehealth" ? (
+                            <>
+                              <Video size={11} className="text-teal-600" />
+                              <span>Telehealth</span>
+                            </>
+                          ) : (
+                            <>
+                              <MapPin size={11} className="text-blue-600" />
+                              <span>In-Person</span>
+                            </>
+                          )}
+                        </span>
+                      </td>
+
+                      {/* Status Column */}
+                      <td className="px-6 py-4 text-center whitespace-nowrap">
+                        <span className={`inline-flex px-2.5 py-1 text-[11px] font-bold rounded-lg border ${badge.className}`}>
+                          {badge.label}
+                        </span>
+                      </td>
+
+                      {/* Doctor Actions Column */}
+                      <td className="px-6 py-4 text-center whitespace-nowrap">
+                        <div className="flex items-center justify-center gap-2">
+                          
+                          {/* When PENDING: Show Approve & Decline */}
+                          {app.status === "PENDING" && (
+                            <>
+                              <button
+                                disabled={isUpdating}
+                                onClick={() => onAction(app.id, "CONFIRMED")}
+                                className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] flex items-center gap-1.5 shadow-sm transition disabled:opacity-50 cursor-pointer"
+                                title="Approve Appointment"
+                              >
+                                <Check size={13} className="stroke-[3]" />
+                                <span>Approve</span>
+                              </button>
+
+                              <button
+                                disabled={isUpdating}
+                                onClick={() => onAction(app.id, "CANCELLED")}
+                                className="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-[11px] flex items-center gap-1 transition disabled:opacity-50 cursor-pointer"
+                                title="Decline Appointment"
+                              >
+                                <X size={13} className="stroke-[3]" />
+                                <span>Decline</span>
+                              </button>
+                            </>
+                          )}
+
+                          {/* When CONFIRMED: Show Join Call, Mark Complete & Cancel */}
+                          {app.status === "CONFIRMED" && (
+                            <>
+                              {app.appointmentType === "telehealth" && (
+                                <button
+                                  onClick={() => setLiveConsultation(app)}
+                                  className="px-2.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-[11px] flex items-center gap-1 shadow-sm transition cursor-pointer"
+                                  title="Start Telehealth Consultation"
+                                >
+                                  <Video size={13} className="stroke-[2.5]" />
+                                  <span>Start Call</span>
+                                </button>
+                              )}
+
+                              <button
+                                disabled={isUpdating}
+                                onClick={() => onAction(app.id, "COMPLETED")}
+                                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-bold text-[11px] flex items-center gap-1.5 shadow-sm transition disabled:opacity-50 cursor-pointer"
+                                title="Mark Consultation Completed"
+                              >
+                                <CheckCircle2 size={13} className="stroke-[2.5]" />
+                                <span>Complete</span>
+                              </button>
+
+                              <button
+                                disabled={isUpdating}
+                                onClick={() => onAction(app.id, "CANCELLED")}
+                                className="p-1.5 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 font-bold text-[11px] transition disabled:opacity-50 cursor-pointer"
+                                title="Cancel Appointment"
+                              >
+                                <X size={13} className="stroke-[2.5]" />
+                              </button>
+                            </>
+                          )}
+
+                          {/* When COMPLETED */}
+                          {app.status === "COMPLETED" && (
+                            <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                              <CheckCircle2 size={13} className="text-emerald-500" />
+                              <span>Closed</span>
+                            </span>
+                          )}
+
+                          {/* When CANCELLED */}
+                          {app.status === "CANCELLED" && (
+                            <span className="text-[11px] font-bold text-rose-400">
+                              Cancelled
+                            </span>
+                          )}
+
+                        </div>
+                      </td>
+
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
 
       </div>
+
+      {/* Live Telehealth Video Modal */}
+      {liveConsultation && (
+        <VideoConsultationModal
+          isOpen={Boolean(liveConsultation)}
+          onClose={() => setLiveConsultation(null)}
+          appointment={{
+            id: liveConsultation.id,
+            doctor: `Dr. ${activeDoctor?.user?.name || "Practitioner"} (You)`,
+            specialty: `${activeDoctor?.specialization || "Clinical"} Consultation`,
+            date: liveConsultation.appointmentDate,
+            time: liveConsultation.startTime,
+            duration: "30 mins",
+            mode: "Telehealth",
+            status: liveConsultation.status
+          }}
+        />
+      )}
 
     </div>
   );

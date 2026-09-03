@@ -22,6 +22,18 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
+    @GetMapping
+    public ResponseEntity<?> getAllAppointments() {
+        try {
+            List<Appointment> list = appointmentService.getAllAppointments();
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     @PostMapping("/book")
     public ResponseEntity<?> bookAppointment(@RequestBody AppointmentRequest request) {
         try {
@@ -77,6 +89,22 @@ public class AppointmentController {
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam AppointmentStatus status) {
         try {
             Appointment appointment = appointmentService.updateAppointmentStatus(id, status);
+            return ResponseEntity.ok(appointment);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PutMapping("/{id}/reschedule")
+    public ResponseEntity<?> rescheduleAppointment(
+            @PathVariable Long id,
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate newDate,
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.TIME) java.time.LocalTime newTime
+    ) {
+        try {
+            Appointment appointment = appointmentService.rescheduleAppointment(id, newDate, newTime);
             return ResponseEntity.ok(appointment);
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();

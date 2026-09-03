@@ -1,16 +1,18 @@
-import React, { useState, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useMemo, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 // Import your local asset
 import doctorHeroImg from "../assets/About-Section/FindDoctors-Hero.png";
 
-// Import local doctor assets (Doctor-img-1 through Doctor-img-7, excluding 2)
+// Import local doctor assets
 import doctorImg1 from "../assets/FindDoctors/Doctor-img-1.png";
-import doctorImg3 from "../assets/FindDoctors/Doctor-img-2.png";
+import doctorImg2 from "../assets/FindDoctors/Doctor-img-2.png";
+import doctorImg3 from "../assets/FindDoctors/Doctor-img-3.png";
 import doctorImg4 from "../assets/FindDoctors/Doctor-img-4.png";
 import doctorImg5 from "../assets/FindDoctors/Doctor-img-5.png";
 import doctorImg6 from "../assets/FindDoctors/New-Doctor-img.png";
 import doctorImg7 from "../assets/FindDoctors/Doctor-img-7.png";
+import doctorImg8 from "../assets/FindDoctors/New-2 -Doctor-img.png";
 
 import {
   Search,
@@ -29,6 +31,8 @@ import {
   Baby,
   Award,
   Clock,
+  X,
+  RotateCcw,
 } from "lucide-react";
 
 import Navbar from "../components/common/Navbar";
@@ -37,13 +41,29 @@ import { motion } from "framer-motion";
 
 const FindDoctors = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialSpecialty = searchParams.get('specialty') || 'All';
 
   // Search & Filter State
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSpecialty, setSelectedSpecialty] = useState('All');
+  const [selectedSpecialty, setSelectedSpecialty] = useState(initialSpecialty);
   const [selectedLocation, setSelectedLocation] = useState('All');
   const [availability, setAvailability] = useState('All');
   const [sortBy, setSortBy] = useState('recommended');
+
+  // Sync state if URL query parameter changes (e.g. from Navbar or Universal Search)
+  useEffect(() => {
+    const specFromUrl = searchParams.get('specialty');
+    if (specFromUrl) {
+      setSelectedSpecialty(specFromUrl);
+      setTimeout(() => {
+        const resultsElement = document.getElementById("doctor-listings");
+        if (resultsElement) {
+          resultsElement.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 150);
+    }
+  }, [searchParams]);
 
   // Specialties Data Array
   const specialties = [
@@ -88,10 +108,17 @@ const FindDoctors = () => {
       count: 30,
       icon: Stethoscope,
       color: 'text-indigo-500 bg-indigo-50 border-indigo-100'
+    },
+    {
+      name: 'Gynecology',
+      desc: 'Women\'s health & maternity care',
+      count: 16,
+      icon: Award,
+      color: 'text-pink-500 bg-pink-50 border-pink-100'
     }
   ];
 
-  // Doctors Data Array (2nd doctor removed)
+  // Doctors Data Array with all specialties represented
   const doctors = [
     {
       id: 1,
@@ -101,10 +128,25 @@ const FindDoctors = () => {
       rating: 4.9,
       reviews: 124,
       experience: '12+ Years Experience',
+      fee: 1500,
       availabilityStatus: 'Available Today',
       nextSlot: 'Today • 06:30 PM',
       image: doctorImg1,
       description: 'Experienced healthcare professional focused on personalized and compassionate patient care.'
+    },
+    {
+      id: 2,
+      name: 'Dr. Vikram Shenoy',
+      specialty: 'Neurology',
+      location: 'Nagpur, Maharashtra',
+      rating: 4.9,
+      reviews: 148,
+      experience: '15+ Years Experience',
+      fee: 1800,
+      availabilityStatus: 'Available Today',
+      nextSlot: 'Today • 04:30 PM',
+      image: doctorImg2,
+      description: 'Senior Neurologist and Spine specialist specializing in stroke recovery, migraine management, and brain health.'
     },
     {
       id: 3,
@@ -114,6 +156,7 @@ const FindDoctors = () => {
       rating: 4.9,
       reviews: 156,
       experience: '8+ Years Experience',
+      fee: 1200,
       availabilityStatus: 'Available Tomorrow',
       nextSlot: 'Tomorrow • 10:00 AM',
       image: doctorImg3,
@@ -127,6 +170,7 @@ const FindDoctors = () => {
       rating: 4.7,
       reviews: 87,
       experience: '11+ Years Experience',
+      fee: 1400,
       availabilityStatus: 'Available Today',
       nextSlot: 'Today • 05:15 PM',
       image: doctorImg4,
@@ -140,6 +184,7 @@ const FindDoctors = () => {
       rating: 4.9,
       reviews: 142,
       experience: '9+ Years Experience',
+      fee: 900,
       availabilityStatus: 'Available Today',
       nextSlot: 'Today • 03:00 PM',
       image: doctorImg5,
@@ -153,6 +198,7 @@ const FindDoctors = () => {
       rating: 4.8,
       reviews: 113,
       experience: '14+ Years Experience',
+      fee: 800,
       availabilityStatus: 'Available Today',
       nextSlot: 'Today • 03:00 PM',
       image: doctorImg6,
@@ -166,10 +212,25 @@ const FindDoctors = () => {
       rating: 4.9,
       reviews: 178,
       experience: '13+ Years Experience',
+      fee: 1600,
       availabilityStatus: 'Available Tomorrow',
       nextSlot: 'Tomorrow • 02:00 PM',
       image: doctorImg7,
       description: 'Dedicated gynecologist specializing in women\'s health, prenatal care, and minimally invasive procedures.'
+    },
+    {
+      id: 8,
+      name: 'Dr. Rohan Mehra',
+      specialty: 'Neurology',
+      location: 'Pune, Maharashtra',
+      rating: 4.8,
+      reviews: 95,
+      experience: '10+ Years Experience',
+      fee: 1400,
+      availabilityStatus: 'Available Tomorrow',
+      nextSlot: 'Tomorrow • 11:30 AM',
+      image: doctorImg8,
+      description: 'Consultant Neurologist specializing in neuro-rehabilitation, peripheral nerve disorders, and epilepsy treatment.'
     }
   ];
 
@@ -203,16 +264,52 @@ const FindDoctors = () => {
     });
   }, [searchTerm, selectedSpecialty, selectedLocation, availability, sortBy]);
 
+  const handleSpecialtyClick = (specName) => {
+    const isCurrentlySelected = selectedSpecialty.toLowerCase() === specName.toLowerCase();
+    const newSpecialty = isCurrentlySelected ? 'All' : specName;
+    setSelectedSpecialty(newSpecialty);
+
+    if (newSpecialty !== 'All') {
+      setSearchParams({ specialty: newSpecialty });
+    } else {
+      setSearchParams({});
+    }
+
+    setTimeout(() => {
+      const resultsElement = document.getElementById("doctor-listings");
+      if (resultsElement) {
+        resultsElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 100);
+  };
+
   const clearAllFilters = () => {
     setSearchTerm('');
     setSelectedSpecialty('All');
     setSelectedLocation('All');
     setAvailability('All');
     setSortBy('recommended');
+    setSearchParams({});
+  };
+
+  const isFiltered = Boolean(searchTerm || selectedSpecialty !== 'All' || selectedLocation !== 'All' || availability !== 'All');
+
+  const handleSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+    const resultsElement = document.getElementById("doctor-listings");
+    if (resultsElement) {
+      resultsElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   const handleBookAppointment = (doctorId) => {
-    navigate(`/book-appointment?doctorId=${doctorId}`);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      localStorage.setItem("redirectAfterLogin", `/appointment?doctorId=${doctorId}`);
+      navigate("/login");
+    } else {
+      navigate(`/appointment?doctorId=${doctorId}`);
+    }
   };
 
   const handleViewProfile = (doctorId) => {
@@ -247,45 +344,41 @@ const FindDoctors = () => {
 
       {/* 1. PAGE HERO */}
       <section 
-        className="relative overflow-hidden pt-32 pb-28 lg:pt-40 lg:pb-36 bg-cover bg-center bg-no-repeat flex items-center w-full"
+        className="relative w-full h-[60vh] sm:h-[75vh] lg:h-[90vh] min-h-[480px] overflow-hidden bg-cover bg-center bg-no-repeat flex items-center justify-center pt-[76px]"
         style={{ backgroundImage: `url(${doctorHeroImg})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/60 to-transparent pointer-events-none" />
+        {/* Balanced contrast overlay - sweet spot between clarity and text contrast */}
+        <div className="absolute inset-0 bg-slate-950/50 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-transparent to-slate-950/50 pointer-events-none" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="max-w-2xl space-y-6">
-            
-            {/* Top Tag Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-semibold tracking-wider uppercase backdrop-blur-md">
-              <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
-              <span>FIND DOCTORS</span>
-            </div>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center">
+          <div className="max-w-3xl mx-auto space-y-6">
 
             {/* Main Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12]">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.14] drop-shadow-md">
               Find the <span className="bg-gradient-to-r from-blue-400 via-teal-300 to-teal-400 bg-clip-text text-transparent">Right Doctor</span> for Your Care
             </h1>
 
             {/* Short Supporting Description */}
-            <p className="text-slate-300 text-base sm:text-lg font-normal leading-relaxed max-w-xl">
+            <p className="text-slate-200 text-base sm:text-lg lg:text-xl font-normal leading-relaxed max-w-2xl mx-auto drop-shadow">
               Connect with verified medical specialists, check live availability, and book appointments instantly with trusted healthcare professionals.
             </p>
 
-            {/* Streamlined Minimal CTAs */}
-            <div className="flex flex-wrap items-center gap-4 pt-4">
-              <a 
-                href="#doctor-listings" 
-                className="px-7 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-teal-600 text-white font-medium shadow-lg shadow-blue-600/30 hover:shadow-xl hover:from-blue-700 hover:to-teal-700 transition-all duration-200 flex items-center gap-2 text-sm sm:text-base"
+            {/* Streamlined Minimal CTAs Centered */}
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
+              <a
+                href="#doctor-listings"
+                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-teal-600 text-white font-medium shadow-lg shadow-blue-600/30 hover:shadow-xl hover:from-blue-700 hover:to-teal-700 transition-all duration-200 flex items-center gap-2 text-sm sm:text-base"
               >
                 Find a Doctor
                 <ArrowRight className="w-4 h-4" />
               </a>
-              <a 
-                href="#doctor-listings" 
-                className="px-7 py-3.5 rounded-xl bg-white/10 border border-white/20 text-white font-medium hover:bg-white/20 transition-all duration-200 shadow-sm backdrop-blur-md text-sm sm:text-base"
+              <Link
+                to="/appointment"
+                className="px-8 py-3.5 rounded-xl bg-white/15 border border-white/25 text-white font-medium hover:bg-white/25 transition-all duration-200 shadow-sm backdrop-blur-md text-sm sm:text-base"
               >
                 Book Appointment
-              </a>
+              </Link>
             </div>
 
           </div>
@@ -296,12 +389,24 @@ const FindDoctors = () => {
       {/* 2. SEARCH DOCTOR PANEL */}
       <section className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-14 mb-16">
         <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xl p-6 sm:p-8 backdrop-blur-xl">
-          <div className="mb-6">
-            <h2 className="text-xl font-bold text-slate-900">Search for a Doctor</h2>
-            <p className="text-sm text-slate-500">Find doctors by specialty, name, or location instantly.</p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">Search for a Doctor</h2>
+              <p className="text-sm text-slate-500">Find doctors by specialty, name, or location instantly.</p>
+            </div>
+            {isFiltered && (
+              <button 
+                type="button"
+                onClick={clearAllFilters}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-semibold rounded-xl transition-all self-start sm:self-auto cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset Filters</span>
+              </button>
+            )}
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-4">
+          <form onSubmit={handleSearchSubmit} className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
               <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                 <Search className="w-5 h-5" />
@@ -366,14 +471,14 @@ const FindDoctors = () => {
             </div>
 
             <button 
-              onClick={() => {}}
-              className="px-6 py-3.5 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-medium rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 shrink-0"
+              type="submit"
+              className="px-6 py-3.5 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-medium rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 shrink-0 cursor-pointer"
             >
               <Search className="w-4 h-4" />
               Search Doctors
             </button>
 
-          </div>
+          </form>
         </div>
       </section>
 
@@ -397,13 +502,14 @@ const FindDoctors = () => {
           <div className="animate-marquee flex gap-6 py-4">
             {[...specialties, ...specialties].map((spec, index) => {
               const IconComponent = spec.icon;
-              const isSelected = selectedSpecialty === spec.name;
+              const isSelected = selectedSpecialty.toLowerCase() === spec.name.toLowerCase();
+              const matchingCount = doctors.filter(d => d.specialty.toLowerCase() === spec.name.toLowerCase()).length;
               return (
                 <div 
                   key={index}
-                  onClick={() => setSelectedSpecialty(isSelected ? 'All' : spec.name)}
+                  onClick={() => handleSpecialtyClick(spec.name)}
                   className={`group w-72 sm:w-80 shrink-0 p-6 rounded-3xl border transition-all duration-300 cursor-pointer bg-white hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between ${
-                    isSelected ? 'border-blue-600 ring-2 ring-blue-500/20 shadow-md' : 'border-slate-200/80 shadow-sm'
+                    isSelected ? 'border-blue-600 ring-2 ring-blue-500/30 bg-blue-50/20 shadow-md' : 'border-slate-200/80 shadow-sm'
                   }`}
                 >
                   <div>
@@ -412,11 +518,11 @@ const FindDoctors = () => {
                         <IconComponent className="w-6 h-6" />
                       </div>
                       <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
-                        {spec.count} Doctors
+                        {matchingCount > 0 ? `${matchingCount} Verified Doctors` : `${spec.count} Doctors`}
                       </span>
                     </div>
 
-                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                    <h3 className={`text-lg font-bold transition-colors ${isSelected ? 'text-blue-600' : 'text-slate-900 group-hover:text-blue-600'}`}>
                       {spec.name}
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -425,8 +531,10 @@ const FindDoctors = () => {
                   </div>
 
                   <div className="mt-6 flex items-center justify-between pt-4 border-t border-slate-100">
-                    <span className="text-xs font-semibold text-blue-600">Explore specialists</span>
-                    <ArrowRight className="w-4 h-4 text-blue-600 transform group-hover:translate-x-1 transition-transform" />
+                    <span className="text-xs font-semibold text-blue-600">
+                      {isSelected ? 'Viewing specialists ↓' : 'Explore specialists'}
+                    </span>
+                    <ArrowRight className={`w-4 h-4 text-blue-600 transform transition-transform ${isSelected ? 'rotate-90 text-teal-600' : 'group-hover:translate-x-1'}`} />
                   </div>
                 </div>
               );
@@ -463,6 +571,52 @@ const FindDoctors = () => {
             </div>
           </div>
         </div>
+
+        {/* Active Filter Chips */}
+        {isFiltered && (
+          <div className="flex items-center gap-2 flex-wrap mb-6 p-3 bg-blue-50/60 rounded-2xl border border-blue-100/80">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider pl-1">Filtered by:</span>
+            {searchTerm && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-medium text-slate-800 shadow-sm">
+                Keyword: <strong>"{searchTerm}"</strong>
+                <button type="button" onClick={() => setSearchTerm('')} className="text-slate-400 hover:text-rose-600 ml-0.5 cursor-pointer">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </span>
+            )}
+            {selectedSpecialty !== 'All' && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-medium text-slate-800 shadow-sm">
+                Specialty: <strong>{selectedSpecialty}</strong>
+                <button type="button" onClick={() => setSelectedSpecialty('All')} className="text-slate-400 hover:text-rose-600 ml-0.5 cursor-pointer">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </span>
+            )}
+            {selectedLocation !== 'All' && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-medium text-slate-800 shadow-sm">
+                Location: <strong>{selectedLocation}</strong>
+                <button type="button" onClick={() => setSelectedLocation('All')} className="text-slate-400 hover:text-rose-600 ml-0.5 cursor-pointer">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </span>
+            )}
+            {availability !== 'All' && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-medium text-slate-800 shadow-sm">
+                Timing: <strong>{availability}</strong>
+                <button type="button" onClick={() => setAvailability('All')} className="text-slate-400 hover:text-rose-600 ml-0.5 cursor-pointer">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={clearAllFilters}
+              className="text-xs font-bold text-blue-600 hover:text-blue-800 ml-auto px-2 py-1 transition-colors cursor-pointer"
+            >
+              Clear All
+            </button>
+          </div>
+        )}
 
         {filteredDoctors.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -524,8 +678,14 @@ const FindDoctors = () => {
                   </div>
 
                   <div>
+                    {/* Consultation Fee */}
+                    <div className="flex items-center justify-between text-xs py-1.5 px-3 bg-slate-50 rounded-xl border border-slate-200/70 mb-3">
+                      <span className="text-slate-500 font-medium">Consultation Fee</span>
+                      <span className="font-extrabold text-slate-900 text-xs sm:text-sm">₹{doc.fee.toLocaleString()}</span>
+                    </div>
+
                     {/* Availability Status & Next Slot */}
-                    <div className="flex items-center justify-between text-xs mb-4 pt-3 border-t border-slate-100">
+                    <div className="flex items-center justify-between text-xs mb-4 pt-1">
                       <div className="flex items-center gap-1.5 font-medium text-emerald-600">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                         <span>{doc.availabilityStatus}</span>

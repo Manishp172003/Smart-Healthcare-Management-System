@@ -60,31 +60,34 @@ const AdminHome = () => {
   return (
     <div className="space-y-6">
       
-      {/* 5 Stats Cards Grid */}
-      <div className="grid grid-cols-5 gap-4 md:gap-5 lg:gap-6">
+      {/* 5 Stats Cards Grid - Responsive: 2 cols on mobile, 3 on tablet, 5 on desktop */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
         {stats.map((stat, idx) => {
           const Icon = stat.icon;
+          const isFifth = idx === 4;
           return (
             <div 
               key={idx} 
-              className="bg-white/60 border border-white/45 rounded-[24px] p-5 lg:p-6 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md flex flex-col justify-between aspect-square"
+              className={`bg-white/70 border border-white/60 rounded-2xl sm:rounded-[24px] p-4 sm:p-5 lg:p-6 shadow-xs backdrop-blur-md flex flex-col justify-between min-h-[115px] sm:min-h-0 sm:aspect-square ${
+                isFifth ? "col-span-2 sm:col-span-1" : "col-span-1"
+              }`}
             >
               {/* Top Row: Label & Icon */}
               <div className="flex items-start justify-between gap-2">
-                <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-tight">
+                <span className="text-[10px] sm:text-[11px] md:text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
                   {stat.label}
                 </span>
-                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center border shrink-0 ${stat.colorClass}`}>
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center border shrink-0 ${stat.colorClass}`}>
                   <Icon size={16} />
                 </div>
               </div>
 
               {/* Bottom Row: Value & Trend */}
-              <div className="mt-auto">
-                <span className="text-base sm:text-lg md:text-xl lg:text-3xl font-black text-slate-800 block leading-none">
+              <div className="mt-3 sm:mt-auto">
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-800 block leading-tight">
                   {stat.value}
                 </span>
-                <span className={`text-[8px] sm:text-[9px] md:text-xs mt-2.5 block font-extrabold leading-none ${
+                <span className={`text-[10px] sm:text-[11px] md:text-xs mt-1 block font-bold leading-none ${
                   stat.isWarning ? "text-[#EA4335]" : "text-slate-400"
                 }`}>
                   {stat.subtext}

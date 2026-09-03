@@ -262,7 +262,7 @@ const BookAppointment = ({ setActiveTab }) => {
         id: doc.id,
         name: doc.user?.name || doc.name,
         specialty: doc.specialization,
-        fee: `₹${doc.consultationFee || 500}`,
+        fee: `₹${doc.consultationFee || 5000}`,
         avatar: doc.avatar || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=100&h=100&q=80",
         rating: doc.rating || "4.9",
         bio: doc.bio || "Experienced specialist in their field",
@@ -350,7 +350,7 @@ const BookAppointment = ({ setActiveTab }) => {
           id: doc.id,
           name: doc.user?.name || doc.name,
           specialty: doc.specialization,
-          fee: `₹${doc.consultationFee || 500}`,
+          fee: `₹${doc.consultationFee || 5000}`,
           avatar: doc.avatar || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=100&h=100&q=80",
           rating: doc.rating || "4.9"
         }));

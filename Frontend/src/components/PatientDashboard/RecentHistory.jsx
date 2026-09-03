@@ -1,6 +1,6 @@
 import { CheckCircle, XCircle } from "lucide-react";
 
-function RecentHistory({ appointments = [], loading = false }) {
+function RecentHistory({ appointments = [], loading = false, setActiveTab }) {
   if (loading) {
     return (
       <div className="flex flex-col overflow-hidden rounded-3xl border border-white/45 bg-white/60 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md min-h-[220px] justify-center items-center">
@@ -23,7 +23,10 @@ function RecentHistory({ appointments = [], loading = false }) {
           Recent History
         </h2>
 
-        <button className="font-bold text-[#2563EB] hover:text-[#0D9488] hover:underline cursor-pointer bg-transparent border-none">
+        <button 
+          onClick={() => setActiveTab && setActiveTab("My Appointments")}
+          className="font-bold text-[#2563EB] hover:text-[#0D9488] hover:underline cursor-pointer bg-transparent border-none text-xs md:text-sm"
+        >
           View All
         </button>
 

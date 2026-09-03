@@ -41,10 +41,13 @@ public class AuthService {
             throw new RuntimeException("Error: Email is already in use!");
         }
 
-        // Determine user role
+        // Determine user role and initial status
         Role userRole = Role.ROLE_PATIENT;
+        UserStatus initialStatus = UserStatus.ACTIVE;
+
         if ("DOCTOR".equalsIgnoreCase(request.getRole())) {
             userRole = Role.ROLE_DOCTOR;
+            initialStatus = UserStatus.PENDING_APPROVAL; // Admin verification gate
         } else if ("ADMIN".equalsIgnoreCase(request.getRole())) {
             userRole = Role.ROLE_ADMIN;
         }
@@ -55,7 +58,7 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(userRole)
-                .status(UserStatus.ACTIVE)
+                .status(initialStatus)
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -76,8 +79,12 @@ public class AuthService {
                     .specialization(request.getSpecialization())
                     .licenseNumber(request.getLicenseNumber())
                     .slotDurationMinutes(30)
+                    .consultationFee(1200)
+                    .rating(5.0)
+                    .supportsTelehealth(true)
                     .build();
             doctorRepository.save(doctor);
+            return "Doctor registration submitted successfully! Your account is pending Admin license verification.";
         }
 
         return "User registered successfully!";
@@ -90,6 +97,10 @@ public class AuthService {
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Error: Invalid credentials!");
+        }
+
+        if (user.getStatus() == UserStatus.PENDING_APPROVAL) {
+            throw new RuntimeException("Doctor account is pending verification by Hospital Administration. Please allow up to 24 hours for credential validation.");
         }
 
         if (user.getStatus() != UserStatus.ACTIVE) {

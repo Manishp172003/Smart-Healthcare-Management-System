@@ -4,10 +4,13 @@ import { CheckCircle2, AlertTriangle, AlertCircle, Info, X, Siren } from "lucide
 import AdminSidebar from "../components/AdminDashboard/AdminSidebar";
 import AdminHeader from "../components/AdminDashboard/AdminHeader";
 import AdminHome from "../components/AdminDashboard/AdminHome";
+import AdminDoctors from "../components/AdminDashboard/AdminDoctors";
 import AdminPatients from "../components/AdminDashboard/AdminPatients";
 import AdminSchedules from "../components/AdminDashboard/AdminSchedules";
 import AdminRecords from "../components/AdminDashboard/AdminRecords";
 import AdminAnalytics from "../components/AdminDashboard/AdminAnalytics";
+import AdminHelp from "../components/AdminDashboard/AdminHelp";
+import AdminTestimonials from "../components/AdminDashboard/AdminTestimonials";
 import AdminEmergencyModal from "../components/AdminDashboard/AdminEmergencyModal";
 import CustomConfirmModal from "../components/common/CustomConfirmModal";
 
@@ -17,6 +20,25 @@ function AdminDashboard() {
   const [isSignOutConfirmOpen, setIsSignOutConfirmOpen] = useState(false);
   const [toasts, setToasts] = useState([]);
   const [activeAlerts, setActiveAlerts] = useState([]);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("smarthealth_admin_sidebar_collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const handleToggleCollapse = (val) => {
+    setIsSidebarCollapsed(val);
+    try {
+      localStorage.setItem("smarthealth_admin_sidebar_collapsed", String(val));
+    } catch {}
+  };
+
+  useEffect(() => {
+    document.title = `${activeTab} • Admin Operations | SmartHealth`;
+  }, [activeTab]);
 
   // Synthesize alarm sound tone using Web Audio API
   const playAlarmSound = () => {
@@ -156,20 +178,43 @@ function AdminDashboard() {
         setActiveTab={setActiveTab} 
         onEmergencyTrigger={() => setIsEmergencyModalOpen(true)}
         onSignOutTrigger={() => setIsSignOutConfirmOpen(true)}
+        isOpen={isMobileSidebarOpen}
+        onClose={() => setIsMobileSidebarOpen(false)}
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={handleToggleCollapse}
       />
 
+      {/* Mobile Drawer Backdrop */}
+      {isMobileSidebarOpen && (
+        <div 
+          onClick={() => setIsMobileSidebarOpen(false)} 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-30 md:hidden"
+        />
+      )}
+
       {/* Main Content Pane */}
-      <main className="min-h-screen flex-1 md:pl-64 overflow-x-hidden">
+      <main className={`min-h-screen flex-1 transition-all duration-300 overflow-x-hidden ${
+        isSidebarCollapsed ? "md:pl-20" : "md:pl-64"
+      }`}>
         <div className="p-6 md:p-10 w-full max-w-[1440px] mx-auto">
 
           {/* Header */}
-          <AdminHeader activeTab={activeTab} setActiveTab={setActiveTab} />
+          <AdminHeader 
+            activeTab={activeTab} 
+            setActiveTab={setActiveTab} 
+            onToggleMobileMenu={() => setIsMobileSidebarOpen(prev => !prev)}
+          />
 
           {/* View Router */}
           <div className="mt-8 relative min-h-[500px]">
             {activeTab === "Dashboard" && (
               <div className="animate-view-fade-in-up">
                 <AdminHome />
+              </div>
+            )}
+            {activeTab === "Doctors" && (
+              <div className="animate-view-fade-in-up">
+                <AdminDoctors />
               </div>
             )}
             {activeTab === "Patients" && (
@@ -187,9 +232,19 @@ function AdminDashboard() {
                 <AdminRecords />
               </div>
             )}
+            {activeTab === "Testimonials" && (
+              <div className="animate-view-fade-in-up">
+                <AdminTestimonials />
+              </div>
+            )}
             {activeTab === "Analytics" && (
               <div className="animate-view-fade-in-up">
                 <AdminAnalytics />
+              </div>
+            )}
+            {activeTab === "Help Center" && (
+              <div className="animate-view-fade-in-up">
+                <AdminHelp />
               </div>
             )}
           </div>

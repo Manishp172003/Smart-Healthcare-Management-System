@@ -61,7 +61,7 @@ const Contact = () => {
       >
 
       {/* HEADER INTRO SECTION */}
-      <section className="relative overflow-hidden pt-48 pb-40 lg:pt-64 lg:pb-52 text-white min-h-[75vh]">
+      <section className="relative w-full h-[60vh] sm:h-[75vh] lg:h-[90vh] overflow-hidden flex items-center justify-center pt-[76px] text-white">
         {/* Healthcare Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
@@ -76,12 +76,6 @@ const Contact = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="max-w-4xl mx-auto space-y-6">
-
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-xs font-bold tracking-wider uppercase backdrop-blur-md shadow-inner font-['Poppins',sans-serif]">
-              <Sparkles className="w-4 h-4 text-cyan-300 animate-pulse" />
-              <span>Contact Us</span>
-            </div>
 
             {/* Heading - solid dark rich contrast */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-white font-['Poppins',sans-serif] drop-shadow-md">

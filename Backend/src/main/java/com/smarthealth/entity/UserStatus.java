@@ -2,5 +2,6 @@ package com.smarthealth.entity;
 
 public enum UserStatus {
     ACTIVE,
-    SUSPENDED
+    SUSPENDED,
+    PENDING_APPROVAL
 }

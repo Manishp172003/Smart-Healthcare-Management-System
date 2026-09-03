@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, FileText, UploadCloud, CheckSquare, Sparkles } from "lucide-react";
+import { Search, FileText, UploadCloud, CheckSquare, Sparkles, X } from "lucide-react";
 
 const recordArchive = [
   { id: "REC-9921", patientName: "Elena Silva", docType: "Lab Report", title: "Lipid Profile Panel", date: "Oct 24, 2026", status: "Signed" },
@@ -13,20 +13,47 @@ const DoctorRecords = () => {
   const [search, setSearch] = useState("");
   const [newPrescription, setNewPrescription] = useState({ patient: "", medication: "", notes: "" });
 
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+
   const handleUploadSubmit = (e) => {
     e.preventDefault();
+    const docName = localStorage.getItem("name") || "Dr. Ananya Sharma";
+    const dateFormatted = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+    // 1. Doctor's local record archive
     const newRecord = {
       id: `REC-${Math.floor(Math.random() * 9000) + 1000}`,
       patientName: newPrescription.patient,
       docType: "Prescription",
       title: `${newPrescription.medication} Prescription`,
-      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      date: dateFormatted,
       status: "Signed"
     };
 
+    // 2. Real-time transmission into patient's Medical Records EHR Vault!
+    try {
+      const existingVaultRaw = localStorage.getItem("smarthealth_medical_records");
+      const vaultList = existingVaultRaw ? JSON.parse(existingVaultRaw) : [];
+      const newVaultEntry = {
+        id: Date.now(),
+        date: dateFormatted,
+        name: `${newPrescription.medication} Official Prescription.pdf`,
+        category: "Prescriptions",
+        provider: docName.startsWith("Dr.") ? docName : `Dr. ${docName}`,
+        size: "450 KB",
+        summary: `Rx: ${newPrescription.medication}. Clinical Instructions: ${newPrescription.notes || "Take as directed after meals."}. Digitally verified and signed by ${docName}.`
+      };
+      localStorage.setItem("smarthealth_medical_records", JSON.stringify([newVaultEntry, ...vaultList]));
+      window.dispatchEvent(new Event("recordsUpdated"));
+      window.dispatchEvent(new Event("storage"));
+    } catch (err) {
+      console.error("Failed to sync with patient vault:", err);
+    }
+
     setRecords([newRecord, ...records]);
     setNewPrescription({ patient: "", medication: "", notes: "" });
-    alert("Prescription has been signed and pushed to patient vault!");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 4000);
   };
 
   const toggleSignRecord = (id) => {
@@ -50,6 +77,19 @@ const DoctorRecords = () => {
   return (
     <div className="space-y-6">
       
+      {/* Success Toast */}
+      {showSuccessToast && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs text-emerald-800 font-bold shadow-sm animate-in fade-in">
+          <div className="flex items-center gap-2">
+            <Sparkles size={16} className="text-emerald-600" />
+            <span>Digital prescription signed and transmitted directly to patient's Medical Records vault!</span>
+          </div>
+          <button onClick={() => setShowSuccessToast(false)} className="text-emerald-600 hover:text-emerald-800">
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
         {/* Left Form: Draft Prescription */}

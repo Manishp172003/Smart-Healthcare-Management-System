@@ -84,6 +84,14 @@ const Auth = () => {
 
         alert(`Welcome back, ${data.name}!`);
 
+        // Check for redirect after login
+        const redirectAfterLogin = localStorage.getItem("redirectAfterLogin");
+        if (redirectAfterLogin) {
+          localStorage.removeItem("redirectAfterLogin");
+          navigate(redirectAfterLogin);
+          return;
+        }
+
         // Redirect based on user role
         if (data.role === "ROLE_ADMIN") {
           navigate("/admin/dashboard");
@@ -147,6 +155,7 @@ const Auth = () => {
 
       if (response.ok) {
         alert("Registration successful! Please login.");
+        // Redirect after login is already preserved in localStorage
         navigate("/login");
       } else {
         alert(data.error || "Registration failed. Please try again.");
