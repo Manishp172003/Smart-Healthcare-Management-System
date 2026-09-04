@@ -5,6 +5,8 @@ import {
   Sparkles,
   Activity,
   Stethoscope,
+  Bone,
+  HeartPulse,
   ChevronRight,
   Calendar,
   Clock,
@@ -34,22 +36,27 @@ import {
   Monitor,
   Bell,
   FileText,
-  Info
+  Info,
+  Eye,
+  Brain
 } from "lucide-react";
+import { CANONICAL_DOCTORS, getDoctorAvatar, getDoctorDetails } from "../../data/doctorsData";
+import { API_BASE_URL } from "../../config/api";
 
 const departments = [
-  { id: "Cardiology", label: "Cardiology", icon: Heart, desc: "Heart health checkups", bg: "bg-red-50 text-red-600 border-red-100" },
-  { id: "Dermatology", label: "Dermatology", icon: Sparkles, desc: "Skin consultations", bg: "bg-yellow-50 text-yellow-600 border-yellow-100" },
-  { id: "Pediatrics", label: "Pediatrics", icon: Smile, desc: "Child care checkups", bg: "bg-purple-50 text-purple-600 border-purple-100" },
-  { id: "Neurology", label: "Neurology", icon: Activity, desc: "Brain and nerve health", bg: "bg-blue-50 text-blue-600 border-blue-100" },
-  { id: "General Practice", label: "General Practice", icon: Stethoscope, desc: "General health reviews", bg: "bg-teal-50 text-teal-600 border-teal-100" }
-];
-
-const mockDoctors = [
-  { name: "Dr. Emily Chen", specialty: "Cardiology", fee: "₹700", avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=100&h=100&q=80", rating: "4.9" },
-  { name: "Dr. Sarah Johnson", specialty: "Cardiology", fee: "₹500", avatar: "https://images.unsplash.com/photo-1594824813573-246434de83fb?auto=format&fit=crop&w=100&h=100&q=80", rating: "4.9" },
-  { name: "Dr. Priya Sharma", specialty: "Dermatology", fee: "₹600", avatar: "https://images.unsplash.com/photo-1594824813573-246434de83fb?auto=format&fit=crop&w=100&h=100&q=80", rating: "4.9" },
-  { name: "Dr. Michael Chen", specialty: "Neurology", fee: "₹700", avatar: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=100&h=100&q=80", rating: "4.8" }
+  { id: "Cardiology", label: "Cardiology", icon: Heart, desc: "Heart & cardiovascular care", bg: "bg-red-50 text-red-600 border-red-100" },
+  { id: "Neurology", label: "Neurology", icon: Activity, desc: "Brain, spine & nervous system", bg: "bg-purple-50 text-purple-600 border-purple-100" },
+  { id: "Dermatology", label: "Dermatology", icon: Sparkles, desc: "Skin, hair & aesthetic care", bg: "bg-amber-50 text-amber-600 border-amber-100" },
+  { id: "Orthopedics", label: "Orthopedics", icon: Bone, desc: "Bones, joints & spine care", bg: "bg-blue-50 text-blue-600 border-blue-100" },
+  { id: "Pediatrics", label: "Pediatrics", icon: Smile, desc: "Infant & child healthcare", bg: "bg-teal-50 text-teal-600 border-teal-100" },
+  { id: "General Practice", label: "General Medicine", icon: Stethoscope, desc: "Primary care & routine exams", bg: "bg-emerald-50 text-emerald-600 border-emerald-100" },
+  { id: "Gynecology", label: "Gynecology & Obstetrics", icon: HeartPulse, desc: "Women's wellness & maternity", bg: "bg-rose-50 text-rose-600 border-rose-100" },
+  { id: "Dentistry", label: "Dentistry", icon: Smile, desc: "Dental care & oral surgery", bg: "bg-cyan-50 text-cyan-600 border-cyan-100" },
+  { id: "Ophthalmology", label: "Ophthalmology", icon: Eye, desc: "Eye care & vision surgery", bg: "bg-indigo-50 text-indigo-600 border-indigo-100" },
+  { id: "Endocrinology", label: "Endocrinology", icon: Activity, desc: "Diabetes & hormonal health", bg: "bg-violet-50 text-violet-600 border-violet-100" },
+  { id: "Nephrology", label: "Nephrology", icon: Activity, desc: "Kidney care & dialysis", bg: "bg-sky-50 text-sky-600 border-sky-100" },
+  { id: "Psychiatry", label: "Psychiatry", icon: Brain, desc: "Mental wellness & therapy", bg: "bg-lime-50 text-lime-700 border-lime-100" },
+  { id: "Gastroenterology", label: "Gastroenterology", icon: HeartPulse, desc: "Digestive & liver care", bg: "bg-orange-50 text-orange-600 border-orange-100" }
 ];
 
 const timeSlots = ["09:00 AM", "10:00 AM", "11:00 AM", "02:00 PM", "03:00 PM", "04:30 PM"];
@@ -79,6 +86,8 @@ const BookAppointment = ({ setActiveTab }) => {
   const [showDoctorProfile, setShowDoctorProfile] = useState(false);
   const [appointmentHistory, setAppointmentHistory] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
+  const [recommendedSpecialty, setRecommendedSpecialty] = useState("");
+  const [hasSearchedRecs, setHasSearchedRecs] = useState(false);
   const [symptoms, setSymptoms] = useState("");
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -109,7 +118,7 @@ const BookAppointment = ({ setActiveTab }) => {
       const token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(`http://localhost:8080/api/doctors/specialty/${selectedDept}`, {
+        const response = await fetch(`${API_BASE_URL}/api/doctors/specialty/${selectedDept}`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -119,19 +128,23 @@ const BookAppointment = ({ setActiveTab }) => {
           const data = await response.json();
           setDoctors(data);
         } else {
-          // Fallback to mock data if backend call fails
-          const mockDoctorsData = mockDoctors.filter(doc =>
-            doc.specialty === selectedDept || selectedDept === "General Practice"
+          // Fallback to canonical doctors if backend call fails
+          const fallbackData = CANONICAL_DOCTORS.filter(doc =>
+            doc.specialty.toLowerCase().includes(selectedDept.toLowerCase()) ||
+            selectedDept.toLowerCase().includes(doc.specialty.toLowerCase()) ||
+            (selectedDept === "General Practice" && doc.specialty === "General Medicine")
           );
-          setDoctors(mockDoctorsData);
+          setDoctors(fallbackData);
         }
       } catch (err) {
         console.error("Error fetching doctors:", err);
-        // Fallback to mock data
-        const mockDoctorsData = mockDoctors.filter(doc =>
-          doc.specialty === selectedDept || selectedDept === "General Practice"
+        // Fallback to canonical doctors
+        const fallbackData = CANONICAL_DOCTORS.filter(doc =>
+          doc.specialty.toLowerCase().includes(selectedDept.toLowerCase()) ||
+          selectedDept.toLowerCase().includes(doc.specialty.toLowerCase()) ||
+          (selectedDept === "General Practice" && doc.specialty === "General Medicine")
         );
-        setDoctors(mockDoctorsData);
+        setDoctors(fallbackData);
       } finally {
         setLoading(false);
       }
@@ -151,7 +164,7 @@ const BookAppointment = ({ setActiveTab }) => {
 
       try {
         const response = await fetch(
-          `http://localhost:8080/api/appointments/availability?doctorId=${selectedDoc.id}&date=${selectedDate}`,
+          `${API_BASE_URL}/api/appointments/availability?doctorId=${selectedDoc.id}&date=${selectedDate}`,
           {
             headers: {
               "Authorization": `Bearer ${token}`
@@ -214,19 +227,31 @@ const BookAppointment = ({ setActiveTab }) => {
     setError("");
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
+    const parsedUserId = userId ? parseInt(userId, 10) : null;
+
+    // Convert "09:00 AM" / "02:00 PM" into 24-hr "HH:mm:ss"
+    let formattedTime = selectedSlot;
+    if (selectedSlot && (selectedSlot.includes("AM") || selectedSlot.includes("PM"))) {
+      const [timePart, modifier] = selectedSlot.split(" ");
+      let [h, m] = timePart.split(":");
+      let hours = parseInt(h, 10);
+      if (modifier === "PM" && hours < 12) hours += 12;
+      if (modifier === "AM" && hours === 12) hours = 0;
+      formattedTime = `${String(hours).padStart(2, "0")}:${m}:00`;
+    }
 
     try {
-      const response = await fetch("http://localhost:8080/api/appointments/book", {
+      const response = await fetch(`${API_BASE_URL}/api/appointments/book`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          patientUserId: parseInt(userId),
+          patientUserId: parsedUserId,
           doctorId: selectedDoc.id,
           appointmentDate: selectedDate,
-          startTime: selectedSlot,
+          startTime: formattedTime,
           reason: reason,
           appointmentType: appointmentType
         })
@@ -235,9 +260,11 @@ const BookAppointment = ({ setActiveTab }) => {
       if (response.ok) {
         const data = await response.json();
         setSuccess(true);
+        window.dispatchEvent(new Event("appointmentsUpdated"));
+        window.dispatchEvent(new Event("appointmentBooked"));
         setTimeout(() => {
           setActiveTab("My Appointments");
-        }, 2000);
+        }, 1500);
       } else {
         const errorData = await response.json();
         setError(errorData.error || "Failed to book appointment. Please try again.");
@@ -250,35 +277,27 @@ const BookAppointment = ({ setActiveTab }) => {
     }
   };
 
-  const filteredDoctors = doctors.length > 0 ? doctors : mockDoctors.filter(doc =>
-    doc.specialty === selectedDept || selectedDept === "General Practice"
+  const filteredDoctors = doctors.length > 0 ? doctors : CANONICAL_DOCTORS.filter(doc =>
+    doc.specialty.toLowerCase().includes(selectedDept.toLowerCase()) ||
+    selectedDept.toLowerCase().includes(doc.specialty.toLowerCase()) ||
+    (selectedDept === "General Practice" && doc.specialty === "General Medicine")
   );
 
-  // Map backend doctors to UI format
+  // Map backend doctors to UI format using canonical image and details resolver
   const displayDoctors = filteredDoctors.map(doc => {
-    if (doc.id) {
-      // Backend doctor format
-      return {
-        id: doc.id,
-        name: doc.user?.name || doc.name,
-        specialty: doc.specialization,
-        fee: `₹${doc.consultationFee || 5000}`,
-        avatar: doc.avatar || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=100&h=100&q=80",
-        rating: doc.rating || "4.9",
-        bio: doc.bio || "Experienced specialist in their field",
-        education: doc.education || "MBBS, MD",
-        experience: doc.experience || "10+ years",
-        telehealth: doc.supportsTelehealth !== false
-      };
-    }
-    // Mock data format
+    const details = getDoctorDetails(doc);
     return {
-      ...doc,
-      id: doc.name,
-      bio: "Experienced specialist in their field",
-      education: "MBBS, MD",
-      experience: "10+ years",
-      telehealth: true
+      id: doc.id || details.id,
+      name: doc.user?.name || doc.name || details.name,
+      specialty: doc.specialization || doc.specialty || details.specialty,
+      fee: typeof doc.fee === "string" ? doc.fee : `₹${doc.consultationFee || doc.fee || details.fee}`,
+      avatar: getDoctorAvatar(doc),
+      rating: doc.rating || details.rating,
+      bio: doc.bio || details.bio,
+      education: doc.education || details.education,
+      experience: doc.experience || details.experience,
+      hospital: doc.hospital || details.hospital,
+      telehealth: doc.supportsTelehealth !== false && doc.telehealth !== false
     };
   });
 
@@ -318,7 +337,7 @@ const BookAppointment = ({ setActiveTab }) => {
   const fetchAppointmentHistory = async (doctorId) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8080/api/appointments/doctor-id/${doctorId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/appointments/doctor-id/${doctorId}`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -337,23 +356,29 @@ const BookAppointment = ({ setActiveTab }) => {
     if (!symptoms.trim()) return;
 
     setLoading(true);
+    setHasSearchedRecs(true);
     try {
-      const response = await fetch(`http://localhost:8080/api/doctors/recommend?symptoms=${encodeURIComponent(symptoms)}`, {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
+      const token = localStorage.getItem("token");
+      const headers = token ? { "Authorization": `Bearer ${token}` } : {};
+      const response = await fetch(`${API_BASE_URL}/api/doctors/recommend?symptoms=${encodeURIComponent(symptoms)}`, {
+        headers
       });
       if (response.ok) {
         const data = await response.json();
-        // Map backend doctors to UI format
-        const mappedDoctors = (data.doctors || []).map(doc => ({
-          id: doc.id,
-          name: doc.user?.name || doc.name,
-          specialty: doc.specialization,
-          fee: `₹${doc.consultationFee || 5000}`,
-          avatar: doc.avatar || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=100&h=100&q=80",
-          rating: doc.rating || "4.9"
-        }));
+        setRecommendedSpecialty(data.recommendedSpecialty || "");
+        // Map backend doctors to UI format with canonical avatar resolver
+        const mappedDoctors = (data.doctors || []).map(doc => {
+          const details = getDoctorDetails(doc);
+          return {
+            id: doc.id || details.id,
+            name: doc.user?.name || doc.name || details.name,
+            specialty: doc.specialization || doc.specialty || details.specialty,
+            fee: typeof doc.fee === "string" ? doc.fee : `₹${doc.consultationFee || doc.fee || details.fee}`,
+            avatar: getDoctorAvatar(doc),
+            rating: doc.rating || details.rating,
+            experience: doc.experience || details.experience
+          };
+        });
         setRecommendations(mappedDoctors);
       }
     } catch (err) {
@@ -365,7 +390,16 @@ const BookAppointment = ({ setActiveTab }) => {
 
   // Phase 2: Show doctor profile
   const showDoctorProfileModal = (doctor) => {
-    setSelectedDoctorProfile(doctor);
+    const details = getDoctorDetails(doctor);
+    setSelectedDoctorProfile({
+      ...details,
+      ...doctor,
+      avatar: getDoctorAvatar(doctor),
+      fee: typeof doctor.fee === "string" ? doctor.fee : `₹${doctor.consultationFee || doctor.fee || details.fee}`,
+      bio: doctor.bio || details.bio,
+      education: doctor.education || details.education,
+      hospital: doctor.hospital || details.hospital
+    });
     setShowDoctorProfile(true);
     fetchAppointmentHistory(doctor.id);
   };
@@ -402,7 +436,7 @@ const BookAppointment = ({ setActiveTab }) => {
   const verifyInsurance = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("http://localhost:8080/api/patient/insurance", {
+      const response = await fetch(`${API_BASE_URL}/api/patient/insurance`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -426,7 +460,7 @@ const BookAppointment = ({ setActiveTab }) => {
   const toggleFavorite = async (doctorId) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8080/api/patient/favorites/${doctorId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/patient/favorites/${doctorId}`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -455,7 +489,7 @@ const BookAppointment = ({ setActiveTab }) => {
   const loadFavoriteDoctors = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("http://localhost:8080/api/patient/favorites", {
+      const response = await fetch(`${API_BASE_URL}/api/patient/favorites`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -586,47 +620,110 @@ const BookAppointment = ({ setActiveTab }) => {
         <div className="flex gap-2">
           <input
             type="text"
-            placeholder="Describe your symptoms (e.g., headache, fever, skin rash)..."
+            placeholder="Describe symptoms (e.g., chest pain, headache, skin rash, knee injury)..."
             value={symptoms}
             onChange={(e) => setSymptoms(e.target.value)}
-            className="flex-1 px-4 py-2.5 bg-white/50 border border-white/40 rounded-xl text-sm focus:outline-none focus:border-[#2563EB] transition"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                getRecommendations();
+              }
+            }}
+            className="flex-1 px-4 py-2.5 bg-white/70 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] transition shadow-2xs"
           />
           <button
             onClick={getRecommendations}
             disabled={loading || !symptoms.trim()}
-            className="px-4 py-2.5 bg-[#2563EB] text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-4 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#0D9488] text-white rounded-xl text-sm font-bold hover:shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer shrink-0"
           >
             {loading ? <Loader2 size={16} className="animate-spin" /> : <ThumbsUp size={16} />}
             Get Recommendations
           </button>
         </div>
 
+        {/* Quick Symptom Chips */}
+        <div className="flex items-center gap-1.5 flex-wrap mt-2.5">
+          <span className="text-[11px] font-semibold text-slate-500 mr-1">Quick Suggestions:</span>
+          {[
+            { label: "Chest Pain", symptom: "chest pain" },
+            { label: "Fever & Flu", symptom: "fever cold" },
+            { label: "Severe Headache", symptom: "headache migraine" },
+            { label: "Skin Rash & Acne", symptom: "skin rash" },
+            { label: "Joint & Knee Pain", symptom: "joint knee pain" },
+            { label: "Pregnancy & Maternity", symptom: "pregnancy care" }
+          ].map((chip) => (
+            <button
+              key={chip.label}
+              type="button"
+              onClick={() => {
+                setSymptoms(chip.symptom);
+                // Trigger recommendation fetch
+                setTimeout(() => {
+                  setSymptoms(chip.symptom);
+                }, 0);
+              }}
+              className="text-[11px] px-2.5 py-1 rounded-full bg-white/80 hover:bg-white text-slate-600 hover:text-[#2563EB] border border-slate-200/80 hover:border-blue-300 transition shadow-2xs cursor-pointer"
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+
         {recommendations.length > 0 && (
-          <div className="mt-4 space-y-2">
-            <p className="text-xs text-slate-500 font-semibold">Based on your symptoms, we recommend:</p>
-            {recommendations.map(doc => (
-              <div
-                key={doc.id}
-                className="flex items-center justify-between p-3 bg-white/50 border border-white/40 rounded-xl hover:bg-white/60 transition cursor-pointer"
-                onClick={() => {
-                  setSelectedDoc(doc);
-                  setSelectedDept(doc.specialty);
-                  setSymptoms("");
-                  setRecommendations([]);
-                  handleNextStep();
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <img src={doc.avatar} alt={doc.name} className="w-10 h-10 rounded-full object-cover" />
-                  <div>
-                    <p className="font-semibold text-slate-800 text-sm">{doc.name}</p>
-                    <p className="text-xs text-slate-500">{doc.specialty}</p>
+          <div className="mt-4 space-y-2.5 pt-3 border-t border-slate-200/60">
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-slate-600 font-bold flex items-center gap-1.5">
+                <Sparkles size={13} className="text-[#0D9488]" />
+                Based on your symptoms, we recommend:
+              </p>
+              {recommendedSpecialty && (
+                <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-blue-50 text-[#2563EB] border border-blue-200">
+                  Recommended Specialty: {recommendedSpecialty}
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {recommendations.map(doc => (
+                <div
+                  key={doc.id}
+                  className="flex items-center justify-between p-3.5 bg-white/80 border border-slate-200 rounded-xl hover:bg-white hover:border-[#2563EB] hover:shadow-md transition cursor-pointer group"
+                  onClick={() => {
+                    setSelectedDoc(doc);
+                    setSelectedDept(doc.specialty);
+                    setSymptoms("");
+                    setRecommendations([]);
+                    setHasSearchedRecs(false);
+                    handleNextStep();
+                  }}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <img src={doc.avatar} alt={doc.name} className="w-11 h-11 rounded-xl object-cover border border-slate-200 shrink-0" />
+                    <div className="min-w-0">
+                      <p className="font-extrabold text-slate-900 text-xs truncate group-hover:text-[#2563EB] transition-colors">{doc.name}</p>
+                      <p className="text-[11px] text-slate-500 font-medium truncate">{doc.specialty}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[11px] font-bold text-[#0D9488]">{doc.fee}</span>
+                        <span className="text-[10px] text-amber-600 font-semibold flex items-center gap-0.5">
+                          <Star size={10} className="fill-amber-400 text-amber-400" /> {doc.rating}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs font-bold text-[#2563EB] shrink-0 pl-2">
+                    <span>Select</span>
+                    <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </div>
-                <ChevronRight size={16} className="text-slate-400" />
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+        )}
+
+        {hasSearchedRecs && recommendations.length === 0 && !loading && (
+          <p className="text-xs text-slate-600 mt-3 font-medium bg-amber-50/80 border border-amber-200/60 p-2.5 rounded-xl">
+            No specific specialist matched "{symptoms}". We recommend selecting <strong>General Medicine</strong> above for comprehensive assessment.
+          </p>
         )}
       </div>
 

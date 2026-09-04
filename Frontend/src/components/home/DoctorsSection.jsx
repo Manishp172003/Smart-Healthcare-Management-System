@@ -10,7 +10,7 @@ import {
 
 // Import real doctor images matching the rest of the application
 import doctorImg1 from "../../assets/FindDoctors/Doctor-img-1.png";
-import doctorImg3 from "../../assets/FindDoctors/Doctor-img-2.png";
+import doctorImg3 from "../../assets/FindDoctors/Doctor-img-3.png";
 import doctorImg4 from "../../assets/FindDoctors/Doctor-img-4.png";
 
 const doctors = [

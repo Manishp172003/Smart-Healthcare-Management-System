@@ -1,4 +1,5 @@
 import { MoreHorizontal } from "lucide-react";
+import { getDoctorAvatar } from "../../data/doctorsData";
 
 function UpcomingAppointments({ appointments = [], loading = false }) {
   if (loading) {
@@ -46,8 +47,10 @@ function UpcomingAppointments({ appointments = [], loading = false }) {
               console.error(err);
             }
 
-            const doctorName = appointment.doctor?.user?.name || "Specialist";
+            const rawDoctorName = appointment.doctor?.user?.name || "Specialist";
+            const doctorName = rawDoctorName.startsWith("Dr.") ? rawDoctorName : `Dr. ${rawDoctorName}`;
             const specialty = appointment.doctor?.specialization || "General Health";
+            const doctorAvatar = getDoctorAvatar(appointment.doctor);
 
             return (
               <div
@@ -72,15 +75,22 @@ function UpcomingAppointments({ appointments = [], loading = false }) {
                   </p>
                 </div>
 
-                {/* Details */}
-                <div className="flex-1">
+                {/* Doctor Avatar */}
+                <img
+                  src={doctorAvatar}
+                  alt={doctorName}
+                  className="w-11 h-11 rounded-xl object-cover border border-slate-200 shrink-0 mt-0.5"
+                />
 
-                  <h3 className="font-bold text-slate-900">
+                {/* Details */}
+                <div className="flex-1 min-w-0">
+
+                  <h3 className="font-bold text-slate-900 truncate">
                     {specialty}
                   </h3>
 
-                  <p className="mt-1 text-sm text-slate-500">
-                    Dr. {doctorName} • {appointment.startTime}
+                  <p className="mt-0.5 text-xs text-slate-500 truncate">
+                    {doctorName} • {appointment.startTime}
                   </p>
 
                   {/* Status */}

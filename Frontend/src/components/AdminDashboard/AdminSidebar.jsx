@@ -12,7 +12,8 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
-  MessageSquareQuote
+  MessageSquareQuote,
+  Mail
 } from "lucide-react";
 
 const menuItems = [
@@ -22,6 +23,7 @@ const menuItems = [
   { label: "Schedules", icon: Calendar },
   { label: "Medical Records", icon: FileHeart },
   { label: "Testimonials", icon: MessageSquareQuote },
+  { label: "Subscribers", icon: Mail },
   { label: "Analytics", icon: BarChart3 }
 ];
 

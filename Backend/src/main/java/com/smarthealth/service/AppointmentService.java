@@ -38,10 +38,24 @@ public class AppointmentService {
     @Transactional
     public Appointment bookAppointment(AppointmentRequest request) {
         // 1. Fetch Patient details (or auto-create if patient record does not exist yet)
-        Patient patient = patientRepository.findByUserId(request.getPatientUserId())
+        Long patientUserId = request.getPatientUserId();
+        if (patientUserId == null || patientUserId <= 0) {
+            org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.getName() != null) {
+                userRepository.findByEmail(auth.getName()).ifPresent(u -> request.setPatientUserId(u.getId()));
+                patientUserId = request.getPatientUserId();
+            }
+        }
+
+        if (patientUserId == null) {
+            throw new RuntimeException("Error: Patient authentication missing. Please login again.");
+        }
+
+        final Long resolvedPatientId = patientUserId;
+        Patient patient = patientRepository.findByUserId(resolvedPatientId)
                 .orElseGet(() -> {
-                    com.smarthealth.entity.User user = userRepository.findById(request.getPatientUserId())
-                            .orElseThrow(() -> new RuntimeException("Error: User not found for ID: " + request.getPatientUserId()));
+                    com.smarthealth.entity.User user = userRepository.findById(resolvedPatientId)
+                            .orElseThrow(() -> new RuntimeException("Error: User not found for ID: " + resolvedPatientId));
                     Patient newPatient = new Patient();
                     newPatient.setUser(user);
                     return patientRepository.save(newPatient);

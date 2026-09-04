@@ -1,4 +1,5 @@
 import { CheckCircle, XCircle } from "lucide-react";
+import { getDoctorAvatar } from "../../data/doctorsData";
 
 function RecentHistory({ appointments = [], loading = false, setActiveTab }) {
   if (loading) {
@@ -67,8 +68,10 @@ function RecentHistory({ appointments = [], loading = false, setActiveTab }) {
             <tbody>
 
               {pastList.map((item, index) => {
-                const doctorName = item.doctor?.user?.name || "Specialist";
+                const rawDoctorName = item.doctor?.user?.name || "Specialist";
+                const doctorName = rawDoctorName.startsWith("Dr.") ? rawDoctorName : `Dr. ${rawDoctorName}`;
                 const specialty = item.doctor?.specialization || "General Health";
+                const doctorAvatar = getDoctorAvatar(item.doctor);
 
                 return (
                   <tr
@@ -81,7 +84,14 @@ function RecentHistory({ appointments = [], loading = false, setActiveTab }) {
                     </td>
 
                     <td className="px-5 py-5 text-sm font-medium text-slate-900">
-                      Dr. {doctorName}
+                      <div className="flex items-center gap-2.5">
+                        <img 
+                          src={doctorAvatar} 
+                          alt={doctorName} 
+                          className="w-7 h-7 rounded-lg object-cover border border-slate-200 shrink-0" 
+                        />
+                        <span>{doctorName}</span>
+                      </div>
                     </td>
 
                     <td className="px-5 py-5 text-sm text-slate-500">

@@ -11,7 +11,13 @@ import {
   MessageSquareQuote,
   Search,
   Check,
-  AlertCircle
+  AlertCircle,
+  Mail,
+  Download,
+  Copy,
+  Users,
+  Calendar,
+  Send
 } from "lucide-react";
 import { 
   getTestimonials, 
@@ -21,28 +27,79 @@ import {
   toggleReviewFeature, 
   deleteReview 
 } from "../../utils/testimonialsService";
+import { API_BASE_URL } from "../../config/api";
 
-const AdminTestimonials = () => {
+const AdminTestimonials = ({ initialSubTab = "testimonials" }) => {
+  const [activeSubTab, setActiveSubTab] = useState(initialSubTab);
+
+  useEffect(() => {
+    if (initialSubTab) {
+      setActiveSubTab(initialSubTab);
+    }
+  }, [initialSubTab]);
   const [testimonials, setTestimonials] = useState([]);
   const [mode, setMode] = useState("manual");
   const [filterStatus, setFilterStatus] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [actionSuccess, setActionSuccess] = useState(null);
 
+  // Newsletter Subscribers State
+  const [subscribers, setSubscribers] = useState([]);
+  const [subscribersLoading, setSubscribersLoading] = useState(false);
+  const [subscriberSearch, setSubscriberSearch] = useState("");
+
   const loadData = () => {
     setTestimonials(getTestimonials());
     setMode(getModerationMode());
   };
 
+  const fetchSubscribers = async () => {
+    setSubscribersLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/newsletter/subscribers`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data)) {
+          setSubscribers(json.data);
+          return;
+        }
+      }
+      throw new Error("Local fallback");
+    } catch {
+      // Local fallback
+      try {
+        const local = JSON.parse(localStorage.getItem("smarthealth_newsletter_subscribers") || "[]");
+        setSubscribers(local.map((email, idx) => ({
+          id: idx + 1,
+          email,
+          subscribedAt: new Date().toISOString(),
+          isActive: true,
+          subscriptionSource: "footer"
+        })));
+      } catch {
+        setSubscribers([]);
+      }
+    } finally {
+      setSubscribersLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadData();
+    fetchSubscribers();
 
-    const handleUpdate = () => loadData();
+    const handleUpdate = () => {
+      loadData();
+      fetchSubscribers();
+    };
+
     window.addEventListener("testimonialsUpdated", handleUpdate);
     window.addEventListener("testimonialsModeChanged", handleUpdate);
+    window.addEventListener("newsletterSubscribed", handleUpdate);
     return () => {
       window.removeEventListener("testimonialsUpdated", handleUpdate);
       window.removeEventListener("testimonialsModeChanged", handleUpdate);
+      window.removeEventListener("newsletterSubscribed", handleUpdate);
     };
   }, []);
 
@@ -77,6 +134,30 @@ const AdminTestimonials = () => {
     }
   };
 
+  const handleCopyAllEmails = () => {
+    const emails = subscribers.map(s => s.email).join(", ");
+    navigator.clipboard.writeText(emails);
+    setActionSuccess(`Copied ${subscribers.length} subscriber email(s) to clipboard!`);
+    setTimeout(() => setActionSuccess(null), 3000);
+  };
+
+  const handleExportCSV = () => {
+    const csvContent = "data:text/csv;charset=utf-8," + 
+      "ID,Email,SubscribedAt,Status,Source\n" + 
+      subscribers.map(s => `${s.id},${s.email},${s.subscribedAt},${s.isActive ? 'ACTIVE' : 'INACTIVE'},${s.subscriptionSource || 'footer'}`).join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `smarthealth_newsletter_subscribers_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setActionSuccess("Exported subscribers CSV!");
+    setTimeout(() => setActionSuccess(null), 3000);
+  };
+
   // Metrics
   const totalCount = testimonials.length;
   const approvedCount = testimonials.filter(t => t.status === "APPROVED").length;
@@ -85,7 +166,7 @@ const AdminTestimonials = () => {
     ? (testimonials.reduce((acc, t) => acc + (t.rating || 5), 0) / totalCount).toFixed(1) 
     : "5.0";
 
-  // Filtered List
+  // Filtered List for Testimonials
   const filteredTestimonials = testimonials.filter(t => {
     const matchesStatus = filterStatus === "ALL" || t.status === filterStatus;
     const matchesSearch = 
@@ -94,6 +175,11 @@ const AdminTestimonials = () => {
       (t.doctorName && t.doctorName.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesStatus && matchesSearch;
   });
+
+  // Filtered List for Subscribers
+  const filteredSubscribers = subscribers.filter(s => 
+    s.email.toLowerCase().includes(subscriberSearch.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -106,275 +192,451 @@ const AdminTestimonials = () => {
         </div>
       )}
 
-      {/* Top Banner: Moderation Mode Switcher */}
-      <div className="bg-white/80 border border-white/60 rounded-[28px] p-6 shadow-xs backdrop-blur-md">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-          
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#0D9488] flex items-center justify-center text-white shadow-sm shrink-0">
-              <MessageSquareQuote size={24} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2.5">
-                <h2 className="text-lg md:text-xl font-black text-slate-900 leading-tight">
-                  Patient Reviews & Testimonials Moderation
-                </h2>
-                <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                  mode === "auto" 
-                    ? "bg-amber-100 text-amber-700 border border-amber-200" 
-                    : "bg-teal-100 text-teal-800 border border-teal-200"
-                }`}>
-                  {mode === "auto" ? "⚡ Auto-Accept Mode" : "🛡️ Manual Review Active"}
-                </span>
+      {/* Top Level Nav Tabs: Testimonials vs Subscribers */}
+      <div className="flex items-center gap-2 bg-slate-200/60 p-1.5 rounded-2xl w-fit border border-slate-300/60">
+        <button
+          onClick={() => setActiveSubTab("testimonials")}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${
+            activeSubTab === "testimonials"
+              ? "bg-white text-slate-900 shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          <MessageSquareQuote size={16} className={activeSubTab === "testimonials" ? "text-[#0D9488]" : ""} />
+          <span>Patient Testimonials & Reviews</span>
+          {pendingCount > 0 && (
+            <span className="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+              {pendingCount}
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={() => setActiveSubTab("subscribers")}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${
+            activeSubTab === "subscribers"
+              ? "bg-white text-slate-900 shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          <Mail size={16} className={activeSubTab === "subscribers" ? "text-blue-600" : ""} />
+          <span>Newsletter Subscribers</span>
+          <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold">
+            {subscribers.length}
+          </span>
+        </button>
+      </div>
+
+      {activeSubTab === "testimonials" ? (
+        <>
+          {/* Top Banner: Moderation Mode Switcher */}
+          <div className="bg-white/80 border border-white/60 rounded-[28px] p-6 shadow-xs backdrop-blur-md">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+              
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#0D9488] flex items-center justify-center text-white shadow-sm shrink-0">
+                  <MessageSquareQuote size={24} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <h2 className="text-lg md:text-xl font-black text-slate-900 leading-tight">
+                      Patient Reviews & Testimonials Moderation
+                    </h2>
+                    <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                      mode === "auto" 
+                        ? "bg-amber-100 text-amber-700 border border-amber-200" 
+                        : "bg-teal-100 text-teal-800 border border-teal-200"
+                    }`}>
+                      {mode === "auto" ? "⚡ Auto-Accept Mode" : "🛡️ Manual Review Active"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1 max-w-xl leading-relaxed">
+                    Control how patient care testimonials appear on the public homepage. Choose between instant publication or administrative verification.
+                  </p>
+                </div>
               </div>
-              <p className="text-xs text-slate-500 mt-1 max-w-xl leading-relaxed">
-                Control how patient care testimonials appear on the public homepage. Choose between instant publication or administrative verification.
-              </p>
-            </div>
-          </div>
 
-          {/* Mode Switcher Toggle Pill */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/80 shrink-0">
-            <button
-              onClick={() => handleModeToggle("manual")}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-                mode === "manual"
-                  ? "bg-white text-slate-900 shadow-sm border border-slate-200/50"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              <ShieldCheck size={15} className={mode === "manual" ? "text-[#0D9488]" : ""} />
-              <span>Manual Approval</span>
-            </button>
-
-            <button
-              onClick={() => handleModeToggle("auto")}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-                mode === "auto"
-                  ? "bg-white text-slate-900 shadow-sm border border-slate-200/50"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              <Zap size={15} className={mode === "auto" ? "text-amber-500" : ""} />
-              <span>Auto-Accept</span>
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        
-        <div className="bg-white/80 border border-white/60 rounded-2xl p-5 shadow-xs backdrop-blur-md">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Reviews</span>
-          <span className="text-2xl font-black text-slate-800 block mt-2">{totalCount}</span>
-          <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Hospital wide</span>
-        </div>
-
-        <div className="bg-white/80 border border-white/60 rounded-2xl p-5 shadow-xs backdrop-blur-md">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Approved & Live</span>
-          <span className="text-2xl font-black text-emerald-700 block mt-2">{approvedCount}</span>
-          <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Published on homepage</span>
-        </div>
-
-        <div className="bg-white/80 border border-white/60 rounded-2xl p-5 shadow-xs backdrop-blur-md">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600">Pending Review</span>
-          <span className="text-2xl font-black text-amber-700 block mt-2">{pendingCount}</span>
-          <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Awaiting sign-off</span>
-        </div>
-
-        <div className="bg-white/80 border border-white/60 rounded-2xl p-5 shadow-xs backdrop-blur-md">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Average Rating</span>
-          <div className="flex items-center gap-1.5 mt-2">
-            <span className="text-2xl font-black text-slate-800">{averageRating}</span>
-            <div className="flex items-center text-amber-400">
-              <Star size={18} className="fill-amber-400" />
-            </div>
-          </div>
-          <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">5.0 Star scale</span>
-        </div>
-
-      </div>
-
-      {/* Moderation Queue & Filter Row */}
-      <div className="bg-white/80 border border-white/60 rounded-[28px] p-6 shadow-xs backdrop-blur-md space-y-5">
-        
-        {/* Filter bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/50 pb-5">
-          
-          {/* Status Tabs */}
-          <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200/80 overflow-x-auto">
-            {["ALL", "PENDING", "APPROVED", "REJECTED"].map((st) => (
-              <button
-                key={st}
-                onClick={() => setFilterStatus(st)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer whitespace-nowrap ${
-                  filterStatus === st
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-500 hover:text-slate-800"
-                }`}
-              >
-                {st === "ALL" && `All (${totalCount})`}
-                {st === "PENDING" && `Pending (${pendingCount})`}
-                {st === "APPROVED" && `Live (${approvedCount})`}
-                {st === "REJECTED" && `Rejected`}
-              </button>
-            ))}
-          </div>
-
-          {/* Search Input */}
-          <div className="relative w-full sm:w-64">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search patient, quote, doctor..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl py-2 pl-9 pr-3.5 text-slate-800 outline-none focus:bg-white focus:border-[#0D9488] transition"
-            />
-          </div>
-
-        </div>
-
-        {/* Testimonials List */}
-        {filteredTestimonials.length === 0 ? (
-          <div className="text-center py-12 text-slate-400 text-xs">
-            No testimonials match the current filter.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredTestimonials.map((item) => {
-              const isPending = item.status === "PENDING";
-              const isApproved = item.status === "APPROVED";
-              const isRejected = item.status === "REJECTED";
-
-              return (
-                <div 
-                  key={item.id}
-                  className={`rounded-2xl p-5 border transition duration-200 flex flex-col justify-between ${
-                    isPending 
-                      ? "bg-amber-50/40 border-amber-200" 
-                      : isRejected 
-                      ? "bg-slate-50 border-slate-200 opacity-65" 
-                      : "bg-white border-slate-200/80 shadow-xs"
+              {/* Mode Switcher Toggle Pill */}
+              <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/80 shrink-0">
+                <button
+                  onClick={() => handleModeToggle("manual")}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    mode === "manual"
+                      ? "bg-white text-slate-900 shadow-sm border border-slate-200/50"
+                      : "text-slate-500 hover:text-slate-800"
                   }`}
                 >
-                  <div>
-                    {/* Top row: Patient Profile & Status Badge */}
-                    <div className="flex items-start justify-between gap-3">
-                      
-                      <div className="flex items-center gap-3">
-                        {item.image ? (
-                          <img 
-                            src={item.image} 
-                            alt={item.name} 
-                            className="w-10 h-10 rounded-full object-cover border border-slate-200 shadow-xs" 
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#2563EB] to-[#0D9488] text-white font-bold flex items-center justify-center text-sm shadow-xs">
-                            {item.name.charAt(0)}
-                          </div>
-                        )}
+                  <ShieldCheck size={15} className={mode === "manual" ? "text-[#0D9488]" : ""} />
+                  <span>Manual Approval</span>
+                </button>
 
-                        <div>
-                          <h4 className="text-sm font-extrabold text-slate-900 leading-tight">
-                            {item.name}
-                          </h4>
-                          <span className="text-[11px] text-slate-500 font-medium block">
-                            {item.role} • {item.doctorName || "General Care"}
+                <button
+                  onClick={() => handleModeToggle("auto")}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    mode === "auto"
+                      ? "bg-white text-slate-900 shadow-sm border border-slate-200/50"
+                      : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  <Zap size={15} className={mode === "auto" ? "text-amber-500" : ""} />
+                  <span>Auto-Accept</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          {/* KPI Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            
+            <div className="bg-white/80 border border-white/60 rounded-2xl p-5 shadow-xs backdrop-blur-md">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Reviews</span>
+              <span className="text-2xl font-black text-slate-800 block mt-2">{totalCount}</span>
+              <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Hospital wide</span>
+            </div>
+
+            <div className="bg-white/80 border border-white/60 rounded-2xl p-5 shadow-xs backdrop-blur-md">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Approved & Live</span>
+              <span className="text-2xl font-black text-emerald-700 block mt-2">{approvedCount}</span>
+              <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Published on homepage</span>
+            </div>
+
+            <div className="bg-white/80 border border-white/60 rounded-2xl p-5 shadow-xs backdrop-blur-md">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600">Pending Review</span>
+              <span className="text-2xl font-black text-amber-700 block mt-2">{pendingCount}</span>
+              <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Awaiting sign-off</span>
+            </div>
+
+            <div className="bg-white/80 border border-white/60 rounded-2xl p-5 shadow-xs backdrop-blur-md">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Average Rating</span>
+              <div className="flex items-center gap-1.5 mt-2">
+                <span className="text-2xl font-black text-slate-800">{averageRating}</span>
+                <div className="flex items-center text-amber-400">
+                  <Star size={18} className="fill-amber-400" />
+                </div>
+              </div>
+              <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">5.0 Star scale</span>
+            </div>
+
+          </div>
+
+          {/* Moderation Queue & Filter Row */}
+          <div className="bg-white/80 border border-white/60 rounded-[28px] p-6 shadow-xs backdrop-blur-md space-y-5">
+            
+            {/* Filter bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/50 pb-5">
+              
+              {/* Status Tabs */}
+              <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200/80 overflow-x-auto">
+                {["ALL", "PENDING", "APPROVED", "REJECTED"].map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => setFilterStatus(st)}
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+                      filterStatus === st
+                        ? "bg-white text-slate-900 shadow-xs"
+                        : "text-slate-500 hover:text-slate-800"
+                    }`}
+                  >
+                    {st === "ALL" && `All (${totalCount})`}
+                    {st === "PENDING" && `Pending (${pendingCount})`}
+                    {st === "APPROVED" && `Live (${approvedCount})`}
+                    {st === "REJECTED" && `Rejected`}
+                  </button>
+                ))}
+              </div>
+
+              {/* Search Input */}
+              <div className="relative w-full sm:w-64">
+                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search patient, quote, doctor..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl py-2 pl-9 pr-3.5 text-slate-800 outline-none focus:bg-white focus:border-[#0D9488] transition"
+                />
+              </div>
+
+            </div>
+
+            {/* Testimonials List */}
+            {filteredTestimonials.length === 0 ? (
+              <div className="text-center py-12 text-slate-400 text-xs">
+                No testimonials match the current filter.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {filteredTestimonials.map((item) => {
+                  const isPending = item.status === "PENDING";
+                  const isApproved = item.status === "APPROVED";
+                  const isRejected = item.status === "REJECTED";
+
+                  return (
+                    <div 
+                      key={item.id}
+                      className={`rounded-2xl p-5 border transition duration-200 flex flex-col justify-between ${
+                        isPending 
+                          ? "bg-amber-50/40 border-amber-200" 
+                          : isRejected 
+                          ? "bg-slate-50 border-slate-200 opacity-65" 
+                          : "bg-white border-slate-200/80 shadow-xs"
+                      }`}
+                    >
+                      <div>
+                        {/* Top row: Patient Profile & Status Badge */}
+                        <div className="flex items-start justify-between gap-3">
+                          
+                          <div className="flex items-center gap-3">
+                            {item.image ? (
+                              <img 
+                                src={item.image} 
+                                alt={item.name} 
+                                className="w-10 h-10 rounded-full object-cover border border-slate-200 shadow-xs" 
+                              />
+                            ) : (
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#2563EB] to-[#0D9488] text-white font-bold flex items-center justify-center text-sm shadow-xs">
+                                {item.name.charAt(0)}
+                              </div>
+                            )}
+
+                            <div>
+                              <h4 className="text-sm font-extrabold text-slate-900 leading-tight">
+                                {item.name}
+                              </h4>
+                              <span className="text-[11px] text-slate-500 font-medium block">
+                                {item.role} • {item.doctorName || "General Care"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Status badge */}
+                          <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                            isApproved
+                              ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                              : isPending
+                              ? "bg-amber-100 text-amber-800 border border-amber-200 animate-pulse"
+                              : "bg-red-100 text-red-700 border border-red-200"
+                          }`}>
+                            {item.status}
                           </span>
+
                         </div>
+
+                        {/* Star Rating */}
+                        <div className="flex items-center gap-1 mt-3">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Star
+                              key={s}
+                              size={14}
+                              className={s <= item.rating ? "fill-amber-400 text-amber-400" : "text-slate-200"}
+                            />
+                          ))}
+                          <span className="text-[11px] font-bold text-slate-500 ml-1.5">{item.rating}.0 / 5.0</span>
+                        </div>
+
+                        {/* Review Quote */}
+                        <p className="text-xs text-slate-700 italic mt-3 leading-relaxed bg-slate-50/70 p-3 rounded-xl border border-slate-100">
+                          "{item.text}"
+                        </p>
                       </div>
 
-                      {/* Status badge */}
-                      <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                        isApproved
-                          ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                          : isPending
-                          ? "bg-amber-100 text-amber-800 border border-amber-200 animate-pulse"
-                          : "bg-red-100 text-red-700 border border-red-200"
-                      }`}>
-                        {item.status}
-                      </span>
-
-                    </div>
-
-                    {/* Star Rating */}
-                    <div className="flex items-center gap-1 mt-3">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star
-                          key={s}
-                          size={14}
-                          className={s <= item.rating ? "fill-amber-400 text-amber-400" : "text-slate-200"}
-                        />
-                      ))}
-                      <span className="text-[11px] font-bold text-slate-500 ml-1.5">{item.rating}.0 / 5.0</span>
-                    </div>
-
-                    {/* Review Quote */}
-                    <p className="text-xs text-slate-700 italic mt-3 leading-relaxed bg-slate-50/70 p-3 rounded-xl border border-slate-100">
-                      "{item.text}"
-                    </p>
-                  </div>
-
-                  {/* Bottom Action Row */}
-                  <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-100">
-                    
-                    {/* Feature Pin Button */}
-                    <button
-                      onClick={() => handleToggleFeature(item.id)}
-                      className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer ${
-                        item.featured 
-                          ? "bg-amber-100 text-amber-800 border border-amber-200" 
-                          : "text-slate-400 hover:text-slate-600 hover:bg-slate-100"
-                      }`}
-                      title={item.featured ? "Featured on Homepage" : "Click to pin to homepage"}
-                    >
-                      <Sparkles size={13} className={item.featured ? "text-amber-500 fill-amber-500" : ""} />
-                      <span>{item.featured ? "Featured" : "Pin"}</span>
-                    </button>
-
-                    {/* Status update buttons */}
-                    <div className="flex items-center gap-2">
-                      {!isApproved && (
+                      {/* Bottom Action Row */}
+                      <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-100">
+                        
+                        {/* Feature Pin Button */}
                         <button
-                          onClick={() => handleApprove(item.id)}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition cursor-pointer"
+                          onClick={() => handleToggleFeature(item.id)}
+                          className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer ${
+                            item.featured 
+                              ? "bg-amber-100 text-amber-800 border border-amber-200" 
+                              : "text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                          }`}
+                          title={item.featured ? "Featured on Homepage" : "Click to pin to homepage"}
                         >
-                          <Check size={13} />
-                          <span>Approve</span>
+                          <Sparkles size={13} className={item.featured ? "text-amber-500 fill-amber-500" : ""} />
+                          <span>{item.featured ? "Featured" : "Pin"}</span>
                         </button>
-                      )}
 
-                      {!isRejected && (
-                        <button
-                          onClick={() => handleReject(item.id)}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-bold transition cursor-pointer border border-red-200"
-                        >
-                          <XCircle size={13} />
-                          <span>Reject</span>
-                        </button>
-                      )}
+                        {/* Status update buttons */}
+                        <div className="flex items-center gap-2">
+                          {!isApproved && (
+                            <button
+                              onClick={() => handleApprove(item.id)}
+                              className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition cursor-pointer"
+                            >
+                              <Check size={13} />
+                              <span>Approve</span>
+                            </button>
+                          )}
 
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-slate-100 transition cursor-pointer"
-                        title="Delete Review"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                          {!isRejected && (
+                            <button
+                              onClick={() => handleReject(item.id)}
+                              className="flex items-center gap-1 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-bold transition cursor-pointer border border-red-200"
+                            >
+                              <XCircle size={13} />
+                              <span>Reject</span>
+                            </button>
+                          )}
+
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+                            title="Delete Review"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+
+                      </div>
+
                     </div>
+                  );
+                })}
+              </div>
+            )}
 
-                  </div>
-
-                </div>
-              );
-            })}
           </div>
-        )}
+        </>
+      ) : (
+        /* ================= NEWSLETTER SUBSCRIBERS VIEW ================= */
+        <div className="space-y-6 animate-fadeIn">
+          
+          {/* Header Card */}
+          <div className="bg-white/80 border border-white/60 rounded-[28px] p-6 shadow-xs backdrop-blur-md flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-sm shrink-0">
+                <Mail size={24} />
+              </div>
+              <div>
+                <h2 className="text-lg md:text-xl font-black text-slate-900 leading-tight">
+                  Public Newsletter & Outreach Subscribers
+                </h2>
+                <p className="text-xs text-slate-500 mt-1 max-w-xl leading-relaxed">
+                  Real-time database of patients and website visitors who signed up for weekly clinical wellness advisories, health camps, and hospital announcements.
+                </p>
+              </div>
+            </div>
 
-      </div>
+            {/* Quick Export / Outreach Buttons */}
+            <div className="flex items-center gap-2.5 shrink-0">
+              <button
+                onClick={handleCopyAllEmails}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold shadow-xs transition cursor-pointer"
+              >
+                <Copy size={14} className="text-blue-600" />
+                <span>Copy All Emails</span>
+              </button>
+
+              <button
+                onClick={handleExportCSV}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#0D9488] text-white text-xs font-bold shadow-sm hover:shadow-md transition cursor-pointer"
+              >
+                <Download size={14} />
+                <span>Export CSV</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Subscribers Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="bg-white/80 border border-white/60 rounded-2xl p-5 shadow-xs backdrop-blur-md">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Subscribers</span>
+              <span className="text-2xl font-black text-slate-800 block mt-2">{subscribers.length}</span>
+              <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Signed up via public website</span>
+            </div>
+
+            <div className="bg-white/80 border border-white/60 rounded-2xl p-5 shadow-xs backdrop-blur-md">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Active Audience</span>
+              <span className="text-2xl font-black text-emerald-700 block mt-2">
+                {subscribers.filter(s => s.isActive).length}
+              </span>
+              <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Eligible for weekly email blasts</span>
+            </div>
+
+            <div className="bg-white/80 border border-white/60 rounded-2xl p-5 shadow-xs backdrop-blur-md">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Primary Channel</span>
+              <span className="text-2xl font-black text-slate-800 block mt-2">Footer Form</span>
+              <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">100% organic website opt-ins</span>
+            </div>
+          </div>
+
+          {/* Subscribers Table Card */}
+          <div className="bg-white/80 border border-white/60 rounded-[28px] p-6 shadow-xs backdrop-blur-md space-y-4">
+            
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-slate-100">
+              <h3 className="text-sm font-extrabold text-slate-800 flex items-center gap-2">
+                <span>Registered Emails</span>
+                <span className="text-xs font-bold text-slate-400">({filteredSubscribers.length})</span>
+              </h3>
+
+              <div className="relative w-full sm:w-64">
+                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Filter subscriber email..."
+                  value={subscriberSearch}
+                  onChange={(e) => setSubscriberSearch(e.target.value)}
+                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl py-2 pl-9 pr-3.5 text-slate-800 outline-none focus:bg-white focus:border-blue-500 transition"
+                />
+              </div>
+            </div>
+
+            {subscribersLoading ? (
+              <div className="py-12 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-slate-300 border-t-blue-600 rounded-full animate-spin" />
+                <span>Loading subscriber database...</span>
+              </div>
+            ) : filteredSubscribers.length === 0 ? (
+              <div className="py-12 text-center text-xs text-slate-400">
+                No newsletter subscribers found.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-700">
+                  <thead className="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold tracking-wider rounded-xl">
+                    <tr>
+                      <th className="py-3 px-4 rounded-l-xl">Subscriber</th>
+                      <th className="py-3 px-4">Subscribed Date</th>
+                      <th className="py-3 px-4">Source Channel</th>
+                      <th className="py-3 px-4 text-right rounded-r-xl">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filteredSubscribers.map((sub, i) => (
+                      <tr key={sub.id || i} className="hover:bg-slate-50/70 transition">
+                        <td className="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0 border border-blue-100">
+                            {sub.email.charAt(0).toUpperCase()}
+                          </div>
+                          <span>{sub.email}</span>
+                        </td>
+                        <td className="py-3.5 px-4 text-slate-500">
+                          {sub.subscribedAt ? new Date(sub.subscribedAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'Recently'}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                            🌐 Website {sub.subscriptionSource || 'footer'}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            ACTIVE
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+          </div>
+
+        </div>
+      )}
 
     </div>
   );

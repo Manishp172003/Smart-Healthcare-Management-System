@@ -17,6 +17,7 @@ import MedicalRecords from "../components/PatientDashboard/MedicalRecords";
 import PatientProfile from "../components/PatientDashboard/PatientProfile";
 import HelpCenter from "../components/PatientDashboard/HelpCenter";
 import LeaveFeedbackModal from "../components/PatientDashboard/LeaveFeedbackModal";
+import { API_BASE_URL } from "../config/api";
 
 const VALID_TABS = ["Dashboard", "My Appointments", "Book Appointment", "Medical Records", "Profile", "Help Center"];
 
@@ -52,7 +53,7 @@ function PatientDashboard() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/doctors")
+    fetch(`${API_BASE_URL}/api/doctors`)
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => setDoctors(data))
       .catch(() => {});
@@ -83,7 +84,7 @@ function PatientDashboard() {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/api/appointments/patient/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/appointments/patient/${userId}`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -113,7 +114,7 @@ function PatientDashboard() {
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("http://localhost:8080/api/emergencies/trigger", {
+      const response = await fetch(`${API_BASE_URL}/api/emergencies/trigger`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

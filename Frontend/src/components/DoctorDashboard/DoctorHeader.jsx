@@ -15,6 +15,7 @@ import {
   Menu
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { API_BASE_URL } from "../../config/api";
 
 const tabMeta = {
   "Dashboard": {
@@ -87,7 +88,7 @@ const DoctorHeader = ({
   useEffect(() => {
     const fetchEmergencies = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/emergencies/active");
+        const res = await fetch(`${API_BASE_URL}/api/emergencies/active`);
         if (res.ok) {
           const data = await res.json();
           setActiveEmergencies(Array.isArray(data) ? data : []);

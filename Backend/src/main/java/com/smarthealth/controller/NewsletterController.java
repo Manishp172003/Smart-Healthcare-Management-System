@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/newsletter")
-@CrossOrigin(origins = "*")
 public class NewsletterController {
 
     @Autowired
@@ -100,6 +99,16 @@ public class NewsletterController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(createErrorResponse("Failed to unsubscribe: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/subscribers")
+    public ResponseEntity<?> getAllSubscribers() {
+        try {
+            return ResponseEntity.ok(createSuccessResponse("Fetched all subscribers", newsletterService.getAllSubscribers()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createErrorResponse("Failed to fetch subscribers: " + e.getMessage()));
         }
     }
 

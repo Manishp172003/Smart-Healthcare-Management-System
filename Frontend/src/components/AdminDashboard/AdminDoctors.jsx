@@ -19,6 +19,7 @@ import {
   Upload,
   Image as ImageIcon
 } from "lucide-react";
+import { API_BASE_URL } from "../../config/api";
 
 export default function AdminDoctors() {
   const [doctors, setDoctors] = useState([]);
@@ -65,7 +66,7 @@ export default function AdminDoctors() {
   const fetchDoctors = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8080/api/doctors");
+      const res = await fetch(`${API_BASE_URL}/api/doctors`);
       if (res.ok) {
         const data = await res.json();
         setDoctors(Array.isArray(data) ? data : []);
@@ -83,7 +84,7 @@ export default function AdminDoctors() {
 
   const handleStatusUpdate = async (id, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/doctors/${id}/status?status=${newStatus}`, {
+      const res = await fetch(`${API_BASE_URL}/api/doctors/${id}/status?status=${newStatus}`, {
         method: "PUT"
       });
       if (res.ok) {
@@ -102,7 +103,7 @@ export default function AdminDoctors() {
   const handleDeleteDoctor = async (id, name) => {
     if (!window.confirm(`Are you sure you want to remove Dr. ${name} from the medical registry?`)) return;
     try {
-      const res = await fetch(`http://localhost:8080/api/doctors/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/doctors/${id}`, {
         method: "DELETE"
       });
       if (res.ok) {
@@ -119,7 +120,7 @@ export default function AdminDoctors() {
   const handleCreateDoctor = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:8080/api/doctors", {
+      const res = await fetch(`${API_BASE_URL}/api/doctors`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newDoctor)

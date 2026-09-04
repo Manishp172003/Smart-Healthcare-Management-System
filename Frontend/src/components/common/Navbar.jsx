@@ -1,4 +1,4 @@
-import { HeartPulse, UserRound, Menu, X, Home, User, Calendar, FileText, Phone, LogOut, ChevronRight, Bell, Settings, Search, Grid, CalendarPlus } from "lucide-react";
+import { HeartPulse, UserRound, Menu, X, Home, User, Calendar, FileText, Phone, LogOut, ChevronRight, Bell, Settings, Search, Grid, CalendarPlus, HelpCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import UniversalSearchModal from "./UniversalSearchModal";
@@ -233,6 +233,11 @@ const Navbar = ({ forceLight = false }) => {
           </div>
 
 
+          <Link to="/faq" className={`nav-link relative text-xs md:text-sm transition-colors hover:text-[#2563EB] ${currentPath === "/faq" ? (isLightNavbar ? "text-[#2563EB] font-semibold active uppercase" : "text-white font-semibold active uppercase") : (isLightNavbar ? "text-[#475569] font-medium uppercase" : "text-white font-medium uppercase")}`}>
+            FAQ
+            <span className="nav-link-underline"></span>
+          </Link>
+
           <Link to="/contact" className={`nav-link relative text-xs md:text-sm transition-colors hover:text-[#2563EB] ${currentPath === "/contact" ? (isLightNavbar ? "text-[#2563EB] font-semibold active uppercase" : "text-white font-semibold active uppercase") : (isLightNavbar ? "text-[#475569] font-medium uppercase" : "text-white font-medium uppercase")}`}>
             Contact Us
             <span className="nav-link-underline"></span>
@@ -410,6 +415,10 @@ const Navbar = ({ forceLight = false }) => {
             <Link to="/service" className={`flex items-center gap-3 p-3 rounded-xl transition-all ${currentPath === "/service" ? "bg-[#2563EB]/10 text-[#2563EB]" : "hover:bg-slate-100"}`}>
               <Grid size={18} />
               <span className="text-xs uppercase font-semibold">Services</span>
+            </Link>
+            <Link to="/faq" className={`flex items-center gap-3 p-3 rounded-xl transition-all ${currentPath === "/faq" ? "bg-[#2563EB]/10 text-[#2563EB]" : "hover:bg-slate-100"}`}>
+              <HelpCircle size={18} />
+              <span className="text-xs uppercase font-semibold">FAQ</span>
             </Link>
             <Link to="/contact" className={`flex items-center gap-3 p-3 rounded-xl transition-all ${currentPath === "/contact" ? "bg-[#2563EB]/10 text-[#2563EB]" : "hover:bg-slate-100"}`}>
               <Phone size={18} />

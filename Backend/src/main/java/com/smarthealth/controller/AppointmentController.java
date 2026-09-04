@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/appointments")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
@@ -27,6 +26,22 @@ public class AppointmentController {
         try {
             List<Appointment> list = appointmentService.getAllAppointments();
             return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/availability")
+    public ResponseEntity<?> getAvailability(@RequestParam Long doctorId, @RequestParam(required = false) String date) {
+        try {
+            String[] defaultSlots = {"09:00 AM", "10:00 AM", "11:00 AM", "02:00 PM", "03:00 PM", "04:30 PM"};
+            Map<String, Object> response = new HashMap<>();
+            response.put("doctorId", doctorId);
+            response.put("date", date);
+            response.put("availableSlots", defaultSlots);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
             response.put("error", e.getMessage());

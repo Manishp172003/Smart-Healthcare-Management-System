@@ -1,0 +1,32 @@
+# ===================================================================
+# SmartHealth Production & Local Deployment Template
+# Copy this file to application.properties or set these environment
+# variables in your cloud provider dashboard (Render, Railway, etc.)
+# ===================================================================
+
+# Server Configuration
+server.port=${PORT:8080}
+
+# Database Configuration (For Aiven MySQL, Railway MySQL, or Localhost)
+# For Aiven: jdbc:mysql://<AIVEN_HOST>:<AIVEN_PORT>/defaultdb?ssl-mode=REQUIRED
+spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/Smart_health?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME:root}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:your_secure_db_password}
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA / Hibernate Configuration
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+# JWT Configuration (Provide a strong 256-bit secret key in production)
+smarthealth.jwt.secret=${JWT_SECRET:9a629b35b1d3ef27c493010b9a30cf7fcfc77174db933f7af93cb148dfa64012}
+smarthealth.jwt.expiration-ms=${JWT_EXPIRATION_MS:86400000}
+
+# Allowed CORS Origins (Comma-separated URLs: add your Vercel URL here)
+# Example: http://localhost:5173,https://smart-healthcare-management.vercel.app
+smarthealth.cors.allowed-origins=${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+
+# Jackson Serialization
+spring.jackson.serialization.fail-on-empty-beans=false

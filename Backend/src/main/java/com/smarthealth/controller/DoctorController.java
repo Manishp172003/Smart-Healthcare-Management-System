@@ -11,7 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/doctors")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class DoctorController {
 
     private final DoctorRepository doctorRepository;
@@ -122,7 +121,11 @@ public class DoctorController {
     @GetMapping("/specialty/{specialty}")
     public ResponseEntity<?> getDoctorsBySpecialty(@PathVariable String specialty) {
         try {
-            List<Doctor> doctors = doctorRepository.findBySpecializationContaining(specialty);
+            String searchPattern = mapSpecialtyToPattern(specialty);
+            List<Doctor> doctors = doctorRepository.findBySpecializationContaining(searchPattern);
+            if (doctors.isEmpty()) {
+                doctors = doctorRepository.findBySpecializationContaining(specialty);
+            }
             return ResponseEntity.ok(doctors);
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
@@ -223,28 +226,34 @@ public class DoctorController {
     @GetMapping("/recommend")
     public ResponseEntity<?> recommendDoctors(@RequestParam String symptoms) {
         try {
-            // Simple symptom-to-specialty mapping
-            Map<String, String> symptomMapping = new HashMap<>();
-            symptomMapping.put("headache", "Neurology");
-            symptomMapping.put("fever", "General Practice");
-            symptomMapping.put("skin", "Dermatology");
-            symptomMapping.put("heart", "Cardiology");
-            symptomMapping.put("chest pain", "Cardiology");
-            symptomMapping.put("rash", "Dermatology");
-            symptomMapping.put("child", "Pediatrics");
-            symptomMapping.put("nerve", "Neurology");
+            String symptomsLower = (symptoms != null) ? symptoms.toLowerCase().trim() : "";
+            String recommendedSpecialty = "General Medicine";
+            String searchPrefix = "General";
 
-            String symptomsLower = symptoms.toLowerCase();
-            String recommendedSpecialty = "General Practice"; // default
-
-            for (Map.Entry<String, String> entry : symptomMapping.entrySet()) {
-                if (symptomsLower.contains(entry.getKey())) {
-                    recommendedSpecialty = entry.getValue();
-                    break;
-                }
+            if (symptomsLower.matches(".*(chest|heart|cardiac|palpitat|bp|hypertension|angina|breathless).*")) {
+                recommendedSpecialty = "Cardiology";
+                searchPrefix = "Cardio";
+            } else if (symptomsLower.matches(".*(headache|migraine|dizzi|nerve|stroke|seizur|numb|brain).*")) {
+                recommendedSpecialty = "Neurology";
+                searchPrefix = "Neuro";
+            } else if (symptomsLower.matches(".*(skin|rash|acne|itch|eczema|hair|pimple|allerg).*")) {
+                recommendedSpecialty = "Dermatology";
+                searchPrefix = "Dermat";
+            } else if (symptomsLower.matches(".*(bone|joint|knee|back|spine|fractur|shoulder|ortho|sprain|leg).*")) {
+                recommendedSpecialty = "Orthopedics";
+                searchPrefix = "Ortho";
+            } else if (symptomsLower.matches(".*(child|baby|infant|newborn|kid|vaccin|pediatr).*")) {
+                recommendedSpecialty = "Pediatrics";
+                searchPrefix = "Pediatr";
+            } else if (symptomsLower.matches(".*(period|menstru|pregnant|pregnan|cramp|pcod|pcos|gynec|pelvic).*")) {
+                recommendedSpecialty = "Gynecology";
+                searchPrefix = "Gynec";
             }
 
-            List<Doctor> recommendedDoctors = doctorRepository.findBySpecializationContaining(recommendedSpecialty);
+            List<Doctor> recommendedDoctors = doctorRepository.findBySpecializationContaining(searchPrefix);
+            if (recommendedDoctors.isEmpty()) {
+                recommendedDoctors = doctorRepository.findBySpecializationContaining("General");
+            }
 
             Map<String, Object> response = new HashMap<>();
             response.put("recommendedSpecialty", recommendedSpecialty);
@@ -256,5 +265,20 @@ public class DoctorController {
             response.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
+    }
+
+    private String mapSpecialtyToPattern(String specialty) {
+        if (specialty == null) return "";
+        String s = specialty.toLowerCase().trim();
+        if (s.contains("cardio") || s.contains("heart")) return "Cardio";
+        if (s.contains("derma") || s.contains("skin")) return "Dermat";
+        if (s.contains("pediatr") || s.contains("child")) return "Pediatr";
+        if (s.contains("neuro") || s.contains("brain")) return "Neuro";
+        if (s.contains("ortho") || s.contains("bone") || s.contains("joint")) return "Ortho";
+        if (s.contains("gynec") || s.contains("obgyn") || s.contains("women")) return "Gynec";
+        if (s.contains("general") || s.contains("physician") || s.contains("medicine") || s.contains("practice")) return "General";
+        if (s.contains("eye") || s.contains("ophthalm")) return "Ophthal";
+        if (s.contains("dent")) return "Dent";
+        return specialty;
     }
 }

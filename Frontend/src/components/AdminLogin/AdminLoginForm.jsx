@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   CircleHelp,
 } from "lucide-react";
+import { API_BASE_URL } from "../../config/api";
 
 function AdminLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +31,7 @@ function AdminLoginForm() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

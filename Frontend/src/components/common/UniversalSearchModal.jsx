@@ -16,12 +16,13 @@ import {
   Smile,
   Shield,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  HelpCircle
 } from "lucide-react";
 
 import doctorImg1 from "../../assets/FindDoctors/Doctor-img-1.png";
-import doctorImg2 from "../../assets/FindDoctors/Doctor-img-7.png";
-import doctorImg3 from "../../assets/FindDoctors/Doctor-img-2.png";
+import doctorImg2 from "../../assets/FindDoctors/Doctor-img-2.png";
+import doctorImg3 from "../../assets/FindDoctors/Doctor-img-3.png";
 import doctorImg4 from "../../assets/FindDoctors/Doctor-img-4.png";
 import doctorImg5 from "../../assets/FindDoctors/Doctor-img-5.png";
 import doctorImg6 from "../../assets/FindDoctors/New-Doctor-img.png";
@@ -127,8 +128,9 @@ const SEARCH_SPECIALTIES = [
 const QUICK_ACTIONS = [
   { title: "Book an Appointment", desc: "Instant booking with top specialists", icon: Calendar, url: "/appointment" },
   { title: "Find Doctors Directory", desc: "Browse all certified clinicians", icon: User, url: "/doctors" },
+  { title: "Frequently Asked Questions (FAQ)", desc: "Patient answers, booking steps & policies", icon: HelpCircle, url: "/faq" },
   { title: "Patient Dashboard", desc: "Access visits, records & prescriptions", icon: Activity, url: "/patient/dashboard" },
-  { title: "My Appointments & Calendar", desc: "Inspect and reschedule upcoming visits", icon: Clock, url: "/patient/dashboard?tab=My Appointments" },
+  { title: "Privacy Policy & Security", desc: "HIPAA compliance & data protection", icon: Shield, url: "/privacy-policy" },
   { title: "Contact Healthcare Support", desc: "24/7 helpdesk & emergency triage", icon: ExternalLink, url: "/contact" }
 ];
 

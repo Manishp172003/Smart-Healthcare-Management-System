@@ -70,6 +70,7 @@ public class DataInitializer implements CommandLineRunner {
             admin.setPassword(passwordEncoder.encode("Admin@123"));
             admin.setRole(Role.ROLE_ADMIN);
             admin.setStatus(UserStatus.ACTIVE);
+            admin.setEmailVerified(true);
             userRepository.save(admin);
             System.out.println(">>> Seeded default administrator: admin@smarthealth.com / Admin@123");
         }
@@ -82,14 +83,39 @@ public class DataInitializer implements CommandLineRunner {
             patient.setPassword(passwordEncoder.encode("password123"));
             patient.setRole(Role.ROLE_PATIENT);
             patient.setStatus(UserStatus.ACTIVE);
+            patient.setEmailVerified(true);
             userRepository.save(patient);
             System.out.println(">>> Seeded default patient: patient@smarthealth.com / password123");
         }
 
         userRepository.findByEmail("manishpawar172003@gmail.com").ifPresent(user -> {
             user.setPassword(passwordEncoder.encode("password123"));
+            user.setEmailVerified(true);
             userRepository.save(user);
             System.out.println(">>> Synchronized manishpawar172003@gmail.com password to password123");
+        });
+
+        // Ensure all seeded doctors have emailVerified = true
+        userRepository.findAll().forEach(u -> {
+            if (!Boolean.TRUE.equals(u.getEmailVerified())) {
+                u.setEmailVerified(true);
+                userRepository.save(u);
+            }
+        });
+
+        // Ensure Doctor #2 matches Dr. Vikram Shenoy from Find Doctors
+        doctorRepository.findById(2L).ifPresent(doc -> {
+            if (!doc.getUser().getName().equals("Dr. Vikram Shenoy")) {
+                doc.getUser().setName("Dr. Vikram Shenoy");
+                doc.getUser().setEmail("vikram.shenoy@smarthealth.com");
+                doc.setSpecialization("Neurologist");
+                doc.setBio("Senior Neurologist and Spine specialist specializing in stroke recovery, migraine management, and brain health.");
+                doc.setConsultationFee(1800);
+                doc.setEducation("MBBS, MD, DM (Neurology) - NIMHANS");
+                doc.setExperience("15+ Years");
+                doctorRepository.save(doc);
+                System.out.println(">>> Synchronized Doctor #2 to Dr. Vikram Shenoy (Neurologist)!");
+            }
         });
     }
 
@@ -102,6 +128,7 @@ public class DataInitializer implements CommandLineRunner {
             newUser.setPassword(passwordEncoder.encode("password123"));
             newUser.setRole(Role.ROLE_DOCTOR);
             newUser.setStatus(UserStatus.ACTIVE);
+            newUser.setEmailVerified(true);
             return userRepository.save(newUser);
         });
 

@@ -9,6 +9,7 @@ import DoctorAnalytics from "../components/DoctorDashboard/DoctorAnalytics";
 import DoctorHelp from "../components/DoctorDashboard/DoctorHelp";
 import CustomConfirmModal from "../components/common/CustomConfirmModal";
 import { CheckCircle2, AlertCircle, X } from "lucide-react";
+import { API_BASE_URL } from "../config/api";
 
 function DoctorDashboard() {
   const [activeTab, setActiveTab] = useState("Dashboard");
@@ -45,7 +46,7 @@ function DoctorDashboard() {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/doctors");
+        const res = await fetch(`${API_BASE_URL}/api/doctors`);
         if (res.ok) {
           const data = await res.json();
           setDoctors(data);
@@ -72,7 +73,7 @@ function DoctorDashboard() {
     if (!selectedDoctorId) return;
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8080/api/appointments/doctor-id/${selectedDoctorId}`);
+      const res = await fetch(`${API_BASE_URL}/api/appointments/doctor-id/${selectedDoctorId}`);
       if (res.ok) {
         const data = await res.json();
         setAppointments(Array.isArray(data) ? data : []);
@@ -101,7 +102,7 @@ function DoctorDashboard() {
   // 3. Update appointment status (CONFIRMED, COMPLETED, CANCELLED)
   const handleUpdateStatus = async (appointmentId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/appointments/${appointmentId}/status?status=${newStatus}`, {
+      const res = await fetch(`${API_BASE_URL}/api/appointments/${appointmentId}/status?status=${newStatus}`, {
         method: "PUT"
       });
       if (res.ok) {

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import VideoConsultationModal from "./VideoConsultationModal";
+import { getDoctorAvatar, getDoctorDetails } from "../../data/doctorsData";
+import { API_BASE_URL } from "../../config/api";
 import {
   Video,
   MapPin,
@@ -260,7 +262,7 @@ const MyAppointments = ({ setActiveTab, appointments: propAppointments = [], loa
     if (window.confirm("Are you sure you want to cancel this appointment?")) {
       const token = localStorage.getItem("token");
       try {
-        const response = await fetch(`http://localhost:8080/api/appointments/${id}/status?status=CANCELLED`, {
+        const response = await fetch(`${API_BASE_URL}/api/appointments/${id}/status?status=CANCELLED`, {
           method: "PUT",
           headers: {
             "Authorization": `Bearer ${token}`
@@ -293,7 +295,7 @@ const MyAppointments = ({ setActiveTab, appointments: propAppointments = [], loa
     const time24 = convert12to24(rescheduleSlot);
     try {
       const response = await fetch(
-        `http://localhost:8080/api/appointments/${selectedAppointment.id}/reschedule?newDate=${rescheduleDate}&newTime=${time24}`,
+        `${API_BASE_URL}/api/appointments/${selectedAppointment.id}/reschedule?newDate=${rescheduleDate}&newTime=${time24}`,
         {
           method: "PUT",
           headers: {
@@ -409,19 +411,22 @@ const MyAppointments = ({ setActiveTab, appointments: propAppointments = [], loa
     setIsPreVisitChecklistOpen(false);
   };
 
-  // Mock doctor data (in real app, this would come from backend)
-  const getDoctorProfile = () => ({
-    name: selectedAppointment?.doctor || "Dr. Specialist",
-    specialty: selectedAppointment?.specialty || "General Medicine",
-    rating: 4.8,
-    reviews: 127,
-    experience: "12 years",
-    education: "Medical School, MD",
-    certifications: ["Board Certified", "Licensed Specialist"],
-    languages: ["English", "Spanish"],
-    bio: "Dr. Specialist is a dedicated healthcare professional with extensive experience in providing quality patient care. Specialized in preventive medicine and patient education.",
-    hospital: "SmartHealth Medical Center"
-  });
+  const getDoctorProfile = () => {
+    const details = getDoctorDetails(selectedAppointment?.doctor);
+    return {
+      name: selectedAppointment?.doctor || details.name,
+      specialty: selectedAppointment?.specialty || details.specialty,
+      avatar: getDoctorAvatar(selectedAppointment?.doctor),
+      rating: details.rating,
+      reviews: details.reviewsCount || 127,
+      experience: details.experience || "12+ Years",
+      education: details.education || "MBBS, MD",
+      certifications: ["Board Certified Specialist", "Licensed Clinical Practitioner"],
+      languages: ["English", "Hindi", "Marathi"],
+      bio: details.bio,
+      hospital: details.hospital || selectedAppointment?.location || "SmartHealth Medical Center"
+    };
+  };
 
   const getFilteredData = () => {
     const filteredByStatus = () => {
@@ -896,16 +901,24 @@ const MyAppointments = ({ setActiveTab, appointments: propAppointments = [], loa
                   </div>
 
                   {/* Doctor Info */}
-                  <div>
-                    <h3
-                      className="text-lg font-extrabold text-slate-800 leading-tight cursor-pointer hover:text-[#2563EB] transition"
+                  <div className="flex items-center gap-3.5">
+                    <img
+                      src={getDoctorAvatar(app.doctor)}
+                      alt={app.doctor}
+                      className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0 cursor-pointer hover:opacity-90 transition shadow-2xs"
                       onClick={() => handleDoctorProfile(app)}
-                    >
-                      {app.doctor}
-                    </h3>
-                    <p className="text-slate-400 text-xs mt-1.5 font-bold">
-                      {app.specialty} <span className="text-slate-300 mx-1">•</span> {app.type}
-                    </p>
+                    />
+                    <div>
+                      <h3
+                        className="text-base sm:text-lg font-extrabold text-slate-800 leading-tight cursor-pointer hover:text-[#2563EB] transition"
+                        onClick={() => handleDoctorProfile(app)}
+                      >
+                        {app.doctor}
+                      </h3>
+                      <p className="text-slate-400 text-xs mt-1 font-bold">
+                        {app.specialty} <span className="text-slate-300 mx-1">•</span> {app.type}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Row Metadata (Links / Location detail) */}
@@ -1197,13 +1210,21 @@ const MyAppointments = ({ setActiveTab, appointments: propAppointments = [], loa
           <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 animate-view-fade-in-up">
               <div className="flex items-start justify-between mb-6">
-                <div>
-                  <h3 className="text-xl font-bold text-slate-800">{doctor.name}</h3>
-                  <p className="text-sm text-slate-500">{doctor.specialty}</p>
+                <div className="flex items-center gap-4">
+                  <img
+                    src={doctor.avatar}
+                    alt={doctor.name}
+                    className="w-16 h-16 rounded-2xl object-cover border border-slate-200 shadow-sm shrink-0"
+                  />
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-800">{doctor.name}</h3>
+                    <p className="text-sm text-slate-500 font-semibold">{doctor.specialty}</p>
+                    <p className="text-xs text-[#0D9488] font-bold mt-0.5">{doctor.hospital}</p>
+                  </div>
                 </div>
                 <button
                   onClick={() => setIsDoctorProfileOpen(false)}
-                  className="text-slate-400 hover:text-slate-600 transition"
+                  className="text-slate-400 hover:text-slate-600 transition p-1 hover:bg-slate-100 rounded-lg cursor-pointer"
                 >
                   <X size={24} />
                 </button>

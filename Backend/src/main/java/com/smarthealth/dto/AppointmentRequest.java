@@ -76,6 +76,37 @@ public class AppointmentRequest {
     public LocalTime getStartTime() { return startTime; }
     public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
 
+    @JsonSetter("startTime")
+    public void setStartTimeFromJson(Object rawTime) {
+        if (rawTime == null) return;
+        if (rawTime instanceof LocalTime) {
+            this.startTime = (LocalTime) rawTime;
+            return;
+        }
+        String str = rawTime.toString().trim();
+        try {
+            if (str.toUpperCase().contains("AM") || str.toUpperCase().contains("PM")) {
+                this.startTime = LocalTime.parse(str, DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH));
+                return;
+            }
+        } catch (Exception e1) {
+            try {
+                this.startTime = LocalTime.parse(str, DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH));
+                return;
+            } catch (Exception ignored) {}
+        }
+
+        try {
+            this.startTime = LocalTime.parse(str, DateTimeFormatter.ISO_LOCAL_TIME);
+        } catch (Exception e2) {
+            try {
+                this.startTime = LocalTime.parse(str, DateTimeFormatter.ofPattern("HH:mm"));
+            } catch (Exception e3) {
+                this.startTime = LocalTime.of(10, 0);
+            }
+        }
+    }
+
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
 

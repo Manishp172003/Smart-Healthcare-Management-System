@@ -5,6 +5,7 @@ import {
   CalendarDays,
 } from "lucide-react";
 import VideoConsultationModal from "./VideoConsultationModal";
+import { getDoctorAvatar } from "../../data/doctorsData";
 
 function NextAppointment({ appointments = [], loading = false, setActiveTab }) {
   const [isTelehealthModalOpen, setIsTelehealthModalOpen] = useState(false);
@@ -41,10 +42,12 @@ function NextAppointment({ appointments = [], loading = false, setActiveTab }) {
     );
   }
 
-  const doctorName = upcoming.doctor?.user?.name || "Medical Specialist";
+  const rawDoctorName = upcoming.doctor?.user?.name || "Medical Specialist";
+  const doctorName = rawDoctorName.startsWith("Dr.") ? rawDoctorName : `Dr. ${rawDoctorName}`;
   const specialization = upcoming.doctor?.specialization || "General Health";
   const dateStr = upcoming.appointmentDate;
   const timeStr = upcoming.startTime;
+  const doctorAvatar = getDoctorAvatar(upcoming.doctor);
 
   return (
     <div className="relative overflow-hidden rounded-3xl border border-white/45 bg-white/60 p-7 shadow-[0_8px_32px_rgba(15,23,42,0.015)] backdrop-blur-md">
@@ -57,24 +60,29 @@ function NextAppointment({ appointments = [], loading = false, setActiveTab }) {
         {/* Appointment Information */}
         <div className="flex flex-col justify-between gap-6 sm:flex-row">
 
-          <div>
+          <div className="flex items-center gap-4">
+            <img 
+              src={doctorAvatar} 
+              alt={doctorName} 
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border border-slate-200/80 shadow-sm shrink-0"
+            />
+            <div>
+              {/* Label */}
+              <div className="mb-1 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0D9488]">
+                <CalendarClock size={16} />
+                Next Appointment
+              </div>
 
-            {/* Label */}
-            <div className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#0D9488]">
-              <CalendarClock size={18} />
-              Next Appointment
+              {/* Title */}
+              <h2 className="text-lg md:text-xl font-extrabold text-slate-900 leading-tight">
+                {specialization}
+              </h2>
+
+              {/* Doctor */}
+              <p className="mt-1 text-xs md:text-sm text-slate-600 font-semibold">
+                {doctorName} • Clinic Center
+              </p>
             </div>
-
-            {/* Title */}
-            <h2 className="text-lg md:text-xl font-extrabold text-slate-900 leading-tight">
-              {specialization} Roster
-            </h2>
-
-            {/* Doctor */}
-            <p className="mt-1.5 text-xs md:text-sm text-slate-500 font-medium">
-              Dr. {doctorName} • Clinic Center
-            </p>
-
           </div>
 
           {/* Date & Time */}

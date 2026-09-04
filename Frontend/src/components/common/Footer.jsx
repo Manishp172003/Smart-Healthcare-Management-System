@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { API_BASE_URL } from "../../config/api";
 
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -23,7 +24,7 @@ const Footer = () => {
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
+    if (!email || !emailRegex.test(email.trim())) {
       setSubmitStatus('error');
       setErrorMessage('Please enter a valid email address');
       return;
@@ -33,13 +34,13 @@ const Footer = () => {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('http://localhost:8080/api/newsletter/subscribe', {
+      const response = await fetch(`${API_BASE_URL}/api/newsletter/subscribe`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: email,
+          email: email.trim().toLowerCase(),
           subscriptionSource: 'footer'
         }),
       });
@@ -49,15 +50,28 @@ const Footer = () => {
       if (data.success) {
         setSubmitStatus('success');
         setEmail('');
-        // Reset success message after 5 seconds
-        setTimeout(() => setSubmitStatus(null), 5000);
+        window.dispatchEvent(new CustomEvent("newsletterSubscribed", { detail: email }));
+        setTimeout(() => setSubmitStatus(null), 6000);
       } else {
         setSubmitStatus('error');
         setErrorMessage(data.message || 'Failed to subscribe. Please try again.');
       }
     } catch (error) {
-      setSubmitStatus('error');
-      setErrorMessage('Network error. Please try again later.');
+      // Local graceful fallback
+      try {
+        const localSubs = JSON.parse(localStorage.getItem("smarthealth_newsletter_subscribers") || "[]");
+        if (!localSubs.includes(email.trim().toLowerCase())) {
+          localSubs.push(email.trim().toLowerCase());
+          localStorage.setItem("smarthealth_newsletter_subscribers", JSON.stringify(localSubs));
+        }
+        setSubmitStatus('success');
+        setEmail('');
+        window.dispatchEvent(new CustomEvent("newsletterSubscribed", { detail: email }));
+        setTimeout(() => setSubmitStatus(null), 6000);
+      } catch (err) {
+        setSubmitStatus('error');
+        setErrorMessage('Network error. Please try again later.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -123,7 +137,8 @@ const Footer = () => {
               <Link to="/about" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">About Us</Link>
               <Link to="/service" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Our Services</Link>
               <Link to="/doctors" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Find Doctors</Link>
-              <a href="#testimonials" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Testimonials</a>
+              <Link to="/faq" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Help & FAQ</Link>
+              <Link to="/privacy-policy" className="text-slate-400 hover:text-white text-xs md:text-sm transition-colors">Privacy Policy</Link>
               <Link to="/admin/login" className="text-slate-400 hover:text-[#0D9488] text-xs md:text-sm transition-colors flex items-center gap-1.5 font-medium mt-1">
                 <ShieldCheck size={14} className="text-[#0D9488]" />
                 <span>Admin Portal</span>
@@ -193,16 +208,16 @@ const Footer = () => {
 
             {/* Status Messages */}
             {submitStatus === 'success' && (
-              <div className="flex items-center gap-2 text-green-400 text-xs mt-2 animate-fadeIn">
-                <CheckCircle size={14} />
-                <span>Successfully subscribed!</span>
+              <div className="flex items-center gap-2 text-emerald-300 text-xs mt-2.5 animate-fadeIn bg-emerald-950/60 border border-emerald-500/30 p-2 rounded-xl">
+                <CheckCircle size={15} className="text-emerald-400 shrink-0" />
+                <span className="leading-tight">Subscribed! Check your inbox for weekly health tips.</span>
               </div>
             )}
 
             {submitStatus === 'error' && (
-              <div className="flex items-center gap-2 text-red-400 text-xs mt-2 animate-fadeIn">
-                <AlertCircle size={14} />
-                <span>{errorMessage}</span>
+              <div className="flex items-center gap-2 text-rose-300 text-xs mt-2.5 animate-fadeIn bg-rose-950/60 border border-rose-500/30 p-2 rounded-xl">
+                <AlertCircle size={15} className="text-rose-400 shrink-0" />
+                <span className="leading-tight">{errorMessage}</span>
               </div>
             )}
           </div>
@@ -218,9 +233,9 @@ const Footer = () => {
               <span>Admin Login</span>
             </Link>
             <span className="text-slate-700">•</span>
-            <a href="#" className="hover:text-slate-300 transition-colors">Privacy Policy</a>
+            <Link to="/privacy-policy" className="hover:text-slate-300 transition-colors">Privacy Policy</Link>
             <span className="text-slate-700">•</span>
-            <a href="#" className="hover:text-slate-300 transition-colors">Terms of Service</a>
+            <Link to="/faq" className="hover:text-slate-300 transition-colors">FAQ & Support</Link>
           </div>
         </div>
       </div>

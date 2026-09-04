@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
 import MockPaymentGatewayModal from "../components/common/MockPaymentGatewayModal";
+import { API_BASE_URL } from "../config/api";
 import { motion } from "framer-motion";
 import {
   Search, Calendar, Clock, User, Phone, Mail, FileText,
@@ -13,12 +14,19 @@ import {
 } from 'lucide-react';
 
 import doctorImg1 from "../assets/FindDoctors/Doctor-img-1.png";
-import doctorImg2 from "../assets/FindDoctors/Doctor-img-7.png";
-import doctorImg3 from "../assets/FindDoctors/Doctor-img-2.png";
+import doctorImg2 from "../assets/FindDoctors/Doctor-img-2.png";
+import doctorImg3 from "../assets/FindDoctors/Doctor-img-3.png";
 import doctorImg4 from "../assets/FindDoctors/Doctor-img-4.png";
 import doctorImg5 from "../assets/FindDoctors/Doctor-img-5.png";
 import doctorImg6 from "../assets/FindDoctors/New-Doctor-img.png";
 import doctorImg7 from "../assets/FindDoctors/Doctor-img-7.png";
+import doctorImg8 from "../assets/FindDoctors/Doctor-img-8.png";
+import doctorImg9 from "../assets/FindDoctors/Doctor-img-9.png";
+import doctorImg10 from "../assets/FindDoctors/Doctor-img-10.png";
+import doctorImg11 from "../assets/FindDoctors/Doctor-img-11.png";
+import doctorImg12 from "../assets/FindDoctors/Doctor-img-12.png";
+import doctorImg13 from "../assets/FindDoctors/Doctor-img-13.png";
+import doctorImg14 from "../assets/FindDoctors/Doctor-img-14.png";
 
 // --- CANONICAL DOCTORS DATABASE ---
 const CANONICAL_DOCTORS = [
@@ -39,18 +47,18 @@ const CANONICAL_DOCTORS = [
   },
   {
     id: 2,
-    name: 'Dr. Sarah Jenkins',
-    specialization: 'Cardiologist',
-    concern: 'Heart-related problems',
-    qualification: 'MBBS, MD - Cardiology (FACC)',
+    name: 'Dr. Vikram Shenoy',
+    specialization: 'Neurologist',
+    concern: 'Brain & nervous system',
+    qualification: 'MBBS, MD, DM (Neurology) - NIMHANS, Bangalore',
     experienceYears: 15,
     rating: 4.9,
-    reviewsCount: 128,
-    fee: 2200,
-    availabilityStatus: 'Available Tomorrow',
-    nextSlot: '10:00 AM',
+    reviewsCount: 148,
+    fee: 1800,
+    availabilityStatus: 'Available Today',
+    nextSlot: '04:30 PM',
     imageUrl: doctorImg2,
-    hospital: 'Apollo Hospitals, Navi Mumbai'
+    hospital: 'Apex Neuro & Stroke Center, Nagpur'
   },
   {
     id: 3,
@@ -126,6 +134,126 @@ const CANONICAL_DOCTORS = [
     nextSlot: '01:30 PM',
     imageUrl: doctorImg7,
     hospital: 'Grace Womens Care & Fertility Clinic, Andheri, Mumbai'
+  },
+  {
+    id: 8,
+    name: 'Dr. Rajesh Patel',
+    specialization: 'Neurologist',
+    concern: 'Brain & nervous system',
+    qualification: 'MBBS, MD (Neurology) - NIMHANS, Bangalore',
+    experienceYears: 16,
+    rating: 4.8,
+    reviewsCount: 145,
+    fee: 2500,
+    availabilityStatus: 'Available Today',
+    nextSlot: '03:00 PM',
+    imageUrl: doctorImg8,
+    hospital: 'NeuroCare Institute, Civil Lines, Nagpur'
+  },
+  {
+    id: 9,
+    name: 'Dr. Anjali Deshmukh',
+    specialization: 'Dentist',
+    concern: 'Dental & oral health',
+    qualification: 'BDS, MDS (Oral Surgery) - GDCH, Mumbai',
+    experienceYears: 11,
+    rating: 4.7,
+    reviewsCount: 98,
+    fee: 800,
+    availabilityStatus: 'Available Today',
+    nextSlot: '10:30 AM',
+    imageUrl: doctorImg9,
+    hospital: 'Smile Dental Clinic, Sadar, Nagpur'
+  },
+  {
+    id: 10,
+    name: 'Dr. Vikram Singh',
+    specialization: 'Ophthalmologist',
+    concern: 'Eye care & vision',
+    qualification: 'MBBS, MS (Ophthalmology) - AIIMS, Delhi',
+    experienceYears: 14,
+    rating: 4.9,
+    reviewsCount: 167,
+    fee: 1200,
+    availabilityStatus: 'Available Tomorrow',
+    nextSlot: '11:00 AM',
+    imageUrl: doctorImg10,
+    hospital: 'Vision Eye Center, Camp, Pune'
+  },
+  {
+    id: 11,
+    name: 'Dr. Meera Krishnan',
+    specialization: 'Endocrinologist',
+    concern: 'Hormonal disorders & diabetes',
+    qualification: 'MBBS, MD (Endocrinology) - CMC, Vellore',
+    experienceYears: 12,
+    rating: 4.8,
+    reviewsCount: 134,
+    fee: 1800,
+    availabilityStatus: 'Available Today',
+    nextSlot: '02:30 PM',
+    imageUrl: doctorImg11,
+    hospital: 'Diabetes Care Center, Anna Nagar, Chennai'
+  },
+  {
+    id: 12,
+    name: 'Dr. Amit Verma',
+    specialization: 'Nephrologist',
+    concern: 'Kidney & urinary disorders',
+    qualification: 'MBBS, MD (Nephrology) - PGI, Chandigarh',
+    experienceYears: 15,
+    rating: 4.7,
+    reviewsCount: 112,
+    fee: 2200,
+    availabilityStatus: 'Available Tomorrow',
+    nextSlot: '04:00 PM',
+    imageUrl: doctorImg12,
+    hospital: 'Kidney Care Hospital, Secunderabad, Hyderabad'
+  },
+  {
+    id: 13,
+    name: 'Dr. Sunita Rao',
+    specialization: 'Psychiatrist',
+    concern: 'Mental health & therapy',
+    qualification: 'MBBS, MD (Psychiatry) - NIMHANS, Bangalore',
+    experienceYears: 10,
+    rating: 4.9,
+    reviewsCount: 201,
+    fee: 1500,
+    availabilityStatus: 'Available Today',
+    nextSlot: '09:00 AM',
+    imageUrl: doctorImg13,
+    hospital: 'Mind Wellness Clinic, Koramangala, Bangalore'
+  },
+  {
+    id: 14,
+    name: 'Dr. Karthik Menon',
+    specialization: 'Gastroenterologist',
+    concern: 'Digestive system & liver',
+    qualification: 'MBBS, MD (Gastroenterology) - CMC, Vellore',
+    experienceYears: 13,
+    rating: 4.8,
+    reviewsCount: 156,
+    fee: 2000,
+    availabilityStatus: 'Available Tomorrow',
+    nextSlot: '01:00 PM',
+    imageUrl: doctorImg14,
+    hospital: 'Digestive Health Center, Gachibowli, Hyderabad'
+  },
+  {
+    id: 15,
+    name: 'Dr. Rohan Mehra',
+    specialization: 'Neurologist',
+    concern: 'Brain & nervous system',
+    qualification: 'MBBS, MD (Neurology) - Armed Forces Medical College (AFMC), Pune',
+    experienceYears: 10,
+    rating: 4.8,
+    reviewsCount: 95,
+    fee: 1400,
+    availabilityStatus: 'Available Tomorrow',
+    nextSlot: '11:30 AM',
+    imageUrl: doctorImg8,
+    hospital: 'Pune Institute of Neurosciences, Shivaji Nagar, Pune'
   }
 ];
 
@@ -147,7 +275,13 @@ const SPECIALIZATIONS = [
   "Orthopedic",
   "General Physician",
   "Pediatrician",
-  "Gynecologist"
+  "Gynecologist",
+  "Dentist",
+  "Ophthalmologist",
+  "Endocrinologist",
+  "Nephrologist",
+  "Psychiatrist",
+  "Gastroenterologist"
 ];
 
 const MORNING_TIME_SLOTS = [
@@ -212,7 +346,7 @@ export default function AppointmentBooking() {
   useEffect(() => {
     const fetchBackendDoctors = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/doctors");
+        const res = await fetch(`${API_BASE_URL}/api/doctors`);
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
@@ -236,7 +370,12 @@ export default function AppointmentBooking() {
                 hospital: localDoc?.hospital || "SmartHealth Medical Center"
               };
             });
-            setDoctorsList(merged);
+            // Retain canonical doctors not present in backend data so all 15 specialists are bookable
+            const remainingCanonical = CANONICAL_DOCTORS.filter(
+              (cDoc) => !data.some((bDoc) => bDoc.id === cDoc.id || (bDoc.user?.name || "").toLowerCase() === cDoc.name.toLowerCase())
+            );
+
+            setDoctorsList([...merged, ...remainingCanonical]);
           }
         }
       } catch (err) {
@@ -250,6 +389,9 @@ export default function AppointmentBooking() {
   useEffect(() => {
     if (doctorIdParam) {
       const doctor = doctorsList.find(doc => 
+        String(doc.id) === String(doctorIdParam) || 
+        String(doc.id).replace('doc_', '') === String(doctorIdParam).replace('doc_', '')
+      ) || CANONICAL_DOCTORS.find(doc => 
         String(doc.id) === String(doctorIdParam) || 
         String(doc.id).replace('doc_', '') === String(doctorIdParam).replace('doc_', '')
       );
@@ -392,7 +534,7 @@ export default function AppointmentBooking() {
     }
 
     try {
-      const res = await fetch("http://localhost:8080/api/appointments/book", {
+      const res = await fetch(`${API_BASE_URL}/api/appointments/book`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -551,7 +693,7 @@ export default function AppointmentBooking() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-['Poppins'] text-slate-800">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 antialiased selection:bg-teal-500 selection:text-white">
       <Navbar />
 
       <motion.div

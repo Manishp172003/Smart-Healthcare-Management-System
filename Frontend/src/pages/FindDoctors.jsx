@@ -12,7 +12,13 @@ import doctorImg4 from "../assets/FindDoctors/Doctor-img-4.png";
 import doctorImg5 from "../assets/FindDoctors/Doctor-img-5.png";
 import doctorImg6 from "../assets/FindDoctors/New-Doctor-img.png";
 import doctorImg7 from "../assets/FindDoctors/Doctor-img-7.png";
-import doctorImg8 from "../assets/FindDoctors/New-2 -Doctor-img.png";
+import doctorImg8 from "../assets/FindDoctors/Doctor-img-8.png";
+import doctorImg9 from "../assets/FindDoctors/Doctor-img-9.png";
+import doctorImg10 from "../assets/FindDoctors/Doctor-img-10.png";
+import doctorImg11 from "../assets/FindDoctors/Doctor-img-11.png";
+import doctorImg12 from "../assets/FindDoctors/Doctor-img-12.png";
+import doctorImg13 from "../assets/FindDoctors/Doctor-img-13.png";
+import doctorImg14 from "../assets/FindDoctors/Doctor-img-14.png";
 
 import {
   Search,
@@ -220,6 +226,104 @@ const FindDoctors = () => {
     },
     {
       id: 8,
+      name: 'Dr. Rajesh Patel',
+      specialty: 'Neurology',
+      location: 'Nagpur, Maharashtra',
+      rating: 4.8,
+      reviews: 145,
+      experience: '16+ Years Experience',
+      fee: 2500,
+      availabilityStatus: 'Available Today',
+      nextSlot: 'Today • 03:00 PM',
+      image: doctorImg8,
+      description: 'Expert neurologist specializing in brain disorders, nervous system conditions, and advanced neurological treatments.'
+    },
+    {
+      id: 9,
+      name: 'Dr. Anjali Deshmukh',
+      specialty: 'Dentistry',
+      location: 'Nagpur, Maharashtra',
+      rating: 4.7,
+      reviews: 98,
+      experience: '11+ Years Experience',
+      fee: 800,
+      availabilityStatus: 'Available Today',
+      nextSlot: 'Today • 10:30 AM',
+      image: doctorImg9,
+      description: 'Specialized dentist providing comprehensive dental care, oral surgery, and cosmetic dentistry services.'
+    },
+    {
+      id: 10,
+      name: 'Dr. Vikram Singh',
+      specialty: 'Ophthalmology',
+      location: 'Pune, Maharashtra',
+      rating: 4.9,
+      reviews: 167,
+      experience: '14+ Years Experience',
+      fee: 1200,
+      availabilityStatus: 'Available Tomorrow',
+      nextSlot: 'Tomorrow • 11:00 AM',
+      image: doctorImg10,
+      description: 'Ophthalmologist specializing in eye surgery, cataract treatment, and comprehensive vision care.'
+    },
+    {
+      id: 11,
+      name: 'Dr. Meera Krishnan',
+      specialty: 'Endocrinology',
+      location: 'Chennai, Tamil Nadu',
+      rating: 4.8,
+      reviews: 134,
+      experience: '12+ Years Experience',
+      fee: 1800,
+      availabilityStatus: 'Available Today',
+      nextSlot: 'Today • 02:30 PM',
+      image: doctorImg11,
+      description: 'Endocrinologist specializing in diabetes management, hormonal disorders, and metabolic conditions.'
+    },
+    {
+      id: 12,
+      name: 'Dr. Amit Verma',
+      specialty: 'Nephrology',
+      location: 'Hyderabad, Telangana',
+      rating: 4.7,
+      reviews: 112,
+      experience: '15+ Years Experience',
+      fee: 2200,
+      availabilityStatus: 'Available Tomorrow',
+      nextSlot: 'Tomorrow • 04:00 PM',
+      image: doctorImg12,
+      description: 'Nephrologist specializing in kidney diseases, dialysis, and urinary tract disorders.'
+    },
+    {
+      id: 13,
+      name: 'Dr. Sunita Rao',
+      specialty: 'Psychiatry',
+      location: 'Bangalore, Karnataka',
+      rating: 4.9,
+      reviews: 201,
+      experience: '10+ Years Experience',
+      fee: 1500,
+      availabilityStatus: 'Available Today',
+      nextSlot: 'Today • 09:00 AM',
+      image: doctorImg13,
+      description: 'Psychiatrist specializing in mental health, therapy, and psychiatric medication management.'
+    },
+    {
+      id: 14,
+      name: 'Dr. Karthik Menon',
+      specialty: 'Gastroenterology',
+      location: 'Hyderabad, Telangana',
+      rating: 4.8,
+      reviews: 156,
+      experience: '13+ Years Experience',
+      fee: 2000,
+      availabilityStatus: 'Available Tomorrow',
+      nextSlot: 'Tomorrow • 01:00 PM',
+      image: doctorImg14,
+      description: 'Gastroenterologist specializing in digestive disorders, liver diseases, and gastrointestinal endoscopy.'
+    },
+    {
+      id: 15,
       name: 'Dr. Rohan Mehra',
       specialty: 'Neurology',
       location: 'Pune, Maharashtra',

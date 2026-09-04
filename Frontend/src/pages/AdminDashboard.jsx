@@ -13,6 +13,7 @@ import AdminHelp from "../components/AdminDashboard/AdminHelp";
 import AdminTestimonials from "../components/AdminDashboard/AdminTestimonials";
 import AdminEmergencyModal from "../components/AdminDashboard/AdminEmergencyModal";
 import CustomConfirmModal from "../components/common/CustomConfirmModal";
+import { API_BASE_URL } from "../config/api";
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("Dashboard");
@@ -76,7 +77,7 @@ function AdminDashboard() {
     // 1. Retrieve current active alerts
     const fetchActiveAlerts = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/emergencies/active");
+        const res = await fetch(`${API_BASE_URL}/api/emergencies/active`);
         if (res.ok) {
           const data = await res.json();
           setActiveAlerts(data);
@@ -88,7 +89,7 @@ function AdminDashboard() {
     fetchActiveAlerts();
 
     // 2. Subscribe to real-time events channel
-    const eventSource = new EventSource("http://localhost:8080/api/emergencies/subscribe");
+    const eventSource = new EventSource(`${API_BASE_URL}/api/emergencies/subscribe`);
     
     eventSource.addEventListener("emergency-alert", (event) => {
       try {
@@ -124,7 +125,7 @@ function AdminDashboard() {
   const handleUpdateAlertStatus = async (alertId, nextStatus) => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:8080/api/emergencies/${alertId}/status?status=${nextStatus}`, {
+      const res = await fetch(`${API_BASE_URL}/api/emergencies/${alertId}/status?status=${nextStatus}`, {
         method: "PUT",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -232,9 +233,9 @@ function AdminDashboard() {
                 <AdminRecords />
               </div>
             )}
-            {activeTab === "Testimonials" && (
+            {(activeTab === "Testimonials" || activeTab === "Subscribers") && (
               <div className="animate-view-fade-in-up">
-                <AdminTestimonials />
+                <AdminTestimonials initialSubTab={activeTab === "Subscribers" ? "subscribers" : "testimonials"} />
               </div>
             )}
             {activeTab === "Analytics" && (

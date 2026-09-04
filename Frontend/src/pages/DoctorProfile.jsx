@@ -3,11 +3,19 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 
 // Import local doctor assets
 import doctorImg1 from "../assets/FindDoctors/Doctor-img-1.png";
-import doctorImg3 from "../assets/FindDoctors/Doctor-img-2.png";
+import doctorImg2 from "../assets/FindDoctors/Doctor-img-2.png";
+import doctorImg3 from "../assets/FindDoctors/Doctor-img-3.png";
 import doctorImg4 from "../assets/FindDoctors/Doctor-img-4.png";
 import doctorImg5 from "../assets/FindDoctors/Doctor-img-5.png";
 import doctorImg6 from "../assets/FindDoctors/New-Doctor-img.png";
 import doctorImg7 from "../assets/FindDoctors/Doctor-img-7.png";
+import doctorImg8 from "../assets/FindDoctors/Doctor-img-8.png";
+import doctorImg9 from "../assets/FindDoctors/Doctor-img-9.png";
+import doctorImg10 from "../assets/FindDoctors/Doctor-img-10.png";
+import doctorImg11 from "../assets/FindDoctors/Doctor-img-11.png";
+import doctorImg12 from "../assets/FindDoctors/Doctor-img-12.png";
+import doctorImg13 from "../assets/FindDoctors/Doctor-img-13.png";
+import doctorImg14 from "../assets/FindDoctors/Doctor-img-14.png";
 
 import {
   MapPin,
@@ -115,25 +123,25 @@ const DoctorProfile = () => {
 
     "2": {
       id: "2",
-      name: "Dr. Sarah Jenkins",
-      specialization: "Interventional Cardiologist",
+      name: "Dr. Vikram Shenoy",
+      specialization: "Neurologist & Spine Specialist",
       experience: "15+ Years",
-      education: "MBBS, MD (Cardiology) - AIIMS, New Delhi",
-      licenseNumber: "MH-MED-12345",
-      hospital: "City Heart Care Center, Mumbai",
-      address: "4th Floor, Healthcare Tower, Marine Drive, Mumbai, Maharashtra 400020",
-      phone: "+91 98765 43210",
-      email: "dr.sarah.jenkins@smarthealth.com",
+      education: "MBBS, MD, DM (Neurology) - NIMHANS, Bangalore",
+      licenseNumber: "MH-NEUR-55210",
+      hospital: "Apex Neuro & Stroke Center, Nagpur",
+      address: "2nd Floor, Ramdaspeth Medical Enclave, Nagpur, Maharashtra 440010",
+      phone: "+91 98221 44551",
+      email: "vikram.shenoy@smarthealth.com",
       rating: 4.9,
-      reviewsCount: 342,
-      consultationFee: 2200,
-      bio: "Dr. Sarah Jenkins is a renowned senior cardiologist with over 15 years of experience in treating complex cardiovascular conditions. She specializes in interventional catheterization and has successfully performed over 5,000 cardiac procedures.",
+      reviewsCount: 148,
+      consultationFee: 1800,
+      bio: "Dr. Vikram Shenoy is a senior neurologist and neuro-rehabilitation specialist with over 15 years of distinguished clinical experience. He specializes in acute stroke management, epilepsy, migraine therapies, and complex peripheral nerve disorders.",
       languages: ["English", "Hindi", "Marathi"],
       availability: "Available Today",
-      nextSlot: "10:30 AM",
-      remainingPatientsToday: 18,
+      nextSlot: "04:30 PM",
+      remainingPatientsToday: 12,
       supportsTelehealth: true,
-      imageUrl: doctorImg1,
+      imageUrl: doctorImg2,
       schedule: [
         { day: "Monday", time: "09:00 - 18:00", status: "Open" },
         { day: "Tuesday", time: "09:00 - 18:00", status: "Open" },
@@ -145,26 +153,33 @@ const DoctorProfile = () => {
       ],
       experienceTimeline: [
         {
-          role: "Senior Consultant Cardiologist",
-          institution: "City Heart Care Center, Mumbai",
+          role: "Senior Consultant Neurologist & Stroke Director",
+          institution: "Apex Neuro Center, Nagpur",
           period: "2018 - Present",
-          desc: "Directing the adult interventional cardiology unit and leading rapid-response emergency angioplasty teams."
+          desc: "Leading the acute stroke thrombolysis protocol and neuro-critical ICU service."
+        },
+        {
+          role: "Associate Neurologist",
+          institution: "NIMHANS, Bangalore",
+          period: "2012 - 2018",
+          desc: "Conducted clinical trials on intractable migraines and refractory epilepsy."
         }
       ],
       educationDetails: [
-        "MBBS - Grant Medical College, Mumbai (2005)",
-        "MD (Cardiology) - AIIMS, New Delhi (2009)",
-        "Fellowship in Interventional Cardiology - Escorts Heart Institute (2011)"
+        "MBBS - Government Medical College, Nagpur (2006)",
+        "MD (General Medicine) - KEM Hospital, Mumbai (2010)",
+        "DM (Neurology) - NIMHANS, Bangalore (2014)"
       ],
       awards: [
-        "Best Cardiologist of the Year - National Healthcare Excellence (2022)",
-        "Excellence in Patient Care - Mumbai Medical Council (2019)"
+        "Distinguished Neurologist of Maharashtra - 2022",
+        "Best Clinical Presentation in Stroke Care - IAN 2019"
       ],
       specializations: [
-        "Interventional Cardiology",
-        "Coronary Angioplasty & Stenting",
-        "Heart Failure Management",
-        "Cardiac Rehabilitation"
+        "Acute Stroke Care & Rehabilitation",
+        "Refractory Migraine Management",
+        "Epilepsy & Seizure Disorders",
+        "Parkinson's & Movement Disorders",
+        "Peripheral Neuropathy"
       ]
     },
 
@@ -447,6 +462,445 @@ const DoctorProfile = () => {
         "Infertility Evaluation & Care",
         "Menopause & Preventive Wellness"
       ]
+    },
+
+    "8": {
+      id: "8",
+      name: "Dr. Rajesh Patel",
+      specialization: "Neurologist",
+      experience: "16+ Years",
+      education: "MBBS, MD (Neurology) - NIMHANS, Bangalore",
+      licenseNumber: "KA-NEU-88214",
+      hospital: "NeuroCare Institute, Civil Lines, Nagpur",
+      address: "Medical Plaza, Civil Lines, Nagpur, Maharashtra 440001",
+      phone: "+91 98220 44550",
+      email: "dr.rajesh.patel@smarthealth.com",
+      rating: 4.8,
+      reviewsCount: 145,
+      consultationFee: 2500,
+      bio: "Dr. Rajesh Patel is a neurologist specializing in brain disorders, nervous system conditions, and advanced neurological treatments including stroke management and epilepsy care.",
+      languages: ["English", "Hindi", "Marathi"],
+      availability: "Available Today",
+      nextSlot: "03:00 PM",
+      remainingPatientsToday: 6,
+      supportsTelehealth: true,
+      imageUrl: doctorImg8,
+      schedule: [
+        { day: "Monday", time: "09:00 - 18:00", status: "Open" },
+        { day: "Tuesday", time: "09:00 - 18:00", status: "Open" },
+        { day: "Wednesday", time: "09:00 - 18:00", status: "Open" },
+        { day: "Thursday", time: "09:00 - 18:00", status: "Open" },
+        { day: "Friday", time: "09:00 - 18:00", status: "Open" },
+        { day: "Saturday", time: "10:00 - 14:00", status: "Half Day" },
+        { day: "Sunday", time: "Emergency Call Only", status: "Emergency" },
+      ],
+      experienceTimeline: [
+        {
+          role: "Senior Consultant Neurologist",
+          institution: "NeuroCare Institute",
+          period: "2015 - Present",
+          desc: "Leading the neurology department with focus on stroke rehabilitation and epilepsy management."
+        }
+      ],
+      educationDetails: [
+        "MBBS - Government Medical College, Nagpur (2003)",
+        "MD (General Medicine) - AIIMS, New Delhi (2007)",
+        "DM (Neurology) - NIMHANS, Bangalore (2010)"
+      ],
+      awards: [
+        "Best Neurologist Award - Neurology Society of India (2021)"
+      ],
+      specializations: [
+        "Stroke Management & Rehabilitation",
+        "Epilepsy Treatment",
+        "Headache & Migraine Care",
+        "Movement Disorders",
+        "Neuro-rehabilitation"
+      ]
+    },
+
+    "9": {
+      id: "9",
+      name: "Dr. Anjali Deshmukh",
+      specialization: "Dentist & Oral Surgeon",
+      experience: "11+ Years",
+      education: "BDS, MDS (Oral Surgery) - GDCH, Mumbai",
+      licenseNumber: "MH-DEN-73214",
+      hospital: "Smile Dental Clinic, Sadar, Nagpur",
+      address: "Dental Care Center, Sadar, Nagpur, Maharashtra 440001",
+      phone: "+91 98231 33661",
+      email: "dr.anjali.deshmukh@smarthealth.com",
+      rating: 4.7,
+      reviewsCount: 98,
+      consultationFee: 800,
+      bio: "Dr. Anjali Deshmukh is a specialized dentist providing comprehensive dental care, oral surgery, and cosmetic dentistry services with modern technology.",
+      languages: ["English", "Hindi", "Marathi"],
+      availability: "Available Today",
+      nextSlot: "10:30 AM",
+      remainingPatientsToday: 12,
+      supportsTelehealth: false,
+      imageUrl: doctorImg9,
+      schedule: [
+        { day: "Monday", time: "10:00 - 20:00", status: "Open" },
+        { day: "Tuesday", time: "10:00 - 20:00", status: "Open" },
+        { day: "Wednesday", time: "10:00 - 20:00", status: "Open" },
+        { day: "Thursday", time: "10:00 - 20:00", status: "Open" },
+        { day: "Friday", time: "10:00 - 20:00", status: "Open" },
+        { day: "Saturday", time: "09:00 - 15:00", status: "Open" },
+        { day: "Sunday", time: "Closed", status: "Closed" },
+      ],
+      experienceTimeline: [
+        {
+          role: "Chief Dental Surgeon",
+          institution: "Smile Dental Clinic",
+          period: "2019 - Present",
+          desc: "Providing advanced dental treatments including implants, root canals, and cosmetic dentistry."
+        }
+      ],
+      educationDetails: [
+        "BDS - Government Dental College, Mumbai (2009)",
+        "MDS (Oral & Maxillofacial Surgery) - GDCH, Mumbai (2013)"
+      ],
+      awards: [
+        "Excellence in Dental Care - Indian Dental Association (2020)"
+      ],
+      specializations: [
+        "Root Canal Treatment",
+        "Dental Implants",
+        "Cosmetic Dentistry",
+        "Oral Surgery",
+        "Pediatric Dentistry"
+      ]
+    },
+
+    "10": {
+      id: "10",
+      name: "Dr. Vikram Singh",
+      specialization: "Ophthalmologist",
+      experience: "14+ Years",
+      education: "MBBS, MS (Ophthalmology) - AIIMS, Delhi",
+      licenseNumber: "DL-OPTH-65214",
+      hospital: "Vision Eye Center, Camp, Pune",
+      address: "Eye Care Complex, Camp, Pune, Maharashtra 411001",
+      phone: "+91 98260 66772",
+      email: "dr.vikram.singh@smarthealth.com",
+      rating: 4.9,
+      reviewsCount: 167,
+      consultationFee: 1200,
+      bio: "Dr. Vikram Singh is an ophthalmologist specializing in eye surgery, cataract treatment, and comprehensive vision care with advanced diagnostic technology.",
+      languages: ["English", "Hindi", "Marathi"],
+      availability: "Available Tomorrow",
+      nextSlot: "11:00 AM",
+      remainingPatientsToday: 0,
+      supportsTelehealth: true,
+      imageUrl: doctorImg10,
+      schedule: [
+        { day: "Monday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Tuesday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Wednesday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Thursday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Friday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Saturday", time: "10:00 - 14:00", status: "Half Day" },
+        { day: "Sunday", time: "Emergency Eye Care", status: "Emergency" },
+      ],
+      experienceTimeline: [
+        {
+          role: "Senior Ophthalmologist",
+          institution: "Vision Eye Center",
+          period: "2017 - Present",
+          desc: "Specializing in phacoemulsification cataract surgery and glaucoma management."
+        }
+      ],
+      educationDetails: [
+        "MBBS - Maulana Azad Medical College, Delhi (2005)",
+        "MS (Ophthalmology) - AIIMS, New Delhi (2009)",
+        "Fellowship in Cornea & Refractive Surgery - LVPEI, Hyderabad (2011)"
+      ],
+      awards: [
+        "Best Ophthalmologist - Maharashtra Ophthalmological Society (2022)"
+      ],
+      specializations: [
+        "Cataract Surgery",
+        "Glaucoma Management",
+        "Refractive Surgery (LASIK)",
+        "Corneal Disorders",
+        "Pediatric Ophthalmology"
+      ]
+    },
+
+    "11": {
+      id: "11",
+      name: "Dr. Meera Krishnan",
+      specialization: "Endocrinologist",
+      experience: "12+ Years",
+      education: "MBBS, MD (Endocrinology) - CMC, Vellore",
+      licenseNumber: "TN-END-55214",
+      hospital: "Diabetes Care Center, Anna Nagar, Chennai",
+      address: "Health Plaza, Anna Nagar, Chennai, Tamil Nadu 600040",
+      phone: "+91 98270 77883",
+      email: "dr.meera.krishnan@smarthealth.com",
+      rating: 4.8,
+      reviewsCount: 134,
+      consultationFee: 1800,
+      bio: "Dr. Meera Krishnan is an endocrinologist specializing in diabetes management, hormonal disorders, and metabolic conditions with personalized treatment plans.",
+      languages: ["English", "Tamil", "Hindi"],
+      availability: "Available Today",
+      nextSlot: "02:30 PM",
+      remainingPatientsToday: 8,
+      supportsTelehealth: true,
+      imageUrl: doctorImg11,
+      schedule: [
+        { day: "Monday", time: "08:00 - 14:00", status: "Open" },
+        { day: "Tuesday", time: "08:00 - 14:00", status: "Open" },
+        { day: "Wednesday", time: "08:00 - 14:00", status: "Open" },
+        { day: "Thursday", time: "08:00 - 14:00", status: "Open" },
+        { day: "Friday", time: "08:00 - 14:00", status: "Open" },
+        { day: "Saturday", time: "09:00 - 12:00", status: "Half Day" },
+        { day: "Sunday", time: "Closed", status: "Closed" },
+      ],
+      experienceTimeline: [
+        {
+          role: "Senior Endocrinologist",
+          institution: "Diabetes Care Center",
+          period: "2018 - Present",
+          desc: "Managing diabetes care programs and hormonal disorder treatments."
+        }
+      ],
+      educationDetails: [
+        "MBBS - Madras Medical College, Chennai (2008)",
+        "MD (General Medicine) - CMC, Vellore (2012)",
+        "DM (Endocrinology) - CMC, Vellore (2015)"
+      ],
+      awards: [
+        "Diabetes Care Excellence Award - Indian Endocrine Society (2021)"
+      ],
+      specializations: [
+        "Type 1 & Type 2 Diabetes",
+        "Thyroid Disorders",
+        "PCOS & Hormonal Imbalance",
+        "Metabolic Syndrome",
+        "Bone & Mineral Disorders"
+      ]
+    },
+
+    "12": {
+      id: "12",
+      name: "Dr. Amit Verma",
+      specialization: "Nephrologist",
+      experience: "15+ Years",
+      education: "MBBS, MD (Nephrology) - PGI, Chandigarh",
+      licenseNumber: "PB-NEPH-45214",
+      hospital: "Kidney Care Hospital, Secunderabad, Hyderabad",
+      address: "Nephrology Wing, Secunderabad, Hyderabad, Telangana 500003",
+      phone: "+91 98280 88994",
+      email: "dr.amit.verma@smarthealth.com",
+      rating: 4.7,
+      reviewsCount: 112,
+      consultationFee: 2200,
+      bio: "Dr. Amit Verma is a nephrologist specializing in kidney diseases, dialysis, and urinary tract disorders with comprehensive renal care services.",
+      languages: ["English", "Hindi", "Telugu"],
+      availability: "Available Tomorrow",
+      nextSlot: "04:00 PM",
+      remainingPatientsToday: 0,
+      supportsTelehealth: true,
+      imageUrl: doctorImg12,
+      schedule: [
+        { day: "Monday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Tuesday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Wednesday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Thursday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Friday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Saturday", time: "10:00 - 14:00", status: "Half Day" },
+        { day: "Sunday", time: "Dialysis Emergency", status: "Emergency" },
+      ],
+      experienceTimeline: [
+        {
+          role: "Head of Nephrology Department",
+          institution: "Kidney Care Hospital",
+          period: "2016 - Present",
+          desc: "Managing dialysis unit, kidney transplant programs, and chronic kidney disease care."
+        }
+      ],
+      educationDetails: [
+        "MBBS - Government Medical College, Chandigarh (2004)",
+        "MD (Internal Medicine) - PGI, Chandigarh (2008)",
+        "DM (Nephrology) - PGI, Chandigarh (2011)"
+      ],
+      awards: [
+        "Excellence in Nephrology Care - Indian Society of Nephrology (2020)"
+      ],
+      specializations: [
+        "Chronic Kidney Disease",
+        "Dialysis Management",
+        "Kidney Transplant",
+        "Glomerular Diseases",
+        "Hypertension Nephrology"
+      ]
+    },
+
+    "13": {
+      id: "13",
+      name: "Dr. Sunita Rao",
+      specialization: "Psychiatrist",
+      experience: "10+ Years",
+      education: "MBBS, MD (Psychiatry) - NIMHANS, Bangalore",
+      licenseNumber: "KA-PSY-35214",
+      hospital: "Mind Wellness Clinic, Koramangala, Bangalore",
+      address: "Mental Health Center, Koramangala, Bangalore, Karnataka 560034",
+      phone: "+91 98290 11005",
+      email: "dr.sunita.rao@smarthealth.com",
+      rating: 4.9,
+      reviewsCount: 201,
+      consultationFee: 1500,
+      bio: "Dr. Sunita Rao is a psychiatrist specializing in mental health, therapy, and psychiatric medication management with compassionate patient care.",
+      languages: ["English", "Hindi", "Kannada", "Tamil"],
+      availability: "Available Today",
+      nextSlot: "09:00 AM",
+      remainingPatientsToday: 5,
+      supportsTelehealth: true,
+      imageUrl: doctorImg13,
+      schedule: [
+        { day: "Monday", time: "09:00 - 18:00", status: "Open" },
+        { day: "Tuesday", time: "09:00 - 18:00", status: "Open" },
+        { day: "Wednesday", time: "09:00 - 18:00", status: "Open" },
+        { day: "Thursday", time: "09:00 - 18:00", status: "Open" },
+        { day: "Friday", time: "09:00 - 18:00", status: "Open" },
+        { day: "Saturday", time: "10:00 - 15:00", status: "Open" },
+        { day: "Sunday", time: "Emergency Crisis Line", status: "Emergency" },
+      ],
+      experienceTimeline: [
+        {
+          role: "Senior Psychiatrist",
+          institution: "Mind Wellness Clinic",
+          period: "2020 - Present",
+          desc: "Providing psychiatric evaluation, therapy, and medication management for various mental health conditions."
+        }
+      ],
+      educationDetails: [
+        "MBBS - Bangalore Medical College, Bangalore (2009)",
+        "MD (Psychiatry) - NIMHANS, Bangalore (2013)",
+        "Fellowship in Child & Adolescent Psychiatry - NIMHANS (2015)"
+      ],
+      awards: [
+        "Mental Health Awareness Award - Indian Psychiatric Society (2022)"
+      ],
+      specializations: [
+        "Depression & Anxiety",
+        "Bipolar Disorder",
+        "Schizophrenia",
+        "Child & Adolescent Psychiatry",
+        "Addiction Psychiatry"
+      ]
+    },
+
+    "14": {
+      id: "14",
+      name: "Dr. Karthik Menon",
+      specialization: "Gastroenterologist",
+      experience: "13+ Years",
+      education: "MBBS, MD (Gastroenterology) - CMC, Vellore",
+      licenseNumber: "TN-GAST-25214",
+      hospital: "Digestive Health Center, Gachibowli, Hyderabad",
+      address: "Gastroenterology Wing, Gachibowli, Hyderabad, Telangana 500032",
+      phone: "+91 98300 22116",
+      email: "dr.karthik.menon@smarthealth.com",
+      rating: 4.8,
+      reviewsCount: 156,
+      consultationFee: 2000,
+      bio: "Dr. Karthik Menon is a gastroenterologist specializing in digestive disorders, liver diseases, and gastrointestinal endoscopy with advanced therapeutic procedures.",
+      languages: ["English", "Hindi", "Telugu", "Malayalam"],
+      availability: "Available Tomorrow",
+      nextSlot: "01:00 PM",
+      remainingPatientsToday: 0,
+      supportsTelehealth: true,
+      imageUrl: doctorImg14,
+      schedule: [
+        { day: "Monday", time: "08:00 - 16:00", status: "Open" },
+        { day: "Tuesday", time: "08:00 - 16:00", status: "Open" },
+        { day: "Wednesday", time: "08:00 - 16:00", status: "Open" },
+        { day: "Thursday", time: "08:00 - 16:00", status: "Open" },
+        { day: "Friday", time: "08:00 - 16:00", status: "Open" },
+        { day: "Saturday", time: "09:00 - 13:00", status: "Half Day" },
+        { day: "Sunday", time: "GI Emergency", status: "Emergency" },
+      ],
+      experienceTimeline: [
+        {
+          role: "Senior Gastroenterologist",
+          institution: "Digestive Health Center",
+          period: "2018 - Present",
+          desc: "Specializing in therapeutic endoscopy, liver diseases, and inflammatory bowel disease management."
+        }
+      ],
+      educationDetails: [
+        "MBBS - Government Medical College, Thiruvananthapuram (2007)",
+        "MD (Internal Medicine) - CMC, Vellore (2011)",
+        "DM (Gastroenterology) - CMC, Vellore (2014)"
+      ],
+      awards: [
+        "Excellence in Gastroenterology - Indian Society of Gastroenterology (2021)"
+      ],
+      specializations: [
+        "Inflammatory Bowel Disease",
+        "Liver Diseases",
+        "Therapeutic Endoscopy",
+        "Acid Reflux & GERD",
+        "Pancreatic Disorders"
+      ]
+    },
+
+    "15": {
+      id: "15",
+      name: "Dr. Rohan Mehra",
+      specialization: "Neurologist & Neuro-Rehabilitation",
+      experience: "10+ Years",
+      education: "MBBS, MD (Neurology) - Armed Forces Medical College (AFMC), Pune",
+      licenseNumber: "MH-NEURO-51982",
+      hospital: "Pune Institute of Neurosciences, Shivaji Nagar, Pune",
+      address: "Neurosciences Complex, Shivaji Nagar, Pune, Maharashtra 411005",
+      phone: "+91 98224 88123",
+      email: "dr.rohan.mehra@smarthealth.com",
+      rating: 4.8,
+      reviewsCount: 95,
+      consultationFee: 1400,
+      bio: "Dr. Rohan Mehra is a consultant neurologist specializing in neuro-rehabilitation, peripheral nerve disorders, headache care, and comprehensive epilepsy treatment.",
+      languages: ["English", "Hindi", "Marathi"],
+      availability: "Available Tomorrow",
+      nextSlot: "11:30 AM",
+      remainingPatientsToday: 6,
+      supportsTelehealth: true,
+      imageUrl: doctorImg8,
+      schedule: [
+        { day: "Monday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Tuesday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Wednesday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Thursday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Friday", time: "09:00 - 17:00", status: "Open" },
+        { day: "Saturday", time: "09:00 - 13:00", status: "Half Day" },
+        { day: "Sunday", time: "Closed", status: "Closed" },
+      ],
+      experienceTimeline: [
+        {
+          role: "Senior Consultant Neurologist",
+          institution: "Pune Institute of Neurosciences",
+          period: "2018 - Present",
+          desc: "Heading neuro-rehabilitation and stroke management unit."
+        }
+      ],
+      educationDetails: [
+        "MBBS - AFMC Pune (2009)",
+        "MD (Medicine) - KEM Hospital, Mumbai (2013)",
+        "DM (Neurology) - NIMHANS Bangalore (2016)"
+      ],
+      awards: [
+        "Young Neurologist Award - Association of Physicians of India (2020)"
+      ],
+      specializations: [
+        "Neuro-rehabilitation",
+        "Peripheral Neuropathy",
+        "Epilepsy & Seizure Care",
+        "Migraine Management",
+        "Parkinson's Disease"
+      ]
     }
   };
 
@@ -458,12 +912,26 @@ const DoctorProfile = () => {
   DOCTORS_DATABASE["doc_5"] = DOCTORS_DATABASE["5"];
   DOCTORS_DATABASE["doc_6"] = DOCTORS_DATABASE["6"];
   DOCTORS_DATABASE["doc_7"] = DOCTORS_DATABASE["7"];
+  DOCTORS_DATABASE["doc_8"] = DOCTORS_DATABASE["8"];
+  DOCTORS_DATABASE["doc_9"] = DOCTORS_DATABASE["9"];
+  DOCTORS_DATABASE["doc_10"] = DOCTORS_DATABASE["10"];
+  DOCTORS_DATABASE["doc_11"] = DOCTORS_DATABASE["11"];
+  DOCTORS_DATABASE["doc_12"] = DOCTORS_DATABASE["12"];
+  DOCTORS_DATABASE["doc_13"] = DOCTORS_DATABASE["13"];
+  DOCTORS_DATABASE["doc_14"] = DOCTORS_DATABASE["14"];
+  DOCTORS_DATABASE["doc_15"] = DOCTORS_DATABASE["15"];
 
   useEffect(() => {
     setLoading(true);
     // 1. Check local rich database for this specific doctorId
     const key = String(doctorId || "1");
-    const doctorData = DOCTORS_DATABASE[key] || DOCTORS_DATABASE["1"];
+    let doctorData = DOCTORS_DATABASE[key];
+    if (!doctorData) {
+      doctorData = Object.values(DOCTORS_DATABASE).find(d => 
+        String(d.id) === key || 
+        d.name?.toLowerCase().includes(key.toLowerCase())
+      ) || DOCTORS_DATABASE["1"];
+    }
 
     // 2. Also try fetching from API if backend has customized values
     fetch(`/api/doctors/${doctorId}`)

@@ -13,6 +13,7 @@ import {
   RefreshCw,
   X
 } from "lucide-react";
+import { API_BASE_URL } from "../../config/api";
 
 const AdminSchedules = () => {
   const [appointments, setAppointments] = useState([]);
@@ -32,8 +33,8 @@ const AdminSchedules = () => {
     setLoading(true);
     try {
       const [aptRes, docRes] = await Promise.all([
-        fetch("http://localhost:8080/api/appointments"),
-        fetch("http://localhost:8080/api/doctors")
+        fetch(`${API_BASE_URL}/api/appointments`),
+        fetch(`${API_BASE_URL}/api/doctors`)
       ]);
 
       if (aptRes.ok) {
@@ -64,7 +65,7 @@ const AdminSchedules = () => {
 
   const handleAdminStatusChange = async (appointmentId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/appointments/${appointmentId}/status?status=${newStatus}`, {
+      const res = await fetch(`${API_BASE_URL}/api/appointments/${appointmentId}/status?status=${newStatus}`, {
         method: "PUT"
       });
       if (res.ok) {
