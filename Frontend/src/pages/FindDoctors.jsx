@@ -44,6 +44,8 @@ import {
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
 import { motion } from "framer-motion";
+import { API_BASE_URL } from "../config/api";
+import { CANONICAL_DOCTORS, getDoctorAvatar, getDoctorDetails } from "../data/doctorsData";
 
 const FindDoctors = () => {
   const navigate = useNavigate();
@@ -124,219 +126,57 @@ const FindDoctors = () => {
     }
   ];
 
-  // Doctors Data Array with all specialties represented
-  const doctors = [
-    {
-      id: 1,
-      name: 'Dr. Ananya Sharma',
-      specialty: 'Cardiology',
-      location: 'Nagpur, Maharashtra',
-      rating: 4.9,
-      reviews: 124,
-      experience: '12+ Years Experience',
-      fee: 1500,
-      availabilityStatus: 'Available Today',
-      nextSlot: 'Today • 06:30 PM',
-      image: doctorImg1,
-      description: 'Experienced healthcare professional focused on personalized and compassionate patient care.'
-    },
-    {
-      id: 2,
-      name: 'Dr. Vikram Shenoy',
-      specialty: 'Neurology',
-      location: 'Nagpur, Maharashtra',
-      rating: 4.9,
-      reviews: 148,
-      experience: '15+ Years Experience',
-      fee: 1800,
-      availabilityStatus: 'Available Today',
-      nextSlot: 'Today • 04:30 PM',
-      image: doctorImg2,
-      description: 'Senior Neurologist and Spine specialist specializing in stroke recovery, migraine management, and brain health.'
-    },
-    {
-      id: 3,
-      name: 'Dr. Priya Kapoor',
-      specialty: 'Dermatology',
-      location: 'Mumbai, Maharashtra',
-      rating: 4.9,
-      reviews: 156,
-      experience: '8+ Years Experience',
-      fee: 1200,
-      availabilityStatus: 'Available Tomorrow',
-      nextSlot: 'Tomorrow • 10:00 AM',
-      image: doctorImg3,
-      description: 'Expert in clinical dermatology and advanced cosmetic skin treatments using modern technologies.'
-    },
-    {
-      id: 4,
-      name: 'Dr. Arjun Verma',
-      specialty: 'Orthopedics',
-      location: 'Nagpur, Maharashtra',
-      rating: 4.7,
-      reviews: 87,
-      experience: '11+ Years Experience',
-      fee: 1400,
-      availabilityStatus: 'Available Today',
-      nextSlot: 'Today • 05:15 PM',
-      image: doctorImg4,
-      description: 'Dedicated orthopedic specialist focused on joint replacements, sports injuries, and rehabilitation.'
-    },
-    {
-      id: 5,
-      name: 'Dr. Neha Joshi',
-      specialty: 'Pediatrics',
-      location: 'Nagpur, Maharashtra',
-      rating: 4.9,
-      reviews: 142,
-      experience: '9+ Years Experience',
-      fee: 900,
-      availabilityStatus: 'Available Today',
-      nextSlot: 'Today • 03:00 PM',
-      image: doctorImg5,
-      description: 'Providing gentle, expert pediatric healthcare, developmental tracking, and vaccination programs.'
-    },
-    {
-      id: 6,
-      name: 'Dr. Kabir Malhotra',
-      specialty: 'General Medicine',
-      location: 'Pune, Maharashtra',
-      rating: 4.8,
-      reviews: 113,
-      experience: '14+ Years Experience',
-      fee: 800,
-      availabilityStatus: 'Available Today',
-      nextSlot: 'Today • 03:00 PM',
-      image: doctorImg6,
-      description: 'Providing expert internal and general medicine care focusing on chronic disease prevention and management.'
-    },
-    {
-      id: 7,
-      name: 'Dr. Sneha Kulkarni',
-      specialty: 'Gynecology',
-      location: 'Mumbai, Maharashtra',
-      rating: 4.9,
-      reviews: 178,
-      experience: '13+ Years Experience',
-      fee: 1600,
-      availabilityStatus: 'Available Tomorrow',
-      nextSlot: 'Tomorrow • 02:00 PM',
-      image: doctorImg7,
-      description: 'Dedicated gynecologist specializing in women\'s health, prenatal care, and minimally invasive procedures.'
-    },
-    {
-      id: 8,
-      name: 'Dr. Rajesh Patel',
-      specialty: 'Neurology',
-      location: 'Nagpur, Maharashtra',
-      rating: 4.8,
-      reviews: 145,
-      experience: '16+ Years Experience',
-      fee: 2500,
-      availabilityStatus: 'Available Today',
-      nextSlot: 'Today • 03:00 PM',
-      image: doctorImg8,
-      description: 'Expert neurologist specializing in brain disorders, nervous system conditions, and advanced neurological treatments.'
-    },
-    {
-      id: 9,
-      name: 'Dr. Anjali Deshmukh',
-      specialty: 'Dentistry',
-      location: 'Nagpur, Maharashtra',
-      rating: 4.7,
-      reviews: 98,
-      experience: '11+ Years Experience',
-      fee: 800,
-      availabilityStatus: 'Available Today',
-      nextSlot: 'Today • 10:30 AM',
-      image: doctorImg9,
-      description: 'Specialized dentist providing comprehensive dental care, oral surgery, and cosmetic dentistry services.'
-    },
-    {
-      id: 10,
-      name: 'Dr. Vikram Singh',
-      specialty: 'Ophthalmology',
-      location: 'Pune, Maharashtra',
-      rating: 4.9,
-      reviews: 167,
-      experience: '14+ Years Experience',
-      fee: 1200,
-      availabilityStatus: 'Available Tomorrow',
-      nextSlot: 'Tomorrow • 11:00 AM',
-      image: doctorImg10,
-      description: 'Ophthalmologist specializing in eye surgery, cataract treatment, and comprehensive vision care.'
-    },
-    {
-      id: 11,
-      name: 'Dr. Meera Krishnan',
-      specialty: 'Endocrinology',
-      location: 'Chennai, Tamil Nadu',
-      rating: 4.8,
-      reviews: 134,
-      experience: '12+ Years Experience',
-      fee: 1800,
-      availabilityStatus: 'Available Today',
-      nextSlot: 'Today • 02:30 PM',
-      image: doctorImg11,
-      description: 'Endocrinologist specializing in diabetes management, hormonal disorders, and metabolic conditions.'
-    },
-    {
-      id: 12,
-      name: 'Dr. Amit Verma',
-      specialty: 'Nephrology',
-      location: 'Hyderabad, Telangana',
-      rating: 4.7,
-      reviews: 112,
-      experience: '15+ Years Experience',
-      fee: 2200,
-      availabilityStatus: 'Available Tomorrow',
-      nextSlot: 'Tomorrow • 04:00 PM',
-      image: doctorImg12,
-      description: 'Nephrologist specializing in kidney diseases, dialysis, and urinary tract disorders.'
-    },
-    {
-      id: 13,
-      name: 'Dr. Sunita Rao',
-      specialty: 'Psychiatry',
-      location: 'Bangalore, Karnataka',
-      rating: 4.9,
-      reviews: 201,
-      experience: '10+ Years Experience',
-      fee: 1500,
-      availabilityStatus: 'Available Today',
-      nextSlot: 'Today • 09:00 AM',
-      image: doctorImg13,
-      description: 'Psychiatrist specializing in mental health, therapy, and psychiatric medication management.'
-    },
-    {
-      id: 14,
-      name: 'Dr. Karthik Menon',
-      specialty: 'Gastroenterology',
-      location: 'Hyderabad, Telangana',
-      rating: 4.8,
-      reviews: 156,
-      experience: '13+ Years Experience',
-      fee: 2000,
-      availabilityStatus: 'Available Tomorrow',
-      nextSlot: 'Tomorrow • 01:00 PM',
-      image: doctorImg14,
-      description: 'Gastroenterologist specializing in digestive disorders, liver diseases, and gastrointestinal endoscopy.'
-    },
-    {
-      id: 15,
-      name: 'Dr. Rohan Mehra',
-      specialty: 'Neurology',
-      location: 'Pune, Maharashtra',
-      rating: 4.8,
-      reviews: 95,
-      experience: '10+ Years Experience',
-      fee: 1400,
-      availabilityStatus: 'Available Tomorrow',
-      nextSlot: 'Tomorrow • 11:30 AM',
-      image: doctorImg8,
-      description: 'Consultant Neurologist specializing in neuro-rehabilitation, peripheral nerve disorders, and epilepsy treatment.'
-    }
-  ];
+  // Doctors Data State synchronized with backend and canonical dataset
+  const initialDoctors = CANONICAL_DOCTORS.map(d => ({
+    id: d.id,
+    name: d.name,
+    specialty: d.specialty || d.specialization,
+    location: d.location || "Nagpur, Maharashtra",
+    rating: d.rating || 4.8,
+    reviews: d.reviewsCount || 120,
+    experience: typeof d.experience === "string" ? d.experience : `${d.experience || 10}+ Years Experience`,
+    fee: d.fee || 1200,
+    availabilityStatus: d.availabilityStatus || "Available Today",
+    nextSlot: d.nextSlot || "Today • 10:00 AM",
+    image: d.imageUrl || getDoctorAvatar(d),
+    description: d.bio || "Experienced healthcare professional focused on personalized and compassionate patient care."
+  }));
+
+  const [doctors, setDoctors] = useState(initialDoctors);
+
+  useEffect(() => {
+    const fetchBackendDoctors = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/doctors`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const mapped = data.map(doc => {
+              const details = getDoctorDetails(doc);
+              return {
+                id: doc.id,
+                name: doc.user?.name || doc.name || details.name,
+                specialty: doc.specialization || doc.specialty || details.specialty,
+                location: doc.location || details.location || "Nagpur, Maharashtra",
+                rating: doc.rating || details.rating || 4.8,
+                reviews: doc.reviewsCount || details.reviewsCount || 100,
+                experience: typeof doc.experience === "string" ? doc.experience : `${doc.experience || details.experience || 10}+ Years Experience`,
+                fee: doc.consultationFee || doc.fee || details.fee,
+                availabilityStatus: doc.availabilityStatus || details.availabilityStatus || "Available Today",
+                nextSlot: doc.nextSlot || details.nextSlot || "Today • 10:00 AM",
+                image: getDoctorAvatar(doc),
+                description: doc.bio || details.bio || "Experienced healthcare professional focused on personalized and compassionate patient care."
+              };
+            });
+            setDoctors(mapped);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching doctors for directory:", err);
+      }
+    };
+    fetchBackendDoctors();
+  }, []);
 
   // Unique locations for filter dropdown
   const locations = ['All', 'Nagpur, Maharashtra', 'Pune, Maharashtra', 'Mumbai, Maharashtra', 'Delhi, India', 'Bangalore, India'];

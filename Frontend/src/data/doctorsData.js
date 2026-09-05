@@ -335,6 +335,29 @@ export const CANONICAL_DOCTORS = [
     bio: "Expert gastroenterologist and therapeutic endoscopist specializing in acid reflux, inflammatory bowel disease (IBD), fatty liver disease, and gastrointestinal oncology.",
     phone: "+91 98221 44563",
     email: "karthik.menon@smarthealth.com"
+  },
+  {
+    id: 15,
+    name: "Dr. Rohan Mehra",
+    specialty: "Neurology",
+    specialization: "Neurologist",
+    concern: "Spine & nerve rehab",
+    qualification: "MBBS, MD (Neurology) - AFMC Pune",
+    education: "MBBS, MD (Neurology)",
+    experience: "10+ Years",
+    experienceYears: 10,
+    rating: 4.8,
+    reviewsCount: 95,
+    fee: 1400,
+    availabilityStatus: "Available Tomorrow",
+    nextSlot: "11:30 AM",
+    imageUrl: doctorImg8,
+    hospital: "Neuro Rehab Care Clinic, Pune",
+    location: "Pune, Maharashtra",
+    telehealth: true,
+    bio: "Consultant Neurologist specializing in neuro-rehabilitation, peripheral nerve disorders, and epilepsy treatment.",
+    phone: "+91 98221 44564",
+    email: "rohan.mehra@smarthealth.com"
   }
 ];
 

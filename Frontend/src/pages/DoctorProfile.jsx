@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../config/api";
 
 // Import local doctor assets
 import doctorImg1 from "../assets/FindDoctors/Doctor-img-1.png";
@@ -934,7 +935,7 @@ const DoctorProfile = () => {
     }
 
     // 2. Also try fetching from API if backend has customized values
-    fetch(`/api/doctors/${doctorId}`)
+    fetch(`${API_BASE_URL}/api/doctors/${doctorId}`)
       .then((res) => {
         if (res.ok) return res.json();
         throw new Error("Local fallback");

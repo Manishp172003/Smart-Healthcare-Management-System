@@ -20,6 +20,7 @@ import {
   Image as ImageIcon
 } from "lucide-react";
 import { API_BASE_URL } from "../../config/api";
+import { getDoctorAvatar } from "../../data/doctorsData";
 
 export default function AdminDoctors() {
   const [doctors, setDoctors] = useState([]);
@@ -351,17 +352,15 @@ export default function AdminDoctors() {
                     <tr key={doc.id} className="hover:bg-slate-50/50 transition">
                       
                       <td className="px-6 py-4 flex items-center gap-3 font-bold text-slate-900">
-                        {doc.avatar ? (
-                          <img
-                            src={doc.avatar}
-                            alt={name}
-                            className="w-10 h-10 rounded-xl object-cover border border-slate-200/80 shadow-xs shrink-0"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-teal-600 text-white flex items-center justify-center font-black text-xs shadow-xs shrink-0">
-                            {name.replace("Dr. ", "").charAt(0)}
-                          </div>
-                        )}
+                        <img
+                          src={doc.avatar || getDoctorAvatar(doc)}
+                          alt={name}
+                          className="w-10 h-10 rounded-xl object-cover border border-slate-200/80 shadow-xs shrink-0"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = getDoctorAvatar(doc.id);
+                          }}
+                        />
                         <div>
                           <p className="leading-tight">Dr. {name.replace("Dr. ", "")}</p>
                           <span className="text-[10px] text-slate-400 font-normal">{doc.user?.email}</span>
