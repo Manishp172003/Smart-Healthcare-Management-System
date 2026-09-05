@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { User, Phone, MapPin, Award, CheckCircle, ShieldAlert, HeartHandshake, Camera, Upload, Trash2, CheckCircle2 } from "lucide-react";
+import { User, Phone, MapPin, Award, CheckCircle, ShieldAlert, HeartHandshake, Camera, Upload, Trash2, CheckCircle2, X } from "lucide-react";
 
 export const calculateAge = (dobString) => {
   if (!dobString) return null;

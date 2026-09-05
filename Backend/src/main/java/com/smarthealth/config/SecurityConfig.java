@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/doctors/**").permitAll()
                 .requestMatchers("/api/emergencies/**").permitAll()
                 .requestMatchers("/api/appointments/**").permitAll()
+                .requestMatchers("/api/patient/**").permitAll()
                 .requestMatchers("/api/newsletter/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .anyRequest().authenticated()
