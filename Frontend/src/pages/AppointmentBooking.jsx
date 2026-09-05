@@ -408,17 +408,80 @@ export default function AppointmentBooking() {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   
-  const [patientForm, setPatientForm] = useState({
-    fullName: localStorage.getItem("name") || 'Piyush Dahiwale',
-    email: localStorage.getItem("email") || 'piyush@healthcare.com',
-    phoneNumber: '+91 98765 43210',
-    age: '26',
-    gender: 'Male',
-    address: 'Nagpur, Maharashtra, India',
-    symptoms: 'Mild chest discomfort and fatigue over the past 3 days',
-    notes: 'Please keep previous blood report history in mind.'
-  });
+  const calculateAgeFromDob = (dobString) => {
+    if (!dobString) return "";
+    const birthDate = new Date(dobString);
+    if (isNaN(birthDate.getTime())) return "";
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age > 0 ? String(age) : "";
+  };
+
+  const getInitialPatientForm = () => {
+    let savedProfile = {};
+    try {
+      const raw = localStorage.getItem("smarthealth_patient_profile");
+      if (raw) savedProfile = JSON.parse(raw);
+    } catch (e) {}
+
+    const userName = localStorage.getItem("name") || savedProfile.fullName || "";
+    const userEmail = localStorage.getItem("email") || savedProfile.email || "";
+    const userPhone = savedProfile.phone || localStorage.getItem("phone") || "+91 ";
+    const userGender = savedProfile.gender || "Male";
+    const userAddress = savedProfile.address || "";
+    const calculatedAge = calculateAgeFromDob(savedProfile.dob || "1998-05-14");
+
+    return {
+      fullName: userName,
+      email: userEmail,
+      phoneNumber: userPhone,
+      age: calculatedAge || (savedProfile.age ? String(savedProfile.age) : "26"),
+      gender: userGender,
+      address: userAddress,
+      symptoms: "",
+      notes: ""
+    };
+  };
+
+  const [patientForm, setPatientForm] = useState(getInitialPatientForm);
   const [formErrors, setFormErrors] = useState({});
+
+  useEffect(() => {
+    const handleProfileSync = () => {
+      let savedProfile = {};
+      try {
+        const raw = localStorage.getItem("smarthealth_patient_profile");
+        if (raw) savedProfile = JSON.parse(raw);
+      } catch (e) {}
+      const userName = localStorage.getItem("name") || savedProfile.fullName;
+      const userEmail = localStorage.getItem("email") || savedProfile.email;
+      const userPhone = savedProfile.phone || localStorage.getItem("phone");
+      const userGender = savedProfile.gender;
+      const userAddress = savedProfile.address;
+      const calculatedAge = calculateAgeFromDob(savedProfile.dob || "1998-05-14");
+
+      setPatientForm((prev) => ({
+        ...prev,
+        fullName: prev.fullName || userName || "",
+        email: prev.email || userEmail || "",
+        phoneNumber: (prev.phoneNumber && prev.phoneNumber !== "+91 ") ? prev.phoneNumber : (userPhone || "+91 "),
+        age: prev.age || calculatedAge || "26",
+        gender: prev.gender || userGender || "Male",
+        address: prev.address || userAddress || ""
+      }));
+    };
+
+    window.addEventListener("storage", handleProfileSync);
+    window.addEventListener("profileUpdated", handleProfileSync);
+    return () => {
+      window.removeEventListener("storage", handleProfileSync);
+      window.removeEventListener("profileUpdated", handleProfileSync);
+    };
+  }, []);
 
   const [appointments, setAppointments] = useState(() => {
     const saved = localStorage.getItem('smarthealth_appointments');
@@ -1124,7 +1187,10 @@ export default function AppointmentBooking() {
                   {formErrors.phoneNumber && <p className="text-red-500 text-[10px] mt-1">{formErrors.phoneNumber}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Age & Gender</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-bold text-slate-700">Age & Gender</label>
+                    <span className="text-[10px] font-semibold text-slate-400">Calculated from DOB</span>
+                  </div>
                   <div className="flex gap-2">
                     <input 
                       type="number"
@@ -1132,6 +1198,8 @@ export default function AppointmentBooking() {
                       value={patientForm.age}
                       onChange={handleInputChange}
                       placeholder="Age"
+                      min="1"
+                      max="120"
                       className="w-24 px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-teal-500"
                     />
                     <select
@@ -1150,13 +1218,13 @@ export default function AppointmentBooking() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Health Symptoms & Concerns</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Health Symptoms & Consultation Reason</label>
                 <textarea 
                   name="symptoms"
                   rows={3}
                   value={patientForm.symptoms}
                   onChange={handleInputChange}
-                  placeholder="Describe your current medical symptoms, duration, and any known allergies..."
+                  placeholder="Describe your current medical symptoms, duration, or reason for consultation (e.g. fever, headache, routine checkup)..."
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 outline-none focus:border-teal-500"
                 />
                 {formErrors.symptoms && <p className="text-red-500 text-[10px] mt-1">{formErrors.symptoms}</p>}

@@ -1,6 +1,19 @@
 import { useState, useRef } from "react";
 import { User, Phone, MapPin, Award, CheckCircle, ShieldAlert, HeartHandshake, Camera, Upload, Trash2, CheckCircle2 } from "lucide-react";
 
+export const calculateAge = (dobString) => {
+  if (!dobString) return null;
+  const birthDate = new Date(dobString);
+  if (isNaN(birthDate.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age >= 0 ? age : null;
+};
+
 const PatientProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [avatar, setAvatar] = useState(() => localStorage.getItem("userAvatar") || "");
@@ -117,6 +130,7 @@ const PatientProfile = () => {
     localStorage.setItem("smarthealth_patient_profile", JSON.stringify(profile));
     localStorage.setItem("smarthealth_patient_medical_history", JSON.stringify(medicalHistory));
     window.dispatchEvent(new Event("storage"));
+    window.dispatchEvent(new Event("profileUpdated"));
     window.dispatchEvent(new Event("avatarUpdated"));
     setSaveToast("Profile details and clinical history successfully saved to your record!");
     setTimeout(() => setSaveToast(""), 4000);
@@ -280,7 +294,16 @@ const PatientProfile = () => {
 
             {/* Date of Birth */}
             <div className="space-y-1.5">
-              <label className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider block">Date of Birth</label>
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                  Date of Birth
+                </label>
+                {profile.dob && calculateAge(profile.dob) !== null && (
+                  <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                    Age: {calculateAge(profile.dob)} Years
+                  </span>
+                )}
+              </div>
               <input 
                 type="date" 
                 name="dob"
