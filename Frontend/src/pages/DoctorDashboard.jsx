@@ -108,10 +108,13 @@ function DoctorDashboard() {
       if (res.ok) {
         const updated = await res.json();
         setAppointments((prev) =>
-          prev.map((app) => (app.id === appointmentId ? { ...app, status: newStatus } : app))
+          prev.map((app) => (app.id === appointmentId ? { ...app, ...updated, status: newStatus } : app))
         );
+        const isRefunded = newStatus === "CANCELLED" && (updated.paymentStatus === "REFUNDED" || updated.amountPaid > 0);
         showToast(
-          `Appointment #${appointmentId} marked as ${newStatus.toLowerCase()}!`,
+          isRefunded
+            ? `Appointment #${appointmentId} cancelled. 100% full refund of ₹${updated.amountPaid || 1500} initiated!`
+            : `Appointment #${appointmentId} marked as ${newStatus.toLowerCase()}!`,
           newStatus === "CANCELLED" ? "error" : "success"
         );
         // Real-time synchronization dispatch

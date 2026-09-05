@@ -178,6 +178,9 @@ const MyAppointments = ({ setActiveTab, appointments: propAppointments = [], loa
         duration: "30 mins",
         mode: apt.appointmentType === "telehealth" ? "Telehealth" : "In-Person",
         status: apt.status === "PENDING" ? "Pending Review" : apt.status === "CONFIRMED" ? "Confirmed" : apt.status === "COMPLETED" ? "Completed" : "Cancelled",
+        paymentStatus: apt.paymentStatus,
+        paymentMethod: apt.paymentMethod,
+        amountPaid: apt.amountPaid,
         location: apt.doctor?.hospital || "Hospital Suite & Clinical Center"
       };
     } catch (error) {
@@ -757,9 +760,15 @@ const MyAppointments = ({ setActiveTab, appointments: propAppointments = [], loa
                             <span>{apt.time} ({apt.duration})</span>
                           </span>
                           <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold ${
-                            apt.status === "Confirmed" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-amber-50 text-amber-700 border border-amber-200"
+                            apt.status === "Confirmed"
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                              : apt.status === "Cancelled"
+                              ? "bg-rose-50 text-rose-700 border border-rose-200"
+                              : "bg-amber-50 text-amber-700 border border-amber-200"
                           }`}>
-                            {apt.status}
+                            {apt.status === "Cancelled" && apt.paymentStatus === "REFUNDED"
+                              ? "Refunded"
+                              : apt.status}
                           </span>
                         </div>
 
@@ -894,10 +903,33 @@ const MyAppointments = ({ setActiveTab, appointments: propAppointments = [], loa
                     </span>
 
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      isConfirmed ? "bg-blue-50 text-[#2563EB]" : "bg-yellow-50 text-yellow-600"
+                      isConfirmed
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                        : app.status === "Cancelled"
+                        ? "bg-rose-50 text-rose-700 border border-rose-200"
+                        : "bg-amber-50 text-amber-700 border border-amber-200"
                     }`}>
-                      {app.status}
+                      {app.status === "Cancelled" && app.paymentStatus === "REFUNDED"
+                        ? `Cancelled • ₹${app.amountPaid || 1500} Refunded`
+                        : app.status}
                     </span>
+
+                    {/* Financial Status Badge */}
+                    {app.paymentStatus === "PAID" && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200">
+                        ✓ Paid Online
+                      </span>
+                    )}
+                    {app.paymentStatus === "PAY_ON_ARRIVAL" && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-slate-100 text-slate-700 border border-slate-200">
+                        💵 Pay at Clinic
+                      </span>
+                    )}
+                    {app.paymentStatus === "REFUNDED" && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">
+                        ↩ 100% Refunded
+                      </span>
+                    )}
                   </div>
 
                   {/* Doctor Info */}

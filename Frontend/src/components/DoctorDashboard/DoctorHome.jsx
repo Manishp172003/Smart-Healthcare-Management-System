@@ -9,6 +9,9 @@ import {
   Check, 
   X, 
   AlertCircle, 
+  AlertTriangle,
+  ShieldCheck,
+  DollarSign,
   RefreshCw, 
   Filter, 
   Video, 
@@ -29,6 +32,7 @@ const DoctorHome = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
   const [liveConsultation, setLiveConsultation] = useState(null);
+  const [cancelModalAppointment, setCancelModalAppointment] = useState(null);
 
   // Compute live KPIs
   const totalCount = appointments.length;
@@ -302,9 +306,24 @@ const DoctorHome = ({
 
                       {/* Status Column */}
                       <td className="px-6 py-4 text-center whitespace-nowrap">
-                        <span className={`inline-flex px-2.5 py-1 text-[11px] font-bold rounded-lg border ${badge.className}`}>
-                          {badge.label}
-                        </span>
+                        <div className="flex flex-col items-center gap-1">
+                          <span className={`inline-flex px-2.5 py-1 text-[11px] font-bold rounded-lg border ${badge.className}`}>
+                            {badge.label}
+                          </span>
+                          {app.paymentStatus === "PAID" ? (
+                            <span className="text-[9px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 inline-flex items-center gap-1">
+                              ✓ Paid Online (₹{app.amountPaid || 1500})
+                            </span>
+                          ) : app.paymentStatus === "REFUNDED" ? (
+                            <span className="text-[9px] font-extrabold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-200 inline-flex items-center gap-1">
+                              ↩ 100% Refunded (₹{app.amountPaid || 1500})
+                            </span>
+                          ) : (
+                            <span className="text-[9px] font-extrabold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 inline-flex items-center gap-1">
+                              💵 Pay at Clinic
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       {/* Doctor Actions Column */}
@@ -326,7 +345,7 @@ const DoctorHome = ({
 
                               <button
                                 disabled={isUpdating}
-                                onClick={() => onAction(app.id, "CANCELLED")}
+                                onClick={() => setCancelModalAppointment(app)}
                                 className="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-[11px] flex items-center gap-1 transition disabled:opacity-50 cursor-pointer"
                                 title="Decline Appointment"
                               >
@@ -362,9 +381,9 @@ const DoctorHome = ({
 
                               <button
                                 disabled={isUpdating}
-                                onClick={() => onAction(app.id, "CANCELLED")}
+                                onClick={() => setCancelModalAppointment(app)}
                                 className="p-1.5 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 font-bold text-[11px] transition disabled:opacity-50 cursor-pointer"
-                                title="Cancel Appointment"
+                                title="Cancel / Emergency Rebook"
                               >
                                 <X size={13} className="stroke-[2.5]" />
                               </button>
@@ -398,6 +417,66 @@ const DoctorHome = ({
         </div>
 
       </div>
+
+      {/* Emergency Cancellation & Auto-Refund Modal */}
+      {cancelModalAppointment && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in duration-200">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4 border border-rose-100">
+              <AlertTriangle size={24} />
+            </div>
+
+            <h3 className="text-lg font-black text-slate-900 leading-tight">
+              Emergency Cancellation
+            </h3>
+            <p className="text-xs text-slate-500 mt-1">
+              Cancel appointment for <span className="font-bold text-slate-800">{cancelModalAppointment.patient?.user?.name || cancelModalAppointment.patient?.name || "Patient"}</span> scheduled on <span className="font-bold text-slate-800">{cancelModalAppointment.appointmentDate} at {cancelModalAppointment.startTime?.slice(0, 5)}</span>?
+            </p>
+
+            {cancelModalAppointment.paymentStatus === "PAID" || (!cancelModalAppointment.paymentStatus && cancelModalAppointment.paymentMethod !== "PAY_AT_CLINIC") ? (
+              <div className="mt-4 p-4 rounded-2xl bg-purple-50/80 border border-purple-200/80 flex items-start gap-3">
+                <ShieldCheck size={20} className="text-purple-600 shrink-0 mt-0.5" />
+                <div>
+                  <h5 className="text-xs font-black text-purple-900">Automatic 100% Patient Refund</h5>
+                  <p className="text-[11px] text-purple-700 mt-0.5 leading-relaxed">
+                    The patient already paid <span className="font-bold">₹{cancelModalAppointment.amountPaid || 1500}</span> online. A full refund will be immediately triggered back to their original payment source.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-4 p-4 rounded-2xl bg-amber-50/80 border border-amber-200/80 flex items-start gap-3">
+                <AlertCircle size={20} className="text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <h5 className="text-xs font-black text-amber-900">Pay at Clinic Appointment</h5>
+                  <p className="text-[11px] text-amber-700 mt-0.5 leading-relaxed">
+                    No online payment was collected. The patient will be notified that this clinical visit slot has been cancelled.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setCancelModalAppointment(null)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+              >
+                Keep Appointment
+              </button>
+              <button
+                disabled={updatingId === cancelModalAppointment.id}
+                onClick={async () => {
+                  const id = cancelModalAppointment.id;
+                  setCancelModalAppointment(null);
+                  await onAction(id, "CANCELLED");
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 shadow-md transition disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+              >
+                <span>Confirm & Cancel</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Live Telehealth Video Modal */}
       {liveConsultation && (

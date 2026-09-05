@@ -119,10 +119,13 @@ function DashboardHeader({ activeTab, setActiveTab, onMenuToggle, appointments =
             actionTab: "My Appointments"
           });
         } else if (apt.status === "CANCELLED") {
+          const isRefunded = apt.paymentStatus === "REFUNDED" || (apt.amountPaid && apt.amountPaid > 0 && apt.paymentMethod !== "PAY_AT_CLINIC");
           list.push({
             id,
-            title: "Appointment Cancelled",
-            description: `Consultation with Dr. ${docName} scheduled for ${date} was cancelled.`,
+            title: isRefunded ? "Appointment Cancelled (100% Refunded)" : "Appointment Cancelled",
+            description: isRefunded
+              ? `Session with Dr. ${docName} was cancelled due to clinical emergency. A full refund of ₹${apt.amountPaid || 1500} has been credited back to your payment method.`
+              : `Consultation with Dr. ${docName} scheduled for ${date} was cancelled.`,
             time: `${date}`,
             type: "appointment",
             unread: !readNotificationIds.includes(id),

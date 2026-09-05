@@ -335,9 +335,24 @@ const AdminSchedules = () => {
                       </td>
 
                       <td className="px-6 py-4 text-center whitespace-nowrap">
-                        <span className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wide border ${getBadgeStyle(app.status)}`}>
-                          {app.status}
-                        </span>
+                        <div className="flex flex-col items-center gap-1">
+                          <span className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wide border ${getBadgeStyle(app.status)}`}>
+                            {app.status}
+                          </span>
+                          {app.paymentStatus === "PAID" ? (
+                            <span className="text-[9px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                              ✓ Paid Online (₹{app.amountPaid || 1500})
+                            </span>
+                          ) : app.paymentStatus === "REFUNDED" ? (
+                            <span className="text-[9px] font-extrabold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+                              ↩ 100% Refunded
+                            </span>
+                          ) : (
+                            <span className="text-[9px] font-extrabold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                              💵 Pay at Clinic
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       <td className="px-6 py-4 text-right whitespace-nowrap">

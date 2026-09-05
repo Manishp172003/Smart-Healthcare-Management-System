@@ -103,7 +103,7 @@ public class AppointmentService {
                 .appointmentDate(request.getAppointmentDate())
                 .startTime(request.getStartTime())
                 .endTime(endTime)
-                .status(AppointmentStatus.PENDING)
+                .status(AppointmentStatus.CONFIRMED)
                 .reason(request.getReason())
                 .appointmentType(request.getAppointmentType())
                 .paymentMethod(paymentMethod)
@@ -141,6 +141,12 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Error: Appointment not found!"));
         appointment.setStatus(status);
+
+        // Auto-Refund policy: If appointment is cancelled and it was paid online, initiate 100% full refund
+        if (status == AppointmentStatus.CANCELLED && "PAID".equalsIgnoreCase(appointment.getPaymentStatus())) {
+            appointment.setPaymentStatus("REFUNDED");
+        }
+
         return appointmentRepository.save(appointment);
     }
 
@@ -169,7 +175,7 @@ public class AppointmentService {
         appointment.setAppointmentDate(newDate);
         appointment.setStartTime(newTime);
         appointment.setEndTime(newTime.plusMinutes(appointment.getDoctor().getSlotDurationMinutes()));
-        appointment.setStatus(AppointmentStatus.PENDING); // Reset to pending for doctor review
+        appointment.setStatus(AppointmentStatus.CONFIRMED); // Rescheduled slot is confirmed directly
 
         return appointmentRepository.save(appointment);
     }
