@@ -126,18 +126,16 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println(">>> Total Doctors in MySQL: " + doctorRepository.count());
 
-        // Ensure canonical Admin user exists
-        if (userRepository.findByEmail("admin@smarthealth.com").isEmpty()) {
-            User admin = new User();
-            admin.setName("System Administrator");
-            admin.setEmail("admin@smarthealth.com");
-            admin.setPassword(passwordEncoder.encode("Admin@123"));
-            admin.setRole(Role.ROLE_ADMIN);
-            admin.setStatus(UserStatus.ACTIVE);
-            admin.setEmailVerified(true);
-            userRepository.save(admin);
-            System.out.println(">>> Seeded default administrator: admin@smarthealth.com / Admin@123");
-        }
+        // Ensure canonical Admin user exists and is always synchronized with correct credentials
+        User admin = userRepository.findByEmail("admin@smarthealth.com").orElseGet(User::new);
+        admin.setName("System Administrator");
+        admin.setEmail("admin@smarthealth.com");
+        admin.setPassword(passwordEncoder.encode("Admin@123"));
+        admin.setRole(Role.ROLE_ADMIN);
+        admin.setStatus(UserStatus.ACTIVE);
+        admin.setEmailVerified(true);
+        userRepository.save(admin);
+        System.out.println(">>> Synchronized canonical administrator: admin@smarthealth.com / Admin@123");
 
         // Ensure canonical Patient user exists
         if (userRepository.findByEmail("patient@smarthealth.com").isEmpty()) {
