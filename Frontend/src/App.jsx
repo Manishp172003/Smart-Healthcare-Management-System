@@ -64,6 +64,7 @@ function App() {
         <Route path="/doctors" element={<FindDoctors/>}/>
         <Route path="/doctors/:doctorId" element={<DoctorProfile/>}/>
         <Route path="/service" element={<Services/>}/>
+        <Route path="/services" element={<Navigate to="/service" replace />}/>
         <Route path="/faq" element={<FAQ/>}/>
         <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
         <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />}/>

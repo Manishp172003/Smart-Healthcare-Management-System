@@ -16,7 +16,7 @@ const Navbar = ({ forceLight = false }) => {
   const currentPath = location.pathname;
   const isDoctorProfile = currentPath.startsWith("/doctors/") && currentPath !== "/doctors";
   // Landing subpages that have full dark hero background banners
-  const darkHeroPaths = ["/", "/about", "/doctors", "/service", "/contact"];
+  const darkHeroPaths = ["/", "/about", "/doctors", "/service", "/services", "/contact"];
   const isDarkHeroPage = darkHeroPaths.includes(currentPath);
   // Any page with a white/light top background (e.g. 404 not found, doctor profile) must show dark text and frosted light backdrop immediately
   const isLightNavbar = forceLight || isScrolled || !isDarkHeroPage;
