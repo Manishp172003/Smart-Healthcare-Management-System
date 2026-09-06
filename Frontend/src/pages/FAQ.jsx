@@ -217,11 +217,16 @@ const Faq = () => {
         }
       `}</style>
 
-      <div className="flex-grow">
+      <motion.main
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        className="flex-grow"
+      >
         
         {/* ================= 1. HERO SECTION WITH SEARCH CONSOLE & BACKGROUND BANNER ================= */}
         <section 
-          className="relative overflow-hidden bg-cover bg-no-repeat pt-28 md:pt-32 pb-20 md:pb-24 border-b border-slate-200/80"
+          className="relative overflow-hidden bg-cover bg-no-repeat pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 border-b border-slate-200/80"
           style={{
             backgroundImage: `url('${faqHeroImg}')`,
             backgroundPosition: 'right 20% center',
@@ -232,7 +237,12 @@ const Faq = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-transparent to-transparent z-0 pointer-events-none" />
 
           <div className="w-full max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
-            <div className="max-w-xl lg:max-w-2xl text-left">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="max-w-xl lg:max-w-2xl text-left"
+            >
               
               {/* Breadcrumb */}
               <div className="flex items-center space-x-2 text-xs sm:text-sm text-slate-500 mb-4 font-medium">
@@ -244,20 +254,20 @@ const Faq = () => {
               </div>
 
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-teal-200/80 shadow-xs mb-4 text-[#0D9488] text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-teal-200/80 shadow-xs mb-4 text-[#0D9488] text-[11px] sm:text-xs font-bold uppercase tracking-wider backdrop-blur-md">
                 <Sparkles className="w-3.5 h-3.5 text-[#0D9488]" />
                 <span>24/7 Knowledgebase & Clinical Support</span>
               </div>
 
               {/* Main Heading */}
-              <h1 className="text-3xl sm:text-5xl lg:text-[52px] font-black tracking-tight text-slate-900 mb-4 leading-[1.15]">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[52px] font-black tracking-tight text-slate-900 mb-3 sm:mb-4 leading-[1.15]">
                 How Can We <br className="hidden sm:inline" />
                 <span className="bg-gradient-to-r from-[#2563EB] to-[#0D9488] bg-clip-text text-transparent">
                   Help You Today?
                 </span>
               </h1>
 
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-7 max-w-lg">
+              <p className="text-xs sm:text-sm md:text-base text-slate-600 leading-relaxed mb-6 sm:mb-7 max-w-lg">
                 Instant answers to appointment scheduling, doctor consultations, digital prescriptions, and clinical policies.
               </p>
 
@@ -276,7 +286,7 @@ const Faq = () => {
                         setTimeout(() => setIsLoading(false), 240);
                       }
                     }}
-                    className="w-full pl-12 pr-20 py-3.5 sm:py-4 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#2563EB]/10 focus:border-[#2563EB] shadow-[0_10px_25px_rgba(15,23,42,0.06)] text-xs sm:text-sm transition-all"
+                    className="w-full pl-12 pr-20 py-3 sm:py-3.5 md:py-4 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#2563EB]/10 focus:border-[#2563EB] shadow-[0_10px_25px_rgba(15,23,42,0.06)] text-xs sm:text-sm transition-all"
                   />
                   {searchQuery && (
                     <button
@@ -302,7 +312,7 @@ const Faq = () => {
                   <button
                     key={chip}
                     onClick={() => handleChipClick(chip)}
-                    className={`text-[11px] px-2.5 py-1 rounded-full border transition-all cursor-pointer ${
+                    className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-full border transition-all cursor-pointer ${
                       searchQuery.toLowerCase() === chip.toLowerCase()
                         ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-xs'
                         : 'bg-white/90 hover:bg-white text-slate-600 hover:text-[#2563EB] border-slate-200 shadow-2xs'
@@ -313,32 +323,42 @@ const Faq = () => {
                 ))}
               </div>
 
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* ================= 2. CATEGORY TABS WITH QUESTION COUNTS ================= */}
-        <div className="w-full max-w-[1440px] mx-auto px-6 md:px-12 -mt-6 relative z-20">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
-            {categories.map((cat) => {
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="w-full max-w-[1440px] mx-auto px-6 md:px-12 -mt-6 relative z-20"
+        >
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3.5">
+            {categories.map((cat, index) => {
               const Icon = cat.icon;
               const isSelected = selectedCategory === cat.name;
 
               return (
-                <button
+                <motion.button
                   key={cat.name}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 + index * 0.04 }}
+                  whileHover={{ y: -3 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => handleCategoryChange(cat.name)}
-                  className={`flex flex-col items-center p-4 sm:p-5 rounded-2xl border transition-all duration-300 text-center cursor-pointer relative overflow-hidden ${
+                  className={`flex flex-col items-center p-3.5 sm:p-5 rounded-2xl border transition-all duration-300 text-center cursor-pointer relative overflow-hidden ${
                     isSelected
                       ? 'bg-gradient-to-br from-[#2563EB] to-[#0D9488] text-white border-transparent shadow-[0_12px_28px_rgba(37,99,235,0.28)] -translate-y-1'
-                      : 'bg-white text-slate-800 border-slate-200 hover:border-teal-300 hover:shadow-md hover:-translate-y-0.5'
+                      : 'bg-white text-slate-800 border-slate-200 hover:border-teal-300 hover:shadow-md'
                   }`}
                 >
                   {/* Category Pill Icon */}
-                  <div className={`p-2.5 rounded-xl mb-2.5 transition-colors ${
+                  <div className={`p-2 sm:p-2.5 rounded-xl mb-2 sm:mb-2.5 transition-colors ${
                     isSelected ? 'bg-white/20 text-white' : 'bg-teal-50 text-[#0D9488]'
                   }`}>
-                    <Icon className="w-5 h-5" />
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
 
                   <h3 className="text-xs sm:text-sm font-extrabold mb-0.5">{cat.name}</h3>
@@ -346,22 +366,27 @@ const Faq = () => {
                   <span className={`text-[10px] font-semibold ${isSelected ? 'text-white/80' : 'text-slate-400'}`}>
                     {cat.count} Questions
                   </span>
-                </button>
+                </motion.button>
               );
             })}
           </div>
-        </div>
+        </motion.div>
 
         {/* ================= 3. FAQ ACCORDION / SKELETON LOADER SECTION ================= */}
-        <div className="w-full max-w-[1440px] mx-auto px-6 md:px-12 py-14">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="w-full max-w-[1440px] mx-auto px-6 md:px-12 py-10 sm:py-14"
+        >
           
           <div className="max-w-5xl mx-auto">
             <div className="flex items-center justify-between gap-4 mb-6 pb-2 border-b border-slate-200/80">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-black text-slate-900">
+              <span className="text-xs sm:text-sm font-black text-slate-900">
                 {selectedCategory === 'All' ? 'All Questions' : `${selectedCategory} Questions`}
               </span>
-              <span className="text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100">
+              <span className="text-[11px] sm:text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100">
                 {filteredFaqs.length} Available
               </span>
             </div>
@@ -395,14 +420,17 @@ const Faq = () => {
           ) : filteredFaqs.length > 0 ? (
             
             /* REAL ACCORDION CONTENT */
-            <div className="space-y-3.5">
+            <div className="space-y-3 sm:space-y-3.5">
               {filteredFaqs.map((faq, index) => {
                 const isOpen = openIndex === index;
                 const feedback = helpfulFeedback[faq.id];
 
                 return (
-                  <div
+                  <motion.div
                     key={faq.id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, delay: index * 0.035 }}
                     className={`border rounded-2xl transition-all duration-200 overflow-hidden ${
                       isOpen 
                         ? 'border-[#2563EB]/40 bg-white shadow-[0_8px_25px_rgba(37,99,235,0.06)] ring-1 ring-[#2563EB]/20' 
@@ -411,21 +439,21 @@ const Faq = () => {
                   >
                     <button
                       onClick={() => toggleAccordion(index)}
-                      className="w-full text-left px-5 sm:px-6 py-4.5 flex items-center justify-between gap-4 focus:outline-none cursor-pointer"
+                      className="w-full text-left px-4 sm:px-6 py-4 sm:py-4.5 flex items-center justify-between gap-3 sm:gap-4 focus:outline-none cursor-pointer"
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#0D9488] bg-teal-50 border border-teal-100/80 px-2.5 py-1 rounded-md shrink-0">
+                      <div className="flex items-center gap-2.5 sm:gap-3">
+                        <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-[#0D9488] bg-teal-50 border border-teal-100/80 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md shrink-0">
                           {faq.category}
                         </span>
-                        <span className="text-sm sm:text-base font-bold text-[#0F172A] leading-snug">
+                        <span className="text-xs sm:text-sm md:text-base font-bold text-[#0F172A] leading-snug">
                           {faq.question}
                         </span>
                       </div>
 
-                      <div className={`p-2 rounded-full shrink-0 transition-colors ${
+                      <div className={`p-1.5 sm:p-2 rounded-full shrink-0 transition-colors ${
                         isOpen ? 'bg-[#EFF6FF] text-[#2563EB]' : 'bg-slate-100 text-slate-500'
                       }`}>
-                        {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                        {isOpen ? <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
                       </div>
                     </button>
 
@@ -438,7 +466,7 @@ const Faq = () => {
                           transition={{ duration: 0.25, ease: "easeInOut" }}
                           className="border-t border-slate-100"
                         >
-                          <div className="px-5 sm:px-6 py-4.5 bg-slate-50/50 text-[#475569] text-xs sm:text-sm leading-relaxed">
+                          <div className="px-4 sm:px-6 py-4 sm:py-4.5 bg-slate-50/50 text-[#475569] text-xs sm:text-sm leading-relaxed">
                             <p>{faq.answer}</p>
 
                             {/* Helpfulness Micro-Widget */}
@@ -474,15 +502,15 @@ const Faq = () => {
                         </motion.div>
                       )}
                     </AnimatePresence>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
           ) : (
             /* Empty State */
-            <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 shadow-xs">
-              <HelpCircle className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <h3 className="text-base font-bold text-slate-800 mb-1">No matching questions found</h3>
+            <div className="text-center py-12 sm:py-16 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs">
+              <HelpCircle className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300 mx-auto mb-3" />
+              <h3 className="text-sm sm:text-base font-bold text-slate-800 mb-1">No matching questions found</h3>
               <p className="text-xs text-slate-500 max-w-md mx-auto mb-5">
                 We couldn't find any questions matching "{searchQuery}". Try selecting another category or speak with our 24/7 hospital support.
               </p>
@@ -495,79 +523,91 @@ const Faq = () => {
             </div>
           )}
           </div>
-        </div>
+        </motion.div>
 
         {/* ================= 4. CLINICAL TRIAGE CONTACT STRIP ================= */}
-        <div className="w-full max-w-[1440px] mx-auto px-6 md:px-12 mb-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-[1440px] mx-auto px-6 md:px-12 mb-12 sm:mb-16"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
             
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-5 flex items-center gap-4 shadow-xs hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }} className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 flex items-center gap-4 shadow-xs hover:shadow-md transition-all">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                 <Phone className="w-5 h-5" />
               </div>
               <div>
                 <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">
                   Emergency Line
                 </span>
-                <a href="tel:+919876543210" className="text-sm font-extrabold text-slate-900 hover:text-blue-600 transition-colors">
+                <a href="tel:+919876543210" className="text-xs sm:text-sm font-extrabold text-slate-900 hover:text-blue-600 transition-colors">
                   +91 98765 43210
                 </a>
-                <p className="text-[11px] text-slate-500">24/7 Clinical Triage</p>
+                <p className="text-[10px] sm:text-[11px] text-slate-500">24/7 Clinical Triage</p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-5 flex items-center gap-4 shadow-xs hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
+            <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }} className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 flex items-center gap-4 shadow-xs hover:shadow-md transition-all">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
                 <Mail className="w-5 h-5" />
               </div>
               <div>
                 <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">
                   Email Helpdesk
                 </span>
-                <a href="mailto:support@smarthealth.com" className="text-sm font-extrabold text-slate-900 hover:text-teal-600 transition-colors">
+                <a href="mailto:support@smarthealth.com" className="text-xs sm:text-sm font-extrabold text-slate-900 hover:text-teal-600 transition-colors">
                   support@smarthealth.com
                 </a>
-                <p className="text-[11px] text-slate-500">Response within 15 mins</p>
+                <p className="text-[10px] sm:text-[11px] text-slate-500">Response within 15 mins</p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-5 flex items-center gap-4 shadow-xs hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+            <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }} className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 flex items-center gap-4 shadow-xs hover:shadow-md transition-all">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
                 <Clock className="w-5 h-5" />
               </div>
               <div>
                 <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">
                   Hospital Helpdesk
                 </span>
-                <span className="text-sm font-extrabold text-slate-900">
+                <span className="text-xs sm:text-sm font-extrabold text-slate-900">
                   Always Open 24/7
                 </span>
-                <p className="text-[11px] text-slate-500">365 Days a Year</p>
+                <p className="text-[10px] sm:text-[11px] text-slate-500">365 Days a Year</p>
               </div>
-            </div>
+            </motion.div>
 
           </div>
-        </div>
+        </motion.div>
 
         {/* ================= 5. STILL HAVE QUESTIONS ACTION BANNER ================= */}
-        <div className="w-full max-w-[1440px] mx-auto px-6 md:px-12 mb-16">
-          <div className="w-full rounded-3xl bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#0D9488] p-8 sm:p-12 text-white text-center shadow-xl relative overflow-hidden border border-slate-700/60">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-[1440px] mx-auto px-6 md:px-12 mb-12 sm:mb-16"
+        >
+          <div className="w-full rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#0D9488] p-6 sm:p-10 md:p-12 text-white text-center shadow-xl relative overflow-hidden border border-slate-700/60">
             <div className="absolute top-0 right-0 w-80 h-80 bg-teal-400/20 rounded-full blur-3xl pointer-events-none" />
             
             <div className="relative z-10 max-w-2xl mx-auto">
-              <span className="inline-block px-3 py-1 rounded-full bg-white/10 text-teal-300 text-[11px] font-bold uppercase tracking-wider mb-3 border border-white/10">
+              <span className="inline-block px-3 py-1 rounded-full bg-white/10 text-teal-300 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-2.5 sm:mb-3 border border-white/10">
                 Personalized Assistance
               </span>
 
-              <h2 className="text-2xl sm:text-4xl font-black tracking-tight mb-3 leading-tight">
+              <h2 className="text-xl sm:text-3xl md:text-4xl font-black tracking-tight mb-2.5 sm:mb-3 leading-tight">
                 Still Can't Find Your Answer?
               </h2>
 
-              <p className="text-slate-300 text-xs sm:text-sm mb-7 leading-relaxed">
+              <p className="text-slate-300 text-xs sm:text-sm mb-6 sm:mb-7 leading-relaxed">
                 Our specialized medical concierge team is online 24/7 to guide you through appointments, specialist recommendations, and treatment inquiries.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-3.5">
                 <Link
                   to="/contact"
                   className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-white text-[#2563EB] font-bold text-xs sm:text-sm shadow-md hover:bg-slate-50 transition-all hover:-translate-y-0.5"
@@ -583,9 +623,9 @@ const Faq = () => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-      </div>
+      </motion.main>
 
       <Footer />
     </div>
